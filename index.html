@@ -1,0 +1,2310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Scheduler</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── SCANDINAVIAN TOKENS ────────────────────────────────── */
+:root{
+  --bg:#f7f6f3;
+  --surf:#ffffff;
+  --s2:#f0ede8;
+  --s3:#e5e0d8;
+  --bdr:#d8d3cc;
+  --bdr2:#b8b3ab;
+  --txt:#1a1a1a;
+  --mid:#5c5852;
+  --mut:#9c978f;
+  --blue:#2563a8;
+  --bl-bg:#eef3fb;
+  --bl-b:#b8cff0;
+  --bl-dk:#1e5090;
+  --red:#c0392b;
+  --rd-bg:#fdf0ee;
+  --rd-b:#e8b5b0;
+  --amb:#92560a;
+  --am-bg:#fdf5e6;
+  --am-b:#e8cfa0;
+  --grn:#1a6b3c;
+  --gn-bg:#edf7f1;
+  --gn-b:#a0d4b8;
+  --pur:#5b3fa0;
+  --pu-bg:#f2eefa;
+  --pu-b:#c0a8e0;
+  --tel:#0c6858;
+  --tl-bg:#e8f5f2;
+  --cor:#8a2a18;
+  --co-bg:#faebe8;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --hh:52px;
+  --r:4px;
+  --r2:6px;
+  --r3:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* ── BUTTONS ── */
+.btn{padding:7px 15px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--surf);cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:500;color:var(--mid);transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;letter-spacing:.01em;}
+.btn:hover{background:var(--s2);color:var(--txt);border-color:var(--bdr2);}
+.btn:disabled{opacity:.38;pointer-events:none;}
+.btn.solid{background:var(--txt);color:#fff;border-color:var(--txt);}
+.btn.solid:hover{background:#333;}
+.btn.blue{color:var(--blue);background:var(--bl-bg);border-color:var(--bl-b);}
+.btn.blue:hover{background:#dce9f8;}
+.btn.red{color:var(--red);background:var(--rd-bg);border-color:var(--rd-b);}
+.btn.red:hover{background:#f8e0dc;}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--mut);}
+.btn.ghost:hover{background:var(--s2);color:var(--txt);border-color:var(--bdr);}
+.btn.sm{padding:4px 10px;font-size:11px;}
+.btn.xs{padding:2px 8px;font-size:10px;}
+.btn.lg{padding:10px 22px;font-size:14px;font-weight:600;}
+
+/* ── FORM ── */
+.mf{margin-bottom:14px;}
+.mf label{display:block;font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.mf input,.mf select,.mf textarea{width:100%;border:1px solid var(--bdr);border-radius:var(--r);padding:8px 10px;font-family:var(--sans);font-size:13px;color:var(--txt);background:var(--surf);outline:none;transition:border-color .15s;}
+.mf input:focus,.mf select:focus,.mf textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,168,.08);}
+.mf textarea{resize:vertical;min-height:56px;}
+.mrow{display:flex;gap:10px;}.mrow .mf{flex:1;}
+.macts{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+
+/* ── MODAL ── */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:600;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.ov.open{display:flex;}
+.mbox{background:var(--surf);border-radius:var(--r3);border:1px solid var(--bdr);padding:28px;max-width:95vw;max-height:92vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.12);}
+.m-title{font-size:16px;font-weight:600;margin-bottom:4px;letter-spacing:-.01em;}
+.m-sub{font-size:12px;color:var(--mut);margin-bottom:20px;line-height:1.6;}
+
+/* ── AVATAR ── */
+.av{display:flex;align-items:center;justify-content:center;border-radius:var(--r);font-family:var(--mono);font-weight:500;flex-shrink:0;}
+.av-xs{width:18px;height:18px;font-size:7px;}
+.av-sm{width:26px;height:26px;font-size:8px;border-radius:var(--r2);}
+.av-md{width:32px;height:32px;font-size:10px;border-radius:var(--r2);}
+.av-lg{width:44px;height:44px;border-radius:var(--r2);font-size:13px;}
+
+/* ── TOGGLE ── */
+.tog{display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;}
+.tog-track{width:32px;height:17px;border-radius:9px;background:var(--bdr);position:relative;transition:background .15s;flex-shrink:0;}
+.tog-track.on{background:var(--blue);}
+.tog-thumb{width:13px;height:13px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.15);}
+.tog-track.on .tog-thumb{transform:translateX(15px);}
+.tog-label{font-size:12px;color:var(--mid);}
+
+/* ── TIP ── */
+.tip{position:fixed;background:rgba(26,26,26,.9);color:#fff;padding:6px 10px;border-radius:var(--r);font-size:11px;line-height:1.5;max-width:280px;z-index:999;pointer-events:none;opacity:0;transition:opacity .1s;}
+.tip.show{opacity:1;}
+
+/* ════════════════════════════════════════════════════════════
+   WIZARD — clean, Scandinavian
+   ════════════════════════════════════════════════════════════ */
+#wizard{position:fixed;inset:0;background:var(--bg);z-index:800;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:48px 24px 32px;}
+.wiz-wrap{width:100%;max-width:640px;}
+
+/* Progress bar */
+.wiz-prog{display:flex;align-items:center;gap:0;margin-bottom:36px;}
+.wiz-prog-step{display:flex;align-items:center;gap:8px;flex:1;}
+.wiz-prog-step:last-child{flex:0;}
+.wiz-prog-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--bdr);background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--mut);flex-shrink:0;transition:all .2s;}
+.wiz-prog-dot.done{background:var(--txt);border-color:var(--txt);color:#fff;}
+.wiz-prog-dot.active{border-color:var(--txt);color:var(--txt);}
+.wiz-prog-line{flex:1;height:1px;background:var(--bdr);transition:background .2s;}
+.wiz-prog-line.done{background:var(--txt);}
+.wiz-prog-label{font-size:10px;color:var(--mut);white-space:nowrap;display:none;}
+
+.wiz-panel{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r3);padding:36px;box-shadow:0 2px 16px rgba(0,0,0,.06);}
+.wiz-step{display:none;}
+.wiz-step.active{display:block;}
+.wiz-eye{font-size:11px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.wiz-title{font-size:22px;font-weight:600;margin-bottom:6px;letter-spacing:-.02em;color:var(--txt);}
+.wiz-desc{font-size:13px;color:var(--mid);margin-bottom:24px;line-height:1.65;max-width:540px;}
+.wiz-foot{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--bdr);}
+
+/* Upload block */
+.upload-block{border:1.5px dashed var(--bdr);border-radius:var(--r2);padding:20px;text-align:center;cursor:pointer;transition:all .15s;background:var(--bg);margin-top:4px;}
+.upload-block:hover{border-color:var(--blue);background:var(--bl-bg);}
+.upload-block-icon{font-size:24px;margin-bottom:6px;opacity:.5;}
+.upload-block-title{font-size:13px;font-weight:500;color:var(--txt);}
+.upload-block-sub{font-size:11px;color:var(--mut);margin-top:3px;}
+.upload-tbc{display:inline-flex;align-items:center;gap:4px;margin-top:10px;background:var(--am-bg);border:1px solid var(--am-b);color:var(--amb);font-size:10px;font-weight:600;padding:2px 9px;border-radius:3px;letter-spacing:.04em;}
+
+/* Room / Staff card in wizard */
+.wiz-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);margin-bottom:5px;}
+.wiz-card-ic{font-size:18px;flex-shrink:0;line-height:1;}
+.wiz-card-body{flex:1;min-width:0;}
+.wiz-card-name{font-size:13px;font-weight:500;display:flex;align-items:center;gap:7px;}
+.wiz-card-sub{font-size:11px;color:var(--mid);margin-top:2px;}
+.wiz-card-acts{display:flex;gap:4px;margin-top:6px;}
+
+/* Edit overlay on staff card */
+.wiz-staff-edit{background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r2);padding:12px;margin-bottom:5px;display:none;}
+.wiz-staff-edit.open{display:block;}
+
+.add-row{display:flex;align-items:center;gap:7px;padding:9px 12px;border:1.5px dashed var(--bdr);border-radius:var(--r2);cursor:pointer;color:var(--mut);font-size:12px;font-weight:500;transition:all .15s;margin-top:4px;}
+.add-row:hover{border-color:var(--blue);color:var(--blue);background:var(--bl-bg);}
+
+.ifrm{background:var(--bl-bg);border:1px solid var(--bl-b);border-radius:var(--r2);padding:14px;margin-bottom:8px;display:none;}
+.ifrm.open{display:block;}
+.irow{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+.irow .mf{margin-bottom:0;min-width:100px;flex:1;}
+.irow .mf input,.irow .mf select{padding:6px 9px;font-size:12px;}
+.irow .mf label{margin-bottom:3px;}
+
+/* Capability chips */
+.chk-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.chk{font-size:11px;color:var(--mid);cursor:pointer;padding:3px 8px;border-radius:3px;border:1px solid var(--bdr);background:var(--surf);user-select:none;transition:all .12s;font-weight:500;}
+.chk:hover{border-color:var(--bdr2);}
+.chk.on{background:var(--txt);color:#fff;border-color:var(--txt);}
+
+/* Step 4 — load per room, day rows */
+.load-room-block{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;}
+.load-room-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.load-room-name{font-size:13px;font-weight:600;}
+.load-room-meta{font-size:11px;color:var(--mut);}
+.load-row{display:flex;align-items:center;gap:10px;padding:5px 0;}
+.load-row+.load-row{border-top:1px solid var(--s2);}
+.load-day{width:100px;font-size:12px;color:var(--mid);flex-shrink:0;}
+.load-inp{width:48px;height:30px;border:1px solid var(--bdr);border-radius:var(--r);text-align:center;font-family:var(--mono);font-size:13px;background:var(--surf);outline:none;transition:all .12s;}
+.load-inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,168,.08);}
+.load-inp.la{border-color:var(--am-b);background:var(--am-bg);}
+.load-inp.lc{border-color:var(--rd-b);background:var(--rd-bg);}
+.load-label{font-size:11px;color:var(--mut);}
+
+/* Step 5 — notifications */
+.notif-option{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1px solid var(--bdr);border-radius:var(--r2);margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.notif-option:hover{border-color:var(--bdr2);background:var(--s2);}
+.notif-option.on{border-color:var(--txt);background:var(--s2);}
+.notif-ic{font-size:22px;flex-shrink:0;line-height:1;margin-top:1px;}
+.notif-title{font-size:13px;font-weight:600;margin-bottom:3px;}
+.notif-desc{font-size:11px;color:var(--mid);line-height:1.55;}
+.notif-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--bdr);background:var(--surf);flex-shrink:0;margin-left:auto;margin-top:2px;transition:all .15s;}
+.notif-option.on .notif-check{background:var(--txt);border-color:var(--txt);}
+
+/* ════════════════════════════════════════════════════════════
+   APP
+   ════════════════════════════════════════════════════════════ */
+#app{display:none;flex-direction:column;height:100vh;}
+#app.visible{display:flex;}
+
+/* Header */
+.hdr{height:var(--hh);background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 0 0 20px;position:sticky;top:0;z-index:300;flex-shrink:0;}
+.logo{font-family:var(--mono);font-size:12px;font-weight:500;padding-right:20px;border-right:1px solid var(--bdr);flex-shrink:0;letter-spacing:.02em;}
+.logo-name{color:var(--txt);display:block;}
+.logo-dept{color:var(--mut);font-size:9px;display:block;margin-top:1px;}
+.hdr-tabs{display:flex;align-items:stretch;height:100%;padding:0 10px;flex:1;}
+.htab{height:100%;padding:0 16px;border:none;border-bottom:2px solid transparent;background:none;font-family:var(--sans);font-size:13px;font-weight:500;color:var(--mid);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;margin-bottom:-1px;transition:color .15s;}
+.htab:hover{color:var(--txt);}
+.htab.on{color:var(--txt);border-bottom-color:var(--txt);}
+.hbadge{background:var(--rd-bg);color:var(--red);font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600;}
+.hbadge.warn{background:var(--am-bg);color:var(--amb);}
+.hdr-right{display:flex;align-items:center;border-left:1px solid var(--bdr);flex-shrink:0;}
+.wknav{display:flex;align-items:center;gap:8px;padding:0 16px;}
+.wkb{width:28px;height:28px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--surf);cursor:pointer;font-size:15px;color:var(--mid);display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.wkb:hover{background:var(--s2);border-color:var(--bdr2);}
+.wklbl{font-family:var(--mono);font-size:11px;min-width:140px;text-align:center;color:var(--mid);}
+.hdr-acts{display:flex;align-items:center;gap:6px;padding:0 14px;border-left:1px solid var(--bdr);}
+
+/* Layout */
+.app-body{display:flex;flex:1;overflow:hidden;}
+.side{width:196px;min-width:196px;background:var(--surf);border-right:1px solid var(--bdr);overflow-y:auto;flex-shrink:0;}
+.side-hd{padding:12px 14px 7px;display:flex;align-items:center;justify-content:space-between;}
+.side-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);}
+.chip{display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;border-left:2px solid transparent;transition:all .12s;}
+.chip:hover{background:var(--s2);}
+.chip.on{background:var(--bl-bg);border-left-color:var(--blue);}
+.chip.dim{opacity:.38;pointer-events:none;}
+.chip-name{font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;}
+.chip-role{font-size:9px;color:var(--mut);}
+.side-sep{border-top:1px solid var(--bdr);margin:6px 0;}
+.leg-row{display:flex;align-items:center;gap:7px;padding:3px 14px;}
+.leg-sw{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.leg-lbl{font-size:11px;color:var(--mid);}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.vwrap{flex:1;overflow:auto;}
+.vpad{padding:24px;}
+
+/* Toolbar */
+.toolbar{background:var(--surf);border-bottom:1px solid var(--bdr);padding:8px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.fill-stat{font-size:11px;color:var(--mid);}
+
+/* Auto-schedule banner */
+.ap-banner{background:var(--surf);border-bottom:1px solid var(--bdr);padding:14px 20px;display:flex;align-items:center;gap:20px;flex-shrink:0;}
+.ap-banner-text{flex:1;}
+.ap-banner-title{font-size:14px;font-weight:600;letter-spacing:-.01em;margin-bottom:2px;}
+.ap-banner-sub{font-size:11px;color:var(--mid);}
+.ap-stats{display:flex;gap:20px;}
+.ap-stat{text-align:center;}
+.ap-stat .sv{font-family:var(--mono);font-size:20px;font-weight:500;line-height:1;display:block;}
+.ap-stat .sl{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+.ap-stat.red .sv{color:var(--red);}
+.ap-stat.amb .sv{color:var(--amb);}
+.ap-stat.grn .sv{color:var(--grn);}
+
+/* Schedule grid */
+table.ex{border-collapse:collapse;width:max-content;min-width:100%;}
+.sched-table-wrap{min-width:100%;}
+th.corn{position:sticky;left:0;top:0;z-index:40;background:var(--s2);border-right:2px solid var(--bdr2);border-bottom:2px solid var(--bdr2);min-width:108px;width:108px;padding:8px 10px;}
+.cn-t{font-size:10px;color:var(--mid);font-weight:600;}
+.cn-h{font-family:var(--mono);font-size:8px;color:var(--mut);margin-top:2px;}
+th.col-h{position:sticky;top:0;z-index:20;background:var(--surf);border:1px solid var(--bdr);border-bottom:2px solid var(--bdr2);padding:6px 8px;text-align:center;min-width:132px;vertical-align:bottom;}
+.col-h-name{font-size:12px;font-weight:700;display:block;letter-spacing:-.01em;}
+.col-h-hrs{font-family:var(--mono);font-size:8px;color:var(--mut);display:block;margin-top:2px;}
+.col-h-bar{height:2px;border-radius:1px;margin-top:4px;}
+.col-h-stat{font-size:9px;margin-top:2px;display:block;font-family:var(--mono);}
+td.row-h{position:sticky;left:0;z-index:10;background:var(--s2);border-right:2px solid var(--bdr2);border-bottom:1px solid var(--bdr);padding:0;min-width:108px;width:108px;vertical-align:top;}
+td.row-h.wknd{background:#edeae4;}
+.rh-in{padding:8px 10px;}
+.rh-n{font-size:12px;font-weight:600;}
+.rh-d{font-family:var(--mono);font-size:10px;color:var(--mut);margin-top:3px;}
+td.cell{border:1px solid var(--bdr);padding:4px;vertical-align:top;min-width:132px;cursor:pointer;transition:background .1s;}
+td.cell:hover{background:var(--s2);}
+td.cell.c-conf{background:var(--rd-bg);}
+td.cell.c-ok{background:#f0f9f3;}
+td.cell.c-unmet{background:#fdf9e8;}
+td.cell.c-partial{background:#fefae8;}
+td.cell.dov{outline:2px solid var(--blue);outline-offset:-2px;background:var(--bl-bg);}
+
+/* Pills */
+.pill{border-radius:var(--r);padding:4px 7px;margin:2px 0;font-size:11px;line-height:1.35;cursor:grab;position:relative;user-select:none;display:block;transition:transform .12s,box-shadow .12s;}
+.pill:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.pill:active{cursor:grabbing;}
+.pn{font-weight:600;display:block;font-size:11px;}
+.pt{font-family:var(--mono);font-size:9px;opacity:.65;display:block;margin-top:1px;}
+.pc{font-size:9px;font-style:italic;opacity:.75;display:block;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pw{position:absolute;top:3px;right:5px;cursor:pointer;font-size:10px;}
+.pns{font-size:8px;font-family:var(--mono);color:var(--pur);display:block;margin-top:1px;}
+.ta{background:var(--bl-bg);color:var(--blue);border-left:2.5px solid var(--blue);}
+.te{background:var(--rd-bg);color:var(--red);border-left:2.5px solid var(--red);}
+.ts2{background:var(--am-bg);color:var(--amb);border-left:2.5px solid var(--amb);}
+.tb{background:var(--gn-bg);color:var(--grn);border-left:2.5px solid var(--grn);}
+.tp{background:var(--pu-bg);color:var(--pur);border-left:2.5px solid var(--pur);}
+.tr2{background:var(--tl-bg);color:var(--tel);border-left:2.5px solid var(--tel);}
+.tn{background:var(--co-bg);color:var(--cor);border-left:2.5px solid var(--cor);}
+.ns-pill{border-style:dashed;opacity:.85;}
+.addb{display:flex;align-items:center;gap:3px;color:var(--mut);font-size:10px;padding:3px 5px;border-radius:var(--r);cursor:pointer;border:1px dashed transparent;margin-top:2px;transition:all .12s;}
+.addb:hover{color:var(--blue);border-color:var(--bl-b);background:var(--bl-bg);}
+.gap-pill{font-size:9px;font-weight:500;padding:3px 7px;border-radius:var(--r);margin-top:4px;text-align:center;cursor:pointer;display:block;transition:all .12s;}
+.gap-n{color:var(--amb);background:var(--am-bg);border:1px dashed var(--am-b);}
+.gap-c{color:var(--red);background:var(--rd-bg);border:1px dashed var(--rd-b);}
+.gap-pill:hover{opacity:.8;}
+
+/* Mobile schedule list */
+.mobile-schedule{display:none;padding:12px;background:var(--bg);}
+.mobile-day{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);margin-bottom:10px;overflow:hidden;}
+.mobile-day-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;background:var(--s2);border-bottom:1px solid var(--bdr);}
+.mobile-day-title{font-size:13px;font-weight:700;color:var(--txt);}
+.mobile-day-date{font-family:var(--mono);font-size:10px;color:var(--mut);}
+.mobile-room{padding:11px 12px;border-bottom:1px solid var(--s2);cursor:pointer;transition:background .12s;}
+.mobile-room:last-child{border-bottom:none;}
+.mobile-room:hover{background:var(--s2);}
+.mobile-room-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;}
+.mobile-room-name{font-size:12px;font-weight:700;line-height:1.35;flex:1;}
+.mobile-room-hours{font-family:var(--mono);font-size:10px;color:var(--mut);white-space:nowrap;}
+.mobile-room-status{font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;white-space:nowrap;}
+.mobile-room-status.ok{background:var(--gn-bg);color:var(--grn);}
+.mobile-room-status.warn{background:var(--am-bg);color:var(--amb);}
+.mobile-room-status.crit{background:var(--rd-bg);color:var(--red);}
+.mobile-shifts{display:flex;flex-direction:column;gap:5px;}
+.mobile-shift{display:flex;align-items:center;gap:8px;border-radius:var(--r);padding:7px 8px;font-size:11px;line-height:1.35;}
+.mobile-shift-main{flex:1;min-width:0;}
+.mobile-shift-name{font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mobile-shift-time{font-family:var(--mono);font-size:10px;opacity:.75;display:block;margin-top:1px;}
+.mobile-shift-note{font-size:10px;opacity:.75;font-style:italic;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mobile-empty-room{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px dashed var(--bdr);border-radius:var(--r);padding:7px 8px;font-size:11px;color:var(--mut);background:var(--bg);}
+.mobile-gap{border-color:var(--am-b);background:var(--am-bg);color:var(--amb);font-weight:700;}
+.mobile-gap.crit{border-color:var(--rd-b);background:var(--rd-bg);color:var(--red);}
+.mobile-add{font-size:10px;font-weight:700;color:var(--blue);}
+
+/* Staff view */
+.stabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
+.stab{padding:5px 12px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--surf);cursor:pointer;font-size:12px;font-weight:500;color:var(--mid);transition:all .12s;display:flex;align-items:center;gap:6px;}
+.stab:hover{background:var(--s2);border-color:var(--bdr2);}
+.stab.on{background:var(--txt);color:#fff;border-color:var(--txt);}
+.stab.abs{border-color:var(--rd-b);color:var(--red);}
+.stab.abs.on{background:var(--red);color:#fff;}
+table.sdt{width:100%;border-collapse:collapse;}
+table.sdt th{background:var(--s2);border:1px solid var(--bdr);padding:8px 10px;font-size:10px;font-weight:700;color:var(--mid);text-align:left;letter-spacing:.04em;text-transform:uppercase;}
+table.sdt td{border:1px solid var(--bdr);padding:8px 10px;font-size:12px;vertical-align:middle;}
+table.sdt tr:hover td{background:var(--s2);}
+table.sdt tr.conf-r td{background:var(--rd-bg);}
+table.sdt tr.ns-r td{background:var(--pu-bg);}
+.conf-box{background:var(--rd-bg);border:1px solid var(--rd-b);border-radius:var(--r2);padding:12px;margin-bottom:12px;}
+.conf-box h4{font-size:12px;font-weight:600;color:var(--red);margin-bottom:3px;}
+.conf-box p{font-size:11px;color:var(--mid);line-height:1.5;margin-bottom:8px;}
+.abs-section{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:14px;margin-bottom:14px;}
+.abs-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bdr);}
+.abs-row:last-child{border-bottom:none;}
+.abs-badge{display:inline-flex;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;}
+.ab-vac{background:var(--bl-bg);color:var(--blue);}
+.ab-sick{background:var(--rd-bg);color:var(--red);}
+.ab-conf{background:var(--gn-bg);color:var(--grn);}
+.ab-rot{background:var(--pu-bg);color:var(--pur);}
+.ab-oth{background:var(--am-bg);color:var(--amb);}
+.prog{height:4px;border-radius:2px;background:var(--s3);overflow:hidden;min-width:60px;}
+.pf{height:100%;border-radius:2px;}
+
+/* Gaps */
+.gaps-top{display:flex;gap:10px;margin-bottom:24px;}
+.gs-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:16px 20px;flex:1;}
+.gs-card.crit{background:var(--rd-bg);border-color:var(--rd-b);}
+.gs-card.warn{background:var(--am-bg);border-color:var(--am-b);}
+.gs-card.ok{background:var(--gn-bg);border-color:var(--gn-b);}
+.gs-v{font-family:var(--mono);font-size:28px;font-weight:500;line-height:1;display:block;}
+.gs-l{font-size:11px;margin-top:5px;display:block;}
+.gs-card.crit .gs-v,.gs-card.crit .gs-l{color:var(--red);}
+.gs-card.warn .gs-v,.gs-card.warn .gs-l{color:var(--amb);}
+.gs-card.ok .gs-v,.gs-card.ok .gs-l{color:var(--grn);}
+.gap-sec{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:18px 0 8px;display:flex;align-items:center;gap:8px;}
+.gap-sec::after{content:'';flex:1;height:1px;background:var(--bdr);}
+.gcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.gcard{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:14px;}
+.gcard.gc-c{border-left:3px solid var(--red);}
+.gcard.gc-n{border-left:3px solid var(--amb);}
+.gc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
+.gc-room{font-weight:600;font-size:13px;}
+.gc-tag{font-family:var(--mono);font-size:9px;background:var(--s2);padding:2px 6px;border-radius:3px;color:var(--mid);}
+.gc-type{font-size:10px;color:var(--mut);margin-bottom:10px;}
+.gc-fill{width:100%;padding:7px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);cursor:pointer;font-size:11px;font-weight:500;color:var(--mid);transition:all .12s;}
+.gc-fill:hover{background:var(--txt);color:#fff;border-color:var(--txt);}
+
+/* Settings */
+.set-layout{display:flex;height:100%;}
+.set-nav{width:168px;border-right:1px solid var(--bdr);background:var(--surf);padding:14px 0;flex-shrink:0;}
+.sn-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;font-weight:500;color:var(--mid);transition:all .12s;border-left:2px solid transparent;}
+.sn-item:hover{background:var(--s2);}
+.sn-item.on{background:var(--bl-bg);color:var(--blue);border-left-color:var(--blue);}
+.set-content{flex:1;overflow-y:auto;padding:28px;}
+.sc-title{font-size:17px;font-weight:600;margin-bottom:16px;letter-spacing:-.01em;}
+table.st{width:100%;border-collapse:collapse;margin-bottom:16px;}
+table.st th{background:var(--s2);border:1px solid var(--bdr);padding:8px 10px;font-size:10px;font-weight:700;color:var(--mid);text-align:left;text-transform:uppercase;letter-spacing:.04em;}
+table.st td{border:1px solid var(--bdr);padding:8px 10px;font-size:12px;vertical-align:middle;}
+table.st tr:hover td{background:var(--s2);}
+.lm-wrap{overflow-x:auto;}
+table.lm{border-collapse:collapse;font-size:12px;width:100%;}
+table.lm th{background:var(--s2);border:1px solid var(--bdr);padding:6px 8px;font-size:10px;color:var(--mid);font-weight:600;white-space:nowrap;}
+table.lm td{border:1px solid var(--bdr);padding:4px;text-align:center;vertical-align:middle;}
+.lm-c{padding:6px 8px;text-align:left;}
+.lm-inp{width:36px;height:28px;border:1px solid var(--bdr);border-radius:var(--r);text-align:center;font-family:var(--mono);font-size:12px;background:var(--surf);outline:none;}
+.lm-inp:focus{border-color:var(--blue);}
+.lm-inp.la{border-color:var(--am-b);background:var(--am-bg);}
+.lm-inp.lc{border-color:var(--rd-b);background:var(--rd-bg);}
+.lm-s{font-family:var(--mono);font-size:10px;}
+.ok{color:var(--grn);}.wn{color:var(--amb);}.bd{color:var(--red);}
+
+/* ── AUTO-SCHEDULE MODAL ── */
+#ap-ov .mbox{width:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;padding:0;}
+.ap-modal-head{padding:24px 28px 20px;border-bottom:1px solid var(--bdr);}
+.ap-modal-body{overflow-y:auto;flex:1;padding:24px 28px;}
+.ap-modal-foot{padding:16px 28px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;}
+
+/* Strategy selector */
+.strat-row{display:flex;gap:8px;margin-bottom:24px;}
+.strat-btn{flex:1;padding:12px;border:1px solid var(--bdr);border-radius:var(--r2);cursor:pointer;transition:all .15s;text-align:center;background:var(--surf);}
+.strat-btn:hover{border-color:var(--bdr2);background:var(--s2);}
+.strat-btn.on{border-color:var(--txt);background:var(--txt);}
+.strat-btn.on .strat-label{color:#fff;}
+.strat-btn.on .strat-icon{opacity:1;}
+.strat-icon{font-size:20px;display:block;margin-bottom:5px;opacity:.6;transition:opacity .15s;}
+.strat-label{font-size:11px;font-weight:600;color:var(--mid);display:block;}
+
+/* Schedule preview cards */
+.schedule-preview{margin-bottom:24px;}
+.preview-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:10px;}
+.preview-cards{display:flex;flex-direction:column;gap:8px;}
+.pv-card{border:1px solid var(--bdr);border-radius:var(--r2);padding:12px;cursor:pointer;transition:all .15s;position:relative;background:var(--surf);}
+.pv-card:hover{border-color:var(--bdr2);box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.pv-card.on{border-color:var(--txt);box-shadow:0 0 0 2px var(--txt);}
+.pv-card-num{font-family:var(--mono);font-size:22px;font-weight:500;display:block;margin-bottom:4px;}
+.pv-card-label{font-size:12px;font-weight:600;display:block;margin-bottom:3px;}
+.pv-card-meta{font-size:10px;color:var(--mut);line-height:1.5;}
+.pv-card-tag{position:absolute;top:8px;right:8px;font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;}
+.pv-tag-best{background:var(--gn-bg);color:var(--grn);}
+.pv-tag-cons{background:var(--am-bg);color:var(--amb);}
+.pv-tag-min{background:var(--bl-bg);color:var(--blue);}
+.pv-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--bdr);background:var(--surf);display:inline-block;vertical-align:middle;transition:all .15s;}
+.pv-card.on .pv-radio{background:var(--txt);border-color:var(--txt);}
+.opt-cat{border:1px solid var(--bdr);border-radius:var(--r2);background:var(--surf);overflow:hidden;}
+.opt-cat-head{width:100%;border:0;background:var(--s2);padding:10px 12px;font-family:var(--sans);display:flex;align-items:center;gap:10px;cursor:pointer;text-align:left;}
+.opt-cat-head:hover{background:var(--s3);}
+.opt-cat-title{font-size:12px;font-weight:700;color:var(--txt);flex:1;}
+.opt-cat-meta{font-size:10px;color:var(--mut);font-family:var(--mono);}
+.opt-cat-chev{font-size:13px;color:var(--mid);transition:transform .15s;}
+.opt-cat.open .opt-cat-chev{transform:rotate(90deg);}
+.opt-list{display:none;padding:8px;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:8px;}
+.opt-cat.open .opt-list{display:grid;}
+.sched-option{border:1px solid var(--bdr);border-radius:var(--r2);padding:10px;cursor:pointer;background:var(--surf);transition:all .15s;min-height:104px;display:flex;flex-direction:column;gap:5px;}
+.sched-option:hover{border-color:var(--bdr2);background:var(--s2);}
+.sched-option.on{border-color:var(--txt);box-shadow:0 0 0 2px var(--txt);}
+.sched-option.future{background:var(--bg);}
+.sched-option-top{display:flex;align-items:flex-start;gap:8px;}
+.sched-option-title{font-size:12px;font-weight:700;line-height:1.35;flex:1;}
+.sched-option-desc{font-size:10px;color:var(--mid);line-height:1.5;}
+.sched-option-tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;}
+.tag-live{background:var(--gn-bg);color:var(--grn);}
+.tag-future{background:var(--s2);color:var(--mut);}
+.option-detail{border:1px solid var(--bdr);border-radius:var(--r2);padding:12px;margin-top:10px;background:var(--bg);font-size:11px;color:var(--mid);line-height:1.55;}
+
+/* Assignment list inside auto-plan */
+.ap-slot{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bdr);}
+.ap-slot:last-child{border:none;padding:0;margin:0;}
+.ap-opt{border:1px solid var(--bdr);border-radius:var(--r2);padding:9px 12px;margin-bottom:5px;cursor:pointer;position:relative;transition:all .12s;}
+.ap-opt:hover{border-color:var(--bdr2);background:var(--s2);}
+.ap-opt.sel{border-color:var(--txt);background:var(--s2);}
+.ap-opt-top{display:flex;justify-content:space-between;margin-bottom:3px;}
+.ap-score{font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;}
+.sc-a{background:var(--gn-bg);color:var(--grn);}
+.sc-b{background:var(--am-bg);color:var(--amb);}
+.sc-c{background:var(--rd-bg);color:var(--red);}
+.ap-radio{position:absolute;top:11px;right:11px;width:15px;height:15px;border-radius:50%;border:2px solid var(--bdr);background:var(--surf);}
+.ap-opt.sel .ap-radio{background:var(--txt);border-color:var(--txt);}
+
+/* Alerts modal */
+#cp-ov .mbox{width:520px;}
+.cp-list{max-height:420px;overflow-y:auto;}
+.cp-item{border:1px solid var(--rd-b);border-radius:var(--r2);padding:14px;margin-bottom:8px;background:var(--rd-bg);}
+.cp-item h4{font-size:12px;font-weight:700;color:var(--red);margin-bottom:3px;}
+.cp-what{font-size:11px;color:var(--txt);margin-bottom:3px;}
+.cp-why{font-size:11px;color:var(--mid);margin-bottom:10px;line-height:1.5;}
+.cp-btn{padding:4px 10px;border:1px solid;border-radius:var(--r);background:var(--surf);cursor:pointer;font-size:11px;font-weight:500;transition:all .12s;}
+.cp-r{border-color:var(--rd-b);color:var(--red);}
+.cp-r:hover{background:var(--red);color:#fff;}
+.cp-ns{border-color:var(--pu-b);color:var(--pur);}
+.cp-ns:hover{background:var(--pu-bg);}
+
+/* PDF */
+#pdf-ov .mbox{width:97vw;max-width:1140px;max-height:95vh;padding:16px;display:flex;flex-direction:column;}
+.pdf-wrap{flex:1;overflow:auto;background:#ccc;padding:16px;display:flex;justify-content:center;}
+.pdf-page{width:277mm;background:#fff;border-radius:2px;box-shadow:0 4px 24px rgba(0,0,0,.2);padding:8mm;font-family:'Inter',sans-serif;font-size:7.5pt;color:#111;}
+.pdf-page h1{font-size:11pt;font-weight:700;margin-bottom:1mm;}
+.pdf-meta{font-size:7pt;color:#777;margin-bottom:3mm;}
+table.pdf-t{width:100%;border-collapse:collapse;font-size:6.5pt;}
+table.pdf-t th{background:#ededea;border:.4pt solid #bbb;padding:2px 3px;text-align:center;font-weight:700;vertical-align:bottom;}
+table.pdf-t th.pdf-rh{text-align:left;min-width:16mm;}
+table.pdf-t td{border:.4pt solid #ddd;padding:1.5px 2px;vertical-align:top;}
+table.pdf-t td.pdf-rh{background:#f5f5f2;font-weight:600;vertical-align:middle;padding:2px 3px;}
+.pdf-pill{border-radius:2px;padding:1px 3px;margin:1px 0;font-size:6pt;line-height:1.35;display:block;word-break:break-word;}
+.pdf-legend{margin-top:3mm;display:flex;gap:6mm;font-size:6pt;color:#666;flex-wrap:wrap;}
+.pdf-leg{display:flex;align-items:center;gap:2mm;}
+.pdf-leg-sw{width:6pt;height:6pt;border-radius:1px;flex-shrink:0;}
+
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;color:var(--mut);gap:8px;text-align:center;}
+.empty-ic{font-size:36px;opacity:.25;}
+.empty p{font-size:13px;}
+
+@media (max-width:760px){
+  html,body{width:100%;overflow-x:hidden;}
+  body{font-size:12px;background:var(--bg);}
+  #wizard{padding:20px 12px 18px;align-items:stretch;overflow-x:hidden;}
+  .wiz-wrap{max-width:none;width:calc(100vw - 24px);min-width:0;}
+  .wiz-prog{margin-bottom:18px;width:100%;min-width:0;}
+  .wiz-prog-step{flex:0 0 auto;min-width:0;}
+  .wiz-prog-line{flex:1 1 24px;max-width:44px;min-width:18px;}
+  .wiz-prog-dot{width:22px;height:22px;font-size:10px;}
+  .wiz-panel{padding:20px;width:100%;max-width:100%;overflow:hidden;}
+  .wiz-panel>*{max-width:100%;}
+  .wiz-title{font-size:20px;}
+  .wiz-desc{font-size:12px;width:min(100%,300px)!important;max-width:300px!important;}
+  .wiz-foot{align-items:stretch;gap:10px;flex-wrap:wrap;}
+  .wiz-foot>span{width:100%;}
+  .wiz-foot .btn{justify-content:center;min-width:0;}
+  .mrow,.irow{flex-direction:column;gap:8px;}
+  .irow .mf{width:100%;min-width:0;}
+  .upload-block{padding:16px 10px;}
+  .upload-block-sub{font-size:10px;}
+  #app.visible{min-height:100dvh;height:auto;}
+  .hdr{height:auto;min-height:var(--hh);padding:8px 10px;flex-wrap:wrap;gap:8px;align-items:flex-start;}
+  .logo{border-right:none;padding-right:8px;min-width:0;}
+  .hdr-tabs{order:3;width:100%;height:38px;padding:0;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--bdr);}
+  .hdr-tabs::-webkit-scrollbar{display:none;}
+  .htab{height:38px;padding:0 12px;font-size:12px;flex:0 0 auto;}
+  .hdr-right{margin-left:auto;border-left:none;gap:6px;align-items:flex-start;}
+  .wknav{padding:0;gap:4px;}
+  .wkb{width:30px;height:30px;}
+  .wklbl{min-width:112px;font-size:10px;}
+  .hdr-acts{display:none;}
+  .app-body{display:block;overflow:visible;}
+  .side{display:none!important;}
+  .main{min-height:calc(100dvh - 98px);overflow:visible;}
+  #v-sched{overflow:visible!important;}
+  .toolbar{position:static;padding:8px 10px;gap:7px;flex-wrap:wrap;}
+  .toolbar .btn.solid{flex:1;justify-content:center;min-width:190px;}
+  .toolbar .btn.ghost{padding:6px 10px;}
+  .toolbar .fill-stat{order:3;width:100%;margin-left:0!important;font-size:10px;text-align:center;}
+  .ap-stat .sv{font-size:16px;}
+  .ap-stat .sl{font-size:8px;}
+  #grid-tbl{overflow:visible;}
+  .sched-table-wrap{display:none;}
+  .mobile-schedule{display:block;}
+  .vpad{padding:12px;}
+  .gaps-top{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px;}
+  .gcards{grid-template-columns:1fr;}
+  .set-layout{display:block;height:auto;}
+  .set-nav{width:auto;display:flex;overflow-x:auto;border-right:none;border-bottom:1px solid var(--bdr);padding:0;background:var(--surf);}
+  .sn-item{flex:0 0 auto;padding:10px 14px;border-left:none;border-bottom:2px solid transparent;}
+  .sn-item.on{border-left-color:transparent;border-bottom-color:var(--blue);}
+  .set-content{padding:14px;}
+  .stabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px;}
+  .stab{flex:0 0 auto;}
+  table.sdt{min-width:620px;}
+  #staff-inner{overflow-x:auto;}
+  .ov{align-items:flex-end;}
+  .mbox{width:100%!important;max-width:100vw;max-height:88dvh;border-radius:var(--r3) var(--r3) 0 0;padding:20px;}
+  #ap-ov .mbox{width:100%!important;max-height:94dvh;}
+  .ap-modal-head{padding:18px 16px 14px;}
+  .ap-modal-body{padding:16px;}
+  .ap-modal-foot{padding:12px 16px;align-items:flex-start;flex-direction:column;}
+  .ap-modal-foot>div{width:100%;justify-content:flex-end;}
+  .opt-list{grid-template-columns:1fr;}
+  .sched-option{min-height:0;}
+  #ap-full-preview{display:none;}
+}
+
+@media print{
+  #wizard,#app>.hdr,.side,.ov,.tip,.ap-banner,.toolbar{display:none!important;}
+  .app-body{height:auto!important;overflow:visible!important;}
+  .main,.vwrap{overflow:visible!important;height:auto!important;}
+  .addb,.gap-pill{display:none!important;}
+  @page{size:A4 landscape;margin:8mm;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     WIZARD — 5 steps
+     ══════════════════════════════════════════════════════════ -->
+<div id="wizard">
+  <div class="wiz-wrap">
+    <!-- Progress -->
+    <div class="wiz-prog" id="wiz-prog"></div>
+
+    <div class="wiz-panel">
+
+      <!-- STEP 1: Department -->
+      <div class="wiz-step active" id="ws-1">
+        <div class="wiz-eye">Step 1 of 5</div>
+        <div class="wiz-title">Welcome to Scheduler</div>
+        <div class="wiz-desc">Set up your department in five steps. Everything can be changed later in Settings.</div>
+        <div class="mf"><label>Department name</label>
+          <input type="text" id="w-dept" value="Urology Department" placeholder="e.g. Urology Department">
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr);">
+          <div style="font-size:11px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Or import an existing schedule</div>
+          <div class="upload-block" onclick="alert('File import — coming soon')">
+            <div class="upload-block-icon">📂</div>
+            <div class="upload-block-title">Upload existing schedule</div>
+            <div class="upload-block-sub">Excel, CSV or PDF · drag & drop or click to browse</div>
+            <div class="upload-tbc">⏳ Coming soon</div>
+          </div>
+        </div>
+        <div class="wiz-foot">
+          <span style="font-size:11px;color:var(--mut)">Appears in the header</span>
+          <button class="btn solid" onclick="wizNext()">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Rooms (+ upload option) -->
+      <div class="wiz-step" id="ws-2">
+        <div class="wiz-eye">Step 2 of 5</div>
+        <div class="wiz-title">Rooms & Assignments</div>
+        <div class="wiz-desc">Edit or add rooms for your department. You can also import from an existing file.</div>
+        <div class="card-list" id="room-list" style="max-height:300px;overflow-y:auto;margin-bottom:8px;"></div>
+        <!-- Inline add form -->
+        <div class="ifrm" id="room-add-form">
+          <div class="irow">
+            <div class="mf"><label>Name</label><input type="text" id="rf-name" placeholder="e.g. Consultation Room 4"></div>
+            <div class="mf"><label>Type</label>
+              <select id="rf-type" onchange="checkRfCustom()">
+                <option>Consultation</option><option>Manipulation</option>
+                <option>Urodynamic</option><option>On Call</option>
+                <option>Ultrasound (USG)</option><option>Endoscopy</option>
+                <option value="__custom">Other…</option>
+              </select>
+            </div>
+            <div class="mf" id="rf-cw" style="display:none"><label>Custom type</label><input type="text" id="rf-custom"></div>
+          </div>
+          <div class="irow">
+            <div class="mf"><label>From</label><input type="time" id="rf-from" value="08:00"></div>
+            <div class="mf"><label>To</label><input type="time" id="rf-to" value="16:00"></div>
+            <div class="mf"><label>Notes</label><input type="text" id="rf-desc" placeholder="Optional"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;margin-top:8px;">
+            <label class="tog" id="rf-crit-tog"><div class="tog-track" id="rf-crit-track"><div class="tog-thumb"></div></div><span class="tog-label">Critical — must always be filled</span></label>
+            <div style="margin-left:auto;display:flex;gap:5px;"><button class="btn sm ghost" onclick="closeRoomForm()">Cancel</button><button class="btn sm solid" onclick="addRoomWiz()">Add room</button></div>
+          </div>
+        </div>
+        <div class="add-row" id="room-add-btn" onclick="openRoomForm()">＋ Add room</div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);">
+          <div style="font-size:11px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Or import from a file</div>
+          <div class="upload-block" onclick="alert('File import — coming soon')">
+            <div class="upload-block-icon">📂</div>
+            <div class="upload-block-title">Upload existing schedule</div>
+            <div class="upload-block-sub">Excel, CSV or PDF · drag & drop or click</div>
+            <div class="upload-tbc">⏳ Coming soon</div>
+          </div>
+        </div>
+        <div class="wiz-foot"><button class="btn ghost" onclick="wizBack()">← Back</button><button class="btn solid" onclick="wizNext()">Continue →</button></div>
+      </div>
+
+      <!-- STEP 3: Room staffing requirements -->
+      <div class="wiz-step" id="ws-3">
+        <div class="wiz-eye">Step 3 of 5</div>
+        <div class="wiz-title">Required room staffing</div>
+        <div class="wiz-desc">For each room, set how many people are needed per day, adjust room hours, and create regular shifts. Set 0 for days the room is closed.</div>
+        <div id="load-wiz" style="max-height:380px;overflow-y:auto;margin-bottom:12px;"></div>
+        <div class="wiz-foot"><button class="btn ghost" onclick="wizBack()">← Back</button><button class="btn solid" onclick="wizNext()">Continue →</button></div>
+      </div>
+
+      <!-- STEP 4: Staff (editable cards + per-room times + upload) -->
+      <div class="wiz-step" id="ws-4">
+        <div class="wiz-eye">Step 4 of 5</div>
+        <div class="wiz-title">Staff</div>
+        <div class="wiz-desc">Edit each person's details, capabilities, and their usual times for each room. This guides the auto-scheduler.</div>
+        <div id="staff-list-wiz" style="max-height:360px;overflow-y:auto;margin-bottom:8px;"></div>
+        <!-- Inline add form -->
+        <div class="ifrm" id="staff-add-form">
+          <div class="irow">
+            <div class="mf"><label>Name</label><input type="text" id="sf-name" placeholder="e.g. Dr. Smith"></div>
+            <div class="mf"><label>Role</label>
+              <select id="sf-role" onchange="checkSfCustom();checkSfSup()">
+                <option>Urologist</option><option>Resident</option>
+                <option>Nurse</option><option value="__custom">Other…</option>
+              </select>
+            </div>
+            <div class="mf" id="sf-cw" style="display:none"><label>Custom</label><input type="text" id="sf-custom"></div>
+            <div class="mf"><label>Initials</label><input type="text" id="sf-init" maxlength="3" style="width:60px"></div>
+          </div>
+          <div id="sf-sup-row" style="display:none" class="mf"><label>Supervisor (for residents)</label><select id="sf-sup"></select></div>
+          <div style="display:flex;justify-content:flex-end;gap:5px;margin-top:8px;"><button class="btn sm ghost" onclick="closeStaffForm()">Cancel</button><button class="btn sm solid" onclick="addStaff()">Add</button></div>
+        </div>
+        <div class="add-row" onclick="openStaffForm()">＋ Add staff member</div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);">
+          <div style="font-size:11px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Or import staff list from a file</div>
+          <div class="upload-block" onclick="alert('Staff import — coming soon')">
+            <div class="upload-block-icon">👥</div>
+            <div class="upload-block-title">Upload staff list</div>
+            <div class="upload-block-sub">Excel or CSV with names, roles, contacts</div>
+            <div class="upload-tbc">⏳ Coming soon</div>
+          </div>
+        </div>
+        <div class="wiz-foot"><button class="btn ghost" onclick="wizBack()">← Back</button><button class="btn solid" onclick="wizNext()">Continue →</button></div>
+      </div>
+
+      <!-- STEP 5: Notifications -->
+      <div class="wiz-step" id="ws-5">
+        <div class="wiz-eye">Step 5 of 5</div>
+        <div class="wiz-title">Notify your team</div>
+        <div class="wiz-desc">Choose how the coordinator communicates schedule changes and confirmations to staff. Doctors and residents can confirm or flag schedule problems directly.</div>
+        <div id="notif-options">
+          <div class="notif-option on" id="notif-email" onclick="toggleNotif('email')">
+            <div class="notif-ic">📧</div>
+            <div style="flex:1">
+              <div class="notif-title">Email</div>
+              <div class="notif-desc">Send weekly schedule and change notifications via email. Staff reply to confirm or flag conflicts.</div>
+            </div>
+            <div class="notif-check"></div>
+          </div>
+          <div class="notif-option" id="notif-sms" onclick="toggleNotif('sms')">
+            <div class="notif-ic">💬</div>
+            <div style="flex:1">
+              <div class="notif-title">SMS</div>
+              <div class="notif-desc">Text message alerts for urgent changes or last-minute shifts. High read rate for time-sensitive updates.</div>
+            </div>
+            <div class="notif-check"></div>
+          </div>
+          <div class="notif-option" id="notif-app" onclick="toggleNotif('app')">
+            <div class="notif-ic">📱</div>
+            <div style="flex:1">
+              <div class="notif-title">In-app (push)</div>
+              <div class="notif-desc">Staff view their shifts in a companion app and confirm with one tap. Full audit trail included.</div>
+            </div>
+            <div class="notif-check"></div>
+          </div>
+          <div class="notif-option" id="notif-call" onclick="toggleNotif('call')">
+            <div class="notif-ic">📞</div>
+            <div style="flex:1">
+              <div class="notif-title">Automated call</div>
+              <div class="notif-desc">Voice call for critical on-call changes. Reads shift details aloud, records verbal confirmation.</div>
+            </div>
+            <div class="notif-check"></div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:12px 14px;background:var(--s2);border-radius:var(--r2);border:1px solid var(--bdr);font-size:11px;color:var(--mid);line-height:1.6;">
+          💡 <strong>How it works:</strong> When you publish or change a schedule, staff receive a notification with their shift details. They can confirm, flag a conflict, or request a swap — all tracked in one place.
+        </div>
+        <div class="wiz-foot">
+          <button class="btn ghost" onclick="wizBack()">← Back</button>
+          <button class="btn solid lg" onclick="finishWizard()">Start scheduling →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     APP
+     ══════════════════════════════════════════════════════════ -->
+<div id="app">
+  <header class="hdr">
+    <div class="logo"><span class="logo-name">Scheduler</span><span class="logo-dept" id="app-dept"></span></div>
+    <nav class="hdr-tabs">
+      <button class="htab on" id="ht-sched" onclick="gTab('sched',this)">Schedule</button>
+      <button class="htab"    id="ht-staff" onclick="gTab('staff',this)">Staff</button>
+      <button class="htab"    id="ht-gaps"  onclick="gTab('gaps',this)">Gaps & Conflicts <span class="hbadge warn" id="gc-tab-badge" style="display:none"></span></button>
+      <button class="htab"    id="ht-set"   onclick="gTab('set',this)">Settings</button>
+    </nav>
+    <div class="hdr-right">
+      <div class="wknav">
+        <button class="wkb" onclick="chWeek(-1)">‹</button>
+        <span class="wklbl" id="wklbl">Dec 01–07, 2025</span>
+        <button class="wkb" onclick="chWeek(1)">›</button>
+      </div>
+      <div class="hdr-acts">
+        <button class="btn" onclick="openPdf()">⎙ PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <aside class="side" id="sidebar">
+      <div class="side-hd"><span class="side-lbl">Filter by staff</span><span class="btn ghost xs" onclick="clearFilter()">Clear</span></div>
+      <div id="chips"></div>
+      <div class="side-sep"></div>
+      <div class="side-hd"><span class="side-lbl">Legend</span></div>
+      <div id="legend"></div>
+    </aside>
+
+    <main class="main">
+      <!-- SCHEDULE TAB -->
+      <div id="v-sched" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="toolbar">
+          <button class="btn solid" onclick="openAutoPlan()" style="font-weight:600">⚡ Generate schedule options</button>
+          <div style="margin-left:12px;display:flex;align-items:center;gap:6px;">
+            <div class="ap-stat" id="stat-filled" style="cursor:default"><span class="sv">—</span><span class="sl">Filled</span></div>
+          </div>
+          <span class="fill-stat" id="fill-stat" style="margin-left:auto"></span>
+          <button class="btn ghost sm" onclick="openAdd(null,null)">＋ Add shift</button>
+        </div>
+        <div class="vwrap" id="grid-tbl"></div>
+      </div>
+
+      <!-- STAFF TAB -->
+      <div id="v-staff" class="vwrap vpad" style="display:none;"></div>
+
+      <!-- GAPS TAB -->
+      <div id="v-gaps" class="vwrap vpad" style="display:none;"></div>
+
+      <!-- SETTINGS TAB -->
+      <div id="v-set" style="display:none;flex:1;overflow:hidden;" class="vwrap">
+        <div class="set-layout">
+          <nav class="set-nav">
+            <div class="sn-item on" id="sn-gen"   onclick="setPane('gen',this)">General</div>
+            <div class="sn-item"    id="sn-rooms" onclick="setPane('rooms',this)">Rooms</div>
+            <div class="sn-item"    id="sn-load"  onclick="setPane('load',this)">Room Staffing</div>
+            <div class="sn-item"    id="sn-staff" onclick="setPane('staff',this)">Staff</div>
+          </nav>
+          <div class="set-content" id="set-pane"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ADD / EDIT SHIFT MODAL -->
+<div class="ov" id="add-ov">
+  <div class="mbox" style="width:400px">
+    <div class="m-title" id="add-title">Add shift</div>
+    <div class="m-sub" id="add-sub"></div>
+    <div class="mf"><label>Staff member</label><select id="m-staff"></select></div>
+    <div class="mrow">
+      <div class="mf"><label>From</label><input type="time" id="m-from" value="08:00"></div>
+      <div class="mf"><label>To</label><input type="time" id="m-to" value="16:00"></div>
+    </div>
+    <div class="mf"><label>Note (optional)</label><textarea id="m-comment" rows="2" style="resize:none"></textarea></div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:6px;">
+      <label class="tog" id="m-reg-tog"><div class="tog-track" id="m-reg-track"><div class="tog-thumb"></div></div><span class="tog-label">Regular — repeats every week</span></label>
+      <label class="tog" id="m-ns-tog"><div class="tog-track" id="m-ns-track"><div class="tog-thumb"></div></div><span class="tog-label">Non-standard — two people at same time (confirmed)</span></label>
+    </div>
+    <div class="macts"><button class="btn ghost" onclick="closeOv('add-ov')">Cancel</button><button class="btn solid" onclick="saveShift()">Save shift</button></div>
+  </div>
+</div>
+
+<!-- NON-STANDARD CONFIRM -->
+<div class="ov" id="ns-ov">
+  <div class="mbox" style="width:380px">
+    <div class="m-title">Two people at the same time?</div>
+    <div class="m-sub" id="ns-msg">This room already has someone assigned here. Are both working together?</div>
+    <div class="macts"><button class="btn ghost" onclick="closeOv('ns-ov')">Cancel</button><button class="btn solid" onclick="confirmNS()">Yes — confirm both present</button></div>
+  </div>
+</div>
+
+<!-- ABSENCE MODAL -->
+<div class="ov" id="abs-ov">
+  <div class="mbox" style="width:360px">
+    <div class="m-title" id="abs-title">Add absence</div>
+    <div class="m-sub" id="abs-sub"></div>
+    <div class="mrow"><div class="mf"><label>From</label><input type="date" id="abs-from"></div><div class="mf"><label>To</label><input type="date" id="abs-to"></div></div>
+    <div class="mf"><label>Reason</label>
+      <select id="abs-type" onchange="checkAbsCust()">
+        <option value="abs-vac">Annual leave</option><option value="abs-sick">Sick leave</option>
+        <option value="abs-conf">Conference</option><option value="abs-rot">Rotation</option>
+        <option value="__custom">Other…</option>
+      </select>
+    </div>
+    <div class="mf" id="abs-cw" style="display:none"><label>Specify</label><input type="text" id="abs-custom"></div>
+    <div class="mf"><label>Note (optional)</label><input type="text" id="abs-note"></div>
+    <div class="macts"><button class="btn ghost" onclick="closeOv('abs-ov')">Cancel</button><button class="btn solid" onclick="saveAbs()">Save</button></div>
+  </div>
+</div>
+
+<!-- GAPS & CONFLICTS MODAL -->
+<div class="ov" id="cp-ov">
+  <div class="mbox">
+    <div class="m-title">Gaps & Conflicts</div>
+    <div class="m-sub">Open gaps and scheduling conflicts for this week. Click any item to resolve it.</div>
+    <div class="cp-list" id="cp-list"></div>
+    <div class="macts"><button class="btn solid" onclick="closeOv('cp-ov')">Done</button></div>
+  </div>
+</div>
+
+<!-- AUTO-SCHEDULE MODAL -->
+<div class="ov" id="ap-ov">
+  <div class="mbox">
+    <div class="ap-modal-head">
+      <div class="m-title" style="margin-bottom:2px">Schedule options</div>
+      <div style="font-size:12px;color:var(--mut)">Review the full schedule preview, pick an option, then confirm assignments.</div>
+    </div>
+
+    <div class="ap-modal-body">
+      <!-- Schedule option cards -->
+      <div class="schedule-preview">
+        <div class="preview-header">Pick an option</div>
+        <div class="preview-cards" id="preview-cards"></div>
+      </div>
+
+      <!-- Full week schedule preview grid -->
+      <div id="ap-full-preview" style="margin-bottom:20px;"></div>
+
+      <!-- Per-gap assignments -->
+      <div id="ap-body"></div>
+    </div>
+
+    <div class="ap-modal-foot">
+      <span style="font-size:11px;color:var(--mid)" id="ap-sum"></span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" onclick="closeOv('ap-ov')">Cancel</button>
+        <button class="btn solid" id="ap-apply-btn" onclick="applyPlan()">Apply this schedule</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PDF -->
+<div class="ov" id="pdf-ov">
+  <div class="mbox">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-shrink:0">
+      <div class="m-title" style="margin:0">PDF Preview</div>
+      <div style="display:flex;gap:8px"><button class="btn solid" onclick="window.print()">⎙ Print / Save</button><button class="btn ghost" onclick="closeOv('pdf-ov')">✕</button></div>
+    </div>
+    <div class="pdf-wrap"><div class="pdf-page" id="pdf-content"></div></div>
+  </div>
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+
+let CFG = {
+  deptName: 'Urology Department',
+  actTypes: [
+    {id:'ta',  label:'Consultation',  color:'#2563a8', bg:'#eef3fb'},
+    {id:'te',  label:'On Call',       color:'#c0392b', bg:'#fdf0ee'},
+    {id:'ts2', label:'Urodynamic',    color:'#92560a', bg:'#fdf5e6'},
+    {id:'tb',  label:'Manipulation',  color:'#1a6b3c', bg:'#edf7f1'},
+    {id:'tp',  label:'Endoscopy/USG', color:'#5b3fa0', bg:'#f2eefa'},
+    {id:'tr2', label:'Supervision',   color:'#0c6858', bg:'#e8f5f2'},
+    {id:'tn',  label:'Nursing',       color:'#8a2a18', bg:'#faebe8'},
+  ],
+  notifications: ['email'],
+  onboarded:false,
+};
+
+const TYPE_EMOJI = {
+  'Consultation':'🚪','Manipulation':'🩺','Urodynamic':'📋',
+  'On Call':'🚨','Ultrasound (USG)':'🔊','Endoscopy':'🔬','Other':'🏥',
+};
+function roomEmoji(t){return TYPE_EMOJI[t]||'🏥';}
+
+const ABS_LABELS={'abs-vac':'Annual leave','abs-sick':'Sick leave','abs-conf':'Conference','abs-rot':'Rotation','abs-cust':'Other'};
+const ABS_CSS={'abs-vac':'ab-vac','abs-sick':'ab-sick','abs-conf':'ab-conf','abs-rot':'ab-rot','abs-cust':'ab-oth'};
+
+const CAPS=[
+  {id:'consult',label:'Consultation'},
+  {id:'manip',  label:'Manipulation'},
+  {id:'uro',    label:'Urodynamics'},
+  {id:'endo',   label:'Endoscopy'},
+  {id:'usg',    label:'Ultrasound'},
+  {id:'oncall', label:'On call'},
+  {id:'nursing',label:'Nursing'},
+];
+
+let ROOMS=[
+  {id:'cons1',name:'Consultation Room 1',  type:'Consultation',    desc:'', critical:false, hrsFrom:'08:00', hrsTo:'16:00'},
+  {id:'cons2',name:'Consultation Room 2',  type:'Consultation',    desc:'', critical:false, hrsFrom:'08:00', hrsTo:'16:00'},
+  {id:'cons3',name:'Consultation Room 3',  type:'Consultation',    desc:'', critical:false, hrsFrom:'08:00', hrsTo:'16:00'},
+  {id:'manip1',name:'Manipulation Room',   type:'Manipulation',    desc:'', critical:false, hrsFrom:'08:00', hrsTo:'16:00'},
+  {id:'uro1',  name:'Urodynamic Procedure Room',type:'Urodynamic', desc:'', critical:false, hrsFrom:'08:00', hrsTo:'14:00'},
+  {id:'oncall',name:'On Call',             type:'On Call',         desc:'', critical:true,  hrsFrom:'08:00', hrsTo:'20:00'},
+  {id:'usg1',  name:'USG',                 type:'Ultrasound (USG)',desc:'', critical:false, hrsFrom:'08:00', hrsTo:'14:00'},
+  {id:'endo1', name:'Endoscopy Room',      type:'Endoscopy',       desc:'Nursing assistant required', critical:false, hrsFrom:'08:00', hrsTo:'14:00'},
+];
+
+let STAFF=[
+  {id:'d01',name:'Dr. Harrison', role:'Urologist', init:'DH',color:'#2563a8',bg:'#eef3fb',absent:false, caps:['consult','oncall','endo','usg']},
+  {id:'d02',name:'Dr. Mitchell', role:'Urologist', init:'DM',color:'#1a6b3c',bg:'#edf7f1',absent:false, caps:['consult','oncall','manip']},
+  {id:'d03',name:'Dr. Clarke',   role:'Urologist', init:'DC',color:'#0c6858',bg:'#e8f5f2',absent:false, caps:['consult','oncall','endo','uro']},
+  {id:'d04',name:'Dr. Reynolds', role:'Urologist', init:'DR',color:'#5b3fa0',bg:'#f2eefa',absent:false, caps:['consult','oncall','manip','uro']},
+  {id:'d05',name:'Dr. Bennett',  role:'Urologist', init:'DB',color:'#92560a',bg:'#fdf5e6',absent:false, caps:['consult','oncall','usg']},
+  {id:'d06',name:'Dr. Warren',   role:'Urologist', init:'DW',color:'#8a2a18',bg:'#faebe8',absent:false, caps:['consult','oncall','endo','manip']},
+  {id:'r01',name:'Dr. Evans',    role:'Resident',  init:'RE',color:'#2563a8',bg:'#dce8f8',absent:false, caps:['consult'], supervisorId:'d01'},
+  {id:'r02',name:'Dr. Cooper',   role:'Resident',  init:'RC',color:'#1a6b3c',bg:'#d8f0e4',absent:false, caps:['consult'], supervisorId:'d03'},
+  {id:'n01',name:'Nurse Adams',  role:'Nurse',     init:'NA',color:'#8a2a18',bg:'#faebe8',absent:false, caps:['nursing','endo']},
+  {id:'n02',name:'Nurse Brown',  role:'Nurse',     init:'NB',color:'#5b3fa0',bg:'#f2eefa',absent:false, caps:['nursing','endo']},
+];
+
+const DAYS=[
+  {k:'mon',s:'M', n:'Monday',    dt:'Dec 01',wknd:false},
+  {k:'tue',s:'T', n:'Tuesday',   dt:'Dec 02',wknd:false},
+  {k:'wed',s:'W', n:'Wednesday', dt:'Dec 03',wknd:false},
+  {k:'thu',s:'Th',n:'Thursday',  dt:'Dec 04',wknd:false},
+  {k:'fri',s:'F', n:'Friday',    dt:'Dec 05',wknd:false},
+  {k:'sat',s:'Sa',n:'Saturday',  dt:'Dec 06',wknd:true},
+  {k:'sun',s:'Su',n:'Sunday',    dt:'Dec 07',wknd:true},
+];
+
+let REQS={
+  'cons1': {mon:1,tue:1,wed:1,thu:1,fri:1,sat:0,sun:0},
+  'cons2': {mon:1,tue:1,wed:1,thu:1,fri:1,sat:0,sun:0},
+  'cons3': {mon:1,tue:0,wed:1,thu:0,fri:1,sat:0,sun:0},
+  'manip1':{mon:1,tue:1,wed:1,thu:1,fri:1,sat:0,sun:0},
+  'uro1':  {mon:1,tue:0,wed:1,thu:0,fri:1,sat:0,sun:0},
+  'oncall':{mon:1,tue:1,wed:1,thu:1,fri:1,sat:1,sun:1},
+  'usg1':  {mon:1,tue:1,wed:0,thu:1,fri:0,sat:0,sun:0},
+  'endo1': {mon:1,tue:0,wed:1,thu:0,fri:1,sat:0,sun:0},
+};
+
+// SCH includes a deliberate gap (Fri oncall) to demonstrate the gap feature
+let SCH={
+  'cons1':{mon:[{sid:'d01',from:'08:00',to:'12:00',t:'ta',regular:true},{sid:'d02',from:'12:00',to:'16:00',t:'ta'}],tue:[{sid:'d03',from:'08:00',to:'16:00',t:'ta',regular:true}],wed:[{sid:'d04',from:'08:00',to:'16:00',t:'ta'}],thu:[{sid:'d05',from:'08:00',to:'16:00',t:'ta'}],fri:[{sid:'d01',from:'08:00',to:'16:00',t:'ta',regular:true}],sat:[],sun:[]},
+  'cons2':{mon:[{sid:'d04',from:'08:00',to:'16:00',t:'ta',regular:true}],tue:[{sid:'d06',from:'08:00',to:'16:00',t:'ta',regular:true}],wed:[{sid:'d05',from:'08:00',to:'16:00',t:'ta'}],thu:[{sid:'d02',from:'08:00',to:'16:00',t:'ta'}],fri:[{sid:'d03',from:'08:00',to:'16:00',t:'ta'}],sat:[],sun:[]},
+  'cons3':{mon:[{sid:'d05',from:'08:00',to:'16:00',t:'ta'}],tue:[],wed:[{sid:'d06',from:'08:00',to:'16:00',t:'ta'}],thu:[],fri:[{sid:'d02',from:'08:00',to:'16:00',t:'ta'}],sat:[],sun:[]},
+  'manip1':{mon:[{sid:'d06',from:'08:00',to:'16:00',t:'tb',regular:true}],tue:[{sid:'d04',from:'08:00',to:'16:00',t:'tb'}],wed:[{sid:'d02',from:'08:00',to:'16:00',t:'tb',regular:true}],thu:[{sid:'d06',from:'08:00',to:'16:00',t:'tb'}],fri:[{sid:'d04',from:'08:00',to:'16:00',t:'tb'}],sat:[],sun:[]},
+  'uro1':{mon:[{sid:'d03',from:'08:00',to:'14:00',t:'ts2'}],tue:[],wed:[{sid:'d04',from:'08:00',to:'14:00',t:'ts2',regular:true}],thu:[],fri:[{sid:'d03',from:'08:00',to:'14:00',t:'ts2'}],sat:[],sun:[]},
+  'oncall':{mon:[{sid:'d02',from:'08:00',to:'20:00',t:'te',regular:true}],tue:[{sid:'d05',from:'08:00',to:'20:00',t:'te'}],wed:[{sid:'d01',from:'08:00',to:'20:00',t:'te'}],thu:[{sid:'d06',from:'08:00',to:'20:00',t:'te',regular:true}],fri:[] /* deliberate gap for demo */,sat:[{sid:'d04',from:'08:00',to:'20:00',t:'te'}],sun:[{sid:'d05',from:'08:00',to:'20:00',t:'te'}]},
+  'usg1':{mon:[{sid:'d05',from:'08:00',to:'14:00',t:'tp'}],tue:[{sid:'d01',from:'08:00',to:'14:00',t:'tp'}],wed:[],thu:[{sid:'d06',from:'08:00',to:'14:00',t:'tp'}],fri:[],sat:[],sun:[]},
+  'endo1':{mon:[{sid:'d01',from:'08:00',to:'14:00',t:'tp'},{sid:'n01',from:'08:00',to:'14:00',t:'tn',nonstandard:true}],tue:[],wed:[{sid:'d03',from:'08:00',to:'14:00',t:'tp'},{sid:'n02',from:'08:00',to:'14:00',t:'tn',nonstandard:true}],thu:[],fri:[{sid:'d06',from:'08:00',to:'14:00',t:'tp'},{sid:'n01',from:'08:00',to:'14:00',t:'tn',nonstandard:true}],sat:[],sun:[]},
+};
+
+let ABSENCES=[];
+
+// ═══ STATE ═══
+const St={
+  filterSid:null,weekOffset:0,pending:null,dragSrc:null,
+  setupStaff:null,apChoices:{},apStrat:'balanced',apOption:0,apOptionId:'full-coverage',apOpenCats:{coverage:true,continuity:true},pane:'gen',
+  wizStep:1,wizRooms:[],wizStaff:[],
+  editEntry:null,addRegular:false,addNS:false,
+  nsPayload:null,absSid:null,editStaffIdx:null,
+};
+const WIZ_STEPS=5;
+const PAL=[['#2563a8','#eef3fb'],['#1a6b3c','#edf7f1'],['#0c6858','#e8f5f2'],['#5b3fa0','#f2eefa'],['#92560a','#fdf5e6'],['#8a2a18','#faebe8'],['#1e5090','#dce8f8'],['#2d6b1a','#e8f7e4']];
+let _pi=0;
+function nextColor(){return PAL[_pi++%PAL.length];}
+function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+
+const STORE_KEY='clinic-scheduler-platform-v1';
+function savePlatformState(){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify({CFG,ROOMS,STAFF,REQS,SCH,ABSENCES}));}catch(e){}
+}
+function loadPlatformState(){
+  try{
+    const raw=localStorage.getItem(STORE_KEY);if(!raw)return;
+    const data=JSON.parse(raw);
+    if(data.CFG)CFG={...CFG,...data.CFG};
+    if(Array.isArray(data.ROOMS))ROOMS=data.ROOMS;
+    if(Array.isArray(data.STAFF))STAFF=data.STAFF;
+    if(data.REQS)REQS=data.REQS;
+    if(data.SCH)SCH=data.SCH;
+    if(Array.isArray(data.ABSENCES))ABSENCES=data.ABSENCES;
+  }catch(e){console.warn('Saved scheduler data could not be loaded.',e);}
+}
+
+// ═══ LOGIC ═══
+function assigned(rid,dk){return((SCH[rid]||{})[dk]||[]).length;}
+function required(rid,dk){return(REQS[rid]||{})[dk]||0;}
+function cellSt(rid,dk){
+  const req=required(rid,dk),has=assigned(rid,dk);
+  if(!req&&!has)return'empty';if(!req)return'ok';
+  if(!has)return'unmet';if(has<req)return'partial';return'ok';
+}
+function getGaps(){
+  const out=[];
+  ROOMS.forEach(r=>DAYS.forEach(d=>{
+    const req=required(r.id,d.k),has=assigned(r.id,d.k);
+    if(req>0&&has<req)out.push({rid:r.id,dk:d.k,room:r.name,day:d.n,dt:d.dt,type:r.type,critical:r.critical,needed:req-has,has,req});
+  }));
+  return out.sort((a,b)=>b.critical-a.critical);
+}
+function getConflicts(){
+  const out=[],seen=new Set();
+  DAYS.forEach(day=>ROOMS.forEach(room=>{
+    ((SCH[room.id]||{})[day.k]||[]).filter(e=>e.conflict&&!e.nonstandard).forEach(e=>{
+      const s=STAFF.find(x=>x.id===e.sid),key=`${e.sid}-${day.k}-${e.from}-m`;
+      if(!seen.has(key)){seen.add(key);out.push({type:'conflict',title:`${s?.name} — ${day.n}`,what:`${room.name}, ${e.from}–${e.to}`,why:e.cr||'Conflict',rid:room.id,dk:day.k,sid:e.sid,from:e.from});}
+    });
+  }));
+  DAYS.forEach(day=>{
+    const byS={};
+    ROOMS.forEach(room=>(SCH[room.id]?.[day.k]||[]).forEach(e=>{
+      (byS[e.sid]||(byS[e.sid]=[])).push({rid:room.id,room:ROOMS.find(r=>r.id===room.id)?.name,from:e.from,to:e.to,ns:!!e.nonstandard});
+    }));
+    Object.entries(byS).forEach(([sid,shifts])=>{
+      for(let i=0;i<shifts.length;i++)for(let j=i+1;j<shifts.length;j++){
+        if(shifts[i].from<shifts[j].to&&shifts[j].from<shifts[i].to&&!shifts[i].ns&&!shifts[j].ns){
+          const key=`${sid}-${day.k}-${shifts[i].from}-ov`;
+          if(!seen.has(key)){seen.add(key);const s=STAFF.find(x=>x.id===sid);
+            out.push({type:'conflict',title:`${s?.name} — ${day.n}`,what:`${shifts[i].room} and ${shifts[j].room}`,why:`Time overlap — one person, two places`,rid:shifts[i].rid,dk:day.k,sid,from:shifts[i].from});}
+        }
+      }
+    });
+  });
+  return out;
+}
+function hasConflictOnAdd(rid,dk,from,to){
+  const room=ROOMS.find(r=>r.id===rid);
+  if(room&&room.type==='Consultation'){
+    const clash=(SCH[rid]?.[dk]||[]).filter(e=>!e.nonstandard&&e.from<to&&from<e.to);
+    if(clash.length)return true;
+  }
+  return false;
+}
+function isAbsent(sid){return ABSENCES.some(a=>a.sid===sid);}
+function absDays(a){try{const f=new Date(a.from),t=new Date(a.to);return Math.max(0,Math.round((t-f)/864e5)+1);}catch{return 0;}}
+function entryType(rid){
+  const room=ROOMS.find(r=>r.id===rid);if(!room)return'ta';
+  const m={'On Call':'te','Urodynamic':'ts2','Manipulation':'tb','Endoscopy':'tp','Ultrasound (USG)':'tp'};
+  return m[room.type]||'ta';
+}
+function getStaffRoomHours(sid,rid){
+  const s=STAFF.find(x=>x.id===sid),room=ROOMS.find(r=>r.id===rid);
+  const h=s?.roomHours?.[rid];
+  return{from:h?.from||room?.hrsFrom||'08:00',to:h?.to||room?.hrsTo||'16:00'};
+}
+function setStaffRoomHours(sid,rid,from,to){
+  const s=STAFF.find(x=>x.id===sid);if(!s)return;
+  if(!s.roomHours)s.roomHours={};
+  s.roomHours[rid]={from:from||'08:00',to:to||'16:00'};
+  const ws=St.wizStaff.find(x=>x.id===sid);
+  if(ws){if(!ws.roomHours)ws.roomHours={};ws.roomHours[rid]={...s.roomHours[rid]};}
+}
+function scoreStaff(sid,rid,dk,strat){
+  const s=STAFF.find(x=>x.id===sid);
+  if(!s||isAbsent(sid))return{score:-999,reasons:[],wk:0,busy:true};
+  const room=ROOMS.find(r=>r.id===rid);
+  let score=100;const reasons=[];
+  const busyT=Object.values(SCH).flatMap(r=>(r[dk]||[]).map(e=>e.sid));
+  const inRoom=(SCH[rid]?.[dk]||[]).some(e=>e.sid===sid);
+  if(inRoom){score-=80;reasons.push('Already in this room');}
+  else if(busyT.includes(sid)){score-=40;reasons.push('Working elsewhere today');}
+  const wk=DAYS.reduce((n,d)=>n+Object.values(SCH).filter(r=>(r[d.k]||[]).some(e=>e.sid===sid)).length,0);
+  if(strat==='balanced'){if(wk>=5){score-=25;reasons.push(`High load (${wk} shifts)`);}else if(wk<=1){score+=20;reasons.push(`Light load (${wk} shifts)`);}}
+  if(strat==='senior'&&s.role==='Resident'){score-=30;reasons.push('Resident (senior-first strategy)');}
+  if(strat==='regular'){const hasReg=(SCH[rid]?.[dk]||[]).some(e=>e.sid===sid&&e.regular);if(!hasReg){score-=40;reasons.push('No regular shift here');}}
+  if(strat==='minimal'&&!room?.critical){score-=30;reasons.push('Room not critical');}
+  if(s.role==='Resident'&&room?.critical){score-=50;reasons.push('Resident — not for critical solo');}
+  const capMap={'Consultation':'consult','Manipulation':'manip','Urodynamic':'uro','Endoscopy':'endo','Ultrasound (USG)':'usg','On Call':'oncall'};
+  const cap=capMap[room?.type];
+  if(cap&&s.caps&&!s.caps.includes(cap)){score-=35;reasons.push('Not trained for this room');}
+  if(s.caps?.includes('nursing')&&room?.type!=='Endoscopy'){score-=60;reasons.push('Nurse — suited for Endoscopy only');}
+  if(!busyT.includes(sid)&&wk<=4&&s.role!=='Resident'&&!s.caps?.includes('nursing'))reasons.push('Good fit');
+  return{score:Math.max(0,score),reasons,wk,busy:busyT.includes(sid)};
+}
+
+// ═══ WIZARD ═══
+function buildWizProgress(){
+  const el=document.getElementById('wiz-prog');el.innerHTML='';
+  for(let i=1;i<=WIZ_STEPS;i++){
+    if(i>1){const line=document.createElement('div');line.className='wiz-prog-line'+(i<=St.wizStep?' done':'');el.appendChild(line);}
+    const step=document.createElement('div');step.className='wiz-prog-step';
+    const dot=document.createElement('div');dot.className='wiz-prog-dot'+(i<St.wizStep?' done':i===St.wizStep?' active':'');dot.textContent=i<St.wizStep?'✓':i;
+    step.appendChild(dot);el.appendChild(step);
+  }
+}
+function initWizard(){
+  buildWizProgress();
+  St.wizRooms=ROOMS.map(r=>({...r}));
+  St.wizStaff=STAFF.map(s=>({...s,caps:[...(s.caps||[])],roomHours:{...(s.roomHours||{})}}));
+  renderWizRooms();renderWizStaff();
+}
+
+/* Rooms */
+function renderWizRooms(){
+  document.getElementById('room-list').innerHTML=St.wizRooms.map((r,i)=>`
+    <div class="wiz-card">
+      <div class="wiz-card-ic">${roomEmoji(r.type)}</div>
+      <div class="wiz-card-body">
+        <div class="wiz-card-name">${r.name}
+          ${r.critical?'<span style="font-size:10px;color:var(--red);background:var(--rd-bg);padding:1px 6px;border-radius:3px;font-weight:600">critical</span>':''}
+        </div>
+        <div class="wiz-card-sub">${r.type} · ${r.hrsFrom}–${r.hrsTo}</div>
+        <div class="wiz-card-acts">
+          <button class="btn xs" onclick="editWizRoom(${i})">Edit hours</button>
+          <button class="btn xs" onclick="toggleCrit(${i})">${r.critical?'Remove critical':'Set critical'}</button>
+          <button class="btn xs ghost" onclick="removeWizRoom(${i})">Remove</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function editWizRoom(i){
+  const r=St.wizRooms[i];
+  const f=prompt(`${r.name} — from:`,r.hrsFrom);if(!f)return;
+  const t=prompt(`to:`,r.hrsTo);if(!t)return;
+  r.hrsFrom=f;r.hrsTo=t;const rr=ROOMS.find(x=>x.id===r.id);if(rr){rr.hrsFrom=f;rr.hrsTo=t;}savePlatformState();renderWizRooms();
+}
+function toggleCrit(i){
+  St.wizRooms[i].critical=!St.wizRooms[i].critical;
+  const rr=ROOMS.find(x=>x.id===St.wizRooms[i].id);if(rr)rr.critical=St.wizRooms[i].critical;savePlatformState();renderWizRooms();
+}
+function removeWizRoom(i){const id=St.wizRooms[i].id;St.wizRooms.splice(i,1);ROOMS.splice(ROOMS.findIndex(r=>r.id===id),1);savePlatformState();renderWizRooms();}
+let _wc=false;
+function openRoomForm(){document.getElementById('room-add-form').classList.add('open');document.getElementById('room-add-btn').style.display='none';document.getElementById('rf-name').focus();}
+function closeRoomForm(){document.getElementById('room-add-form').classList.remove('open');document.getElementById('room-add-btn').style.display='';_wc=false;document.getElementById('rf-crit-track').classList.remove('on');}
+function checkRfCustom(){document.getElementById('rf-cw').style.display=document.getElementById('rf-type').value==='__custom'?'':'none';}
+document.getElementById('rf-crit-tog').addEventListener('click',()=>{_wc=!_wc;document.getElementById('rf-crit-track').classList.toggle('on',_wc);});
+function addRoomWiz(){
+  const name=document.getElementById('rf-name').value.trim();if(!name)return;
+  let type=document.getElementById('rf-type').value;if(type==='__custom')type=document.getElementById('rf-custom').value.trim()||'Other';
+  const room={id:uid('r'),name,type,desc:document.getElementById('rf-desc').value.trim(),critical:_wc,hrsFrom:document.getElementById('rf-from').value,hrsTo:document.getElementById('rf-to').value};
+  St.wizRooms.push(room);ROOMS.push(room);if(!REQS[room.id])REQS[room.id]={};DAYS.forEach(d=>REQS[room.id][d.k]=0);
+  document.getElementById('rf-name').value='';savePlatformState();closeRoomForm();renderWizRooms();
+}
+
+/* Staff — fully editable in wizard */
+function renderWizStaff(){
+  rebuildSupSel('sf-sup');
+  document.getElementById('staff-list-wiz').innerHTML=St.wizStaff.map((s,i)=>{
+    const sup=s.supervisorId?STAFF.find(x=>x.id===s.supervisorId):null;
+    const caps=s.caps||[];
+    const chks=CAPS.map(c=>`<span class="chk${caps.includes(c.id)?' on':''}" onclick="toggleWizCap(${i},'${c.id}',this)">${c.label}</span>`).join('');
+    // Per-room time rows (only rooms that match caps)
+    const roomTimesHtml=ROOMS.map(room=>{
+      const capKey={'Consultation':'consult','Manipulation':'manip','Urodynamic':'uro','Endoscopy':'endo','Ultrasound (USG)':'usg','On Call':'oncall'}[room.type];
+      if(!capKey||!caps.includes(capKey))return'';
+      // Find existing regular shift for this staff in this room (any day — show Mon as default)
+      const existing=(SCH[room.id]?.['mon']||[]).find(e=>e.sid===s.id&&e.regular);
+      const saved=s.roomHours?.[room.id];
+      const defFrom=saved?.from||existing?.from||room.hrsFrom;
+      const defTo=saved?.to||existing?.to||room.hrsTo;
+      return`<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--s2);">
+        <span style="font-size:12px;flex:1;font-weight:500">${roomEmoji(room.type)} ${room.name}</span>
+        <span style="font-size:10px;color:var(--mut)">Typical hours</span>
+        <input type="time" value="${defFrom}" style="width:82px;font-family:var(--mono);font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;background:var(--surf)" id="st-from-${i}-${room.id}">
+        <span style="color:var(--mut)">–</span>
+        <input type="time" value="${defTo}" style="width:82px;font-family:var(--mono);font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;background:var(--surf)" id="st-to-${i}-${room.id}">
+      </div>`;
+    }).filter(Boolean).join('');
+    return`<div>
+      <div class="wiz-card" style="align-items:flex-start">
+        <div class="av av-md" style="background:${s.bg};color:${s.color};margin-top:1px">${s.init}</div>
+        <div class="wiz-card-body">
+          <div class="wiz-card-name">${s.name}
+            <span style="font-size:10px;color:var(--mid);font-weight:400">${s.role}${sup?' · '+sup.name:''}</span>
+          </div>
+          <div class="chk-list">${chks}</div>
+          <div class="wiz-card-acts" style="margin-top:6px">
+            <button class="btn xs" onclick="openEditStaff(${i})">Edit details & times</button>
+            <button class="btn xs ghost" onclick="removeWizStaff(${i})">Remove</button>
+          </div>
+        </div>
+      </div>
+      <div class="wiz-staff-edit" id="staff-edit-${i}">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:10px">Personal details</div>
+        <div class="irow" style="margin-bottom:12px">
+          <div class="mf"><label>Name</label><input type="text" id="se-name-${i}" value="${s.name}"></div>
+          <div class="mf"><label>Role</label>
+            <select id="se-role-${i}">
+              <option${s.role==='Urologist'?' selected':''}>Urologist</option>
+              <option${s.role==='Resident'?' selected':''}>Resident</option>
+              <option${s.role==='Nurse'?' selected':''}>Nurse</option>
+            </select>
+          </div>
+          <div class="mf"><label>Initials</label><input type="text" id="se-init-${i}" value="${s.init}" maxlength="3" style="width:60px"></div>
+        </div>
+        ${roomTimesHtml?`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:8px">Usual hours per room</div>${roomTimesHtml}`:''}
+        <div style="display:flex;justify-content:flex-end;gap:5px;margin-top:10px">
+          <button class="btn sm ghost" onclick="closeEditStaff(${i})">Cancel</button>
+          <button class="btn sm solid" onclick="saveEditStaff(${i})">Save</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openEditStaff(i){
+  document.querySelectorAll('.wiz-staff-edit').forEach(el=>el.classList.remove('open'));
+  document.getElementById(`staff-edit-${i}`).classList.add('open');
+}
+function closeEditStaff(i){document.getElementById(`staff-edit-${i}`).classList.remove('open');}
+function saveEditStaff(i){
+  const s=St.wizStaff[i];
+  s.name=document.getElementById(`se-name-${i}`).value.trim()||s.name;
+  s.role=document.getElementById(`se-role-${i}`).value;
+  s.init=document.getElementById(`se-init-${i}`).value.trim()||s.init;
+  const sr=STAFF.find(x=>x.id===s.id);if(sr){sr.name=s.name;sr.role=s.role;sr.init=s.init;}
+  ROOMS.forEach(room=>{
+    const from=document.getElementById(`st-from-${i}-${room.id}`)?.value;
+    const to=document.getElementById(`st-to-${i}-${room.id}`)?.value;
+    if(from||to)setStaffRoomHours(s.id,room.id,from,to);
+  });
+  savePlatformState();
+  closeEditStaff(i);renderWizStaff();
+}
+function toggleWizCap(si,cap,el){const s=St.wizStaff[si];if(!s.caps)s.caps=[];const has=s.caps.includes(cap);has?s.caps=s.caps.filter(c=>c!==cap):s.caps.push(cap);el.classList.toggle('on',!has);const sr=STAFF.find(x=>x.id===s.id);if(sr)sr.caps=s.caps;savePlatformState();}
+function removeWizStaff(i){const id=St.wizStaff[i].id;St.wizStaff.splice(i,1);STAFF.splice(STAFF.findIndex(s=>s.id===id),1);renderWizStaff();}
+function openStaffForm(){rebuildSupSel('sf-sup');document.getElementById('staff-add-form').classList.add('open');document.getElementById('sf-name').focus();}
+function closeStaffForm(){document.getElementById('staff-add-form').classList.remove('open');}
+function checkSfCustom(){document.getElementById('sf-cw').style.display=document.getElementById('sf-role').value==='__custom'?'':'none';}
+function checkSfSup(){document.getElementById('sf-sup-row').style.display=document.getElementById('sf-role').value==='Resident'?'':'none';}
+function rebuildSupSel(id){const s=document.getElementById(id);if(!s)return;s.innerHTML='<option value="">— none —</option>'+STAFF.filter(x=>x.role!=='Resident'&&!isAbsent(x.id)).map(x=>`<option value="${x.id}">${x.name}</option>`).join('');}
+function addStaff(){
+  const name=document.getElementById('sf-name').value.trim();if(!name)return;
+  let role=document.getElementById('sf-role').value;if(role==='__custom')role=document.getElementById('sf-custom').value.trim()||'Other';
+  const init=document.getElementById('sf-init').value.trim()||name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const[color,bg]=nextColor();const supId=document.getElementById('sf-sup').value||null;
+  const defaultCaps=role==='Nurse'?['nursing']:['consult'];
+  const s={id:uid('s'),name,role,init,color,bg,absent:false,caps:defaultCaps,supervisorId:supId};
+  St.wizStaff.push(s);STAFF.push(s);
+  document.getElementById('sf-name').value='';document.getElementById('sf-init').value='';
+  closeStaffForm();renderWizStaff();
+}
+
+/* Step 4 — load */
+function renderWizLoad(){
+  const el=document.getElementById('load-wiz');
+  let h='';
+  St.wizRooms.forEach(room=>{
+    if(!REQS[room.id])REQS[room.id]={};
+    h+=`<div class="load-room-block">
+      <div class="load-room-header">
+        <span style="font-size:18px">${roomEmoji(room.type)}</span>
+        <div style="flex:1">
+          <div class="load-room-name">${room.name}${room.critical?' <span style="font-size:10px;color:var(--red)">⚠ critical</span>':''}</div>
+          <div class="load-room-meta">${room.type} · ${room.hrsFrom}–${room.hrsTo}</div>
+        </div>
+        <button class="btn xs" onclick="toggleWizRoomEdit('${room.id}')">Edit hours & shifts</button>
+      </div>`;
+    DAYS.forEach(d=>{
+      const v=(REQS[room.id]||{})[d.k]||0;
+      const cls=room.critical&&v>0?'lc':v>0?'la':'';
+      const label=v===0?'closed':v===1?'1 person needed':`${v} needed`;
+      h+=`<div class="load-row">
+        <span class="load-day">${d.n}</span>
+        <input class="load-inp ${cls}" type="number" min="0" max="5" value="${v}"
+          onchange="setWizReq('${room.id}','${d.k}',this)">
+        <span class="load-label" id="ll-${room.id}-${d.k}">${label}</span>
+      </div>`;
+    });
+    h+=`<div id="wiz-room-edit-${room.id}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr)">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Room hours</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px;flex-wrap:wrap">
+        <span style="color:var(--mid)">From</span>
+        <input type="time" value="${room.hrsFrom}" id="wiz-rh-from-${room.id}" style="width:88px;font-family:var(--mono);font-size:12px;border:1px solid var(--bdr);border-radius:var(--r);padding:4px 7px;background:var(--surf)">
+        <span style="color:var(--mid)">to</span>
+        <input type="time" value="${room.hrsTo}" id="wiz-rh-to-${room.id}" style="width:88px;font-family:var(--mono);font-size:12px;border:1px solid var(--bdr);border-radius:var(--r);padding:4px 7px;background:var(--surf)">
+        <button class="btn xs solid" onclick="saveWizRoomHours('${room.id}')">Save hours</button>
+      </div>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Regular shifts</div>
+      <div style="font-size:11px;color:var(--mid);margin-bottom:8px">Create recurring shifts while onboarding, then refine them later in Settings.</div>`;
+    DAYS.forEach(d=>{
+      const shifts=(SCH[room.id]?.[d.k]||[]).filter(e=>e.regular);
+      h+=`<div style="padding:5px 0;border-bottom:1px solid var(--s2)">
+        <div style="font-size:11px;font-weight:600;margin-bottom:4px;color:var(--mid)">${d.n}</div>
+        ${shifts.length?shifts.map(e=>{const s=STAFF.find(x=>x.id===e.sid);return s?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:11px;flex-wrap:wrap">
+          <div class="av av-xs" style="background:${s.bg};color:${s.color}">${s.init}</div>
+          <span style="font-weight:500">${s.name}</span>
+          <span style="font-family:var(--mono);color:var(--mut)">${e.from}–${e.to}</span>
+          <span style="color:var(--grn);font-size:10px">↻</span>
+          <button class="btn xs red" onclick="removeWizRegularShift('${room.id}','${d.k}','${e.sid}','${e.from}')">✕</button>
+        </div>`:'';}).join(''):'<span style="font-size:11px;color:var(--mut)">No regular shifts</span>'}
+        <div style="display:flex;align-items:center;gap:5px;margin-top:5px;flex-wrap:wrap">
+          <select id="wiz-rs-staff-${room.id}-${d.k}" style="font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;background:var(--surf)">${STAFF.filter(s=>!isAbsent(s.id)).map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
+          <input type="time" id="wiz-rs-from-${room.id}-${d.k}" value="${room.hrsFrom}" style="width:84px;font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;font-family:var(--mono);background:var(--surf)">
+          <input type="time" id="wiz-rs-to-${room.id}-${d.k}" value="${room.hrsTo}" style="width:84px;font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;font-family:var(--mono);background:var(--surf)">
+          <button class="btn xs" onclick="addWizRegularShift('${room.id}','${d.k}')">＋ Add</button>
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+    h+=`</div>`;
+  });
+  el.innerHTML=h||`<div style="color:var(--mut);font-size:12px;padding:8px">No rooms added yet.</div>`;
+}
+function setWizReq(rid,dk,input){
+  if(!REQS[rid])REQS[rid]={};
+  const v=Math.max(0,parseInt(input.value)||0);
+  const room=ROOMS.find(r=>r.id===rid);
+  REQS[rid][dk]=v;
+  input.className='load-inp '+(room?.critical&&v>0?'lc':v>0?'la':'');
+  const label=document.getElementById(`ll-${rid}-${dk}`);
+  if(label)label.textContent=v===0?'closed':v===1?'1 person needed':`${v} needed`;
+  savePlatformState();
+}
+function toggleWizRoomEdit(rid){
+  const el=document.getElementById(`wiz-room-edit-${rid}`);
+  if(el)el.style.display=el.style.display==='none'?'block':'none';
+}
+function saveWizRoomHours(rid){
+  const f=document.getElementById(`wiz-rh-from-${rid}`)?.value;
+  const t=document.getElementById(`wiz-rh-to-${rid}`)?.value;
+  const wr=St.wizRooms.find(r=>r.id===rid),room=ROOMS.find(r=>r.id===rid);
+  if(wr){if(f)wr.hrsFrom=f;if(t)wr.hrsTo=t;}
+  if(room){if(f)room.hrsFrom=f;if(t)room.hrsTo=t;}
+  savePlatformState();renderWizRooms();renderWizLoad();
+}
+function addWizRegularShift(rid,dk){
+  const sid=document.getElementById(`wiz-rs-staff-${rid}-${dk}`)?.value;
+  const from=document.getElementById(`wiz-rs-from-${rid}-${dk}`)?.value;
+  const to=document.getElementById(`wiz-rs-to-${rid}-${dk}`)?.value;
+  if(!sid||!from||!to)return;
+  if(!SCH[rid])SCH[rid]={};if(!SCH[rid][dk])SCH[rid][dk]=[];
+  SCH[rid][dk]=SCH[rid][dk].filter(e=>!(e.sid===sid&&e.regular));
+  SCH[rid][dk].push({sid,from,to,t:entryType(rid),regular:true});
+  savePlatformState();renderWizLoad();
+}
+function removeWizRegularShift(rid,dk,sid,from){
+  if(!SCH[rid]?.[dk])return;
+  SCH[rid][dk]=SCH[rid][dk].filter(e=>!(e.sid===sid&&e.from===from&&e.regular));
+  savePlatformState();renderWizLoad();
+}
+
+/* Step 5 — notifications */
+function toggleNotif(key){
+  const el=document.getElementById('notif-'+key);
+  el.classList.toggle('on');
+  if(el.classList.contains('on'))CFG.notifications.push(key);
+  else CFG.notifications=CFG.notifications.filter(k=>k!==key);
+  savePlatformState();
+}
+
+/* Navigation */
+function wizNext(){
+  if(St.wizStep===1)CFG.deptName=document.getElementById('w-dept').value.trim()||CFG.deptName;
+  if(St.wizStep>=WIZ_STEPS){finishWizard();return;}
+  St.wizStep++;showWizStep();
+  if(St.wizStep===3)renderWizLoad();
+  if(St.wizStep===4)renderWizStaff();
+}
+function wizBack(){if(St.wizStep>1){St.wizStep--;showWizStep();}}
+function showWizStep(){
+  for(let i=1;i<=WIZ_STEPS;i++)document.getElementById('ws-'+i).classList.toggle('active',i===St.wizStep);
+  buildWizProgress();
+}
+function finishWizard(){
+  CFG.onboarded=true;
+  document.getElementById('wizard').style.display='none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('app-dept').textContent=CFG.deptName;
+  savePlatformState();
+  initApp();
+}
+
+// ═══ APP ═══
+function initApp(){buildSidebar();rebuildActSel();renderAll();}
+function renderAll(){renderGrid();renderStaff();renderGaps();syncUI();savePlatformState();}
+
+const ALL_TABS=['sched','staff','gaps','set'];
+function gTab(t,btn){
+  document.querySelectorAll('.htab').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');
+  ALL_TABS.forEach(v=>{const el=document.getElementById('v-'+v);if(el)el.style.display=v===t?(v==='sched'?'flex':''):'none';});
+  document.getElementById('sidebar').style.display=t==='sched'?'':'none';
+  if(t==='set'){document.getElementById('v-set').style.display='flex';renderSettingsPane(St.pane);}
+  if(t==='staff')renderStaff();
+  if(t==='gaps')renderGaps();
+}
+
+/* Sidebar */
+function buildSidebar(){
+  const c=document.getElementById('chips');c.innerHTML='';
+  const allEl=mkEl('div','chip'+(St.filterSid===null?' on':''));
+  allEl.innerHTML=`<div class="av av-sm" style="background:var(--s2);color:var(--mut)">All</div><div><div class="chip-name" style="font-style:italic;color:var(--mid)">Everyone</div></div>`;
+  allEl.onclick=()=>{St.filterSid=null;buildSidebar();renderGrid();};c.appendChild(allEl);
+  STAFF.forEach(s=>{
+    const abs=isAbsent(s.id);
+    const e=mkEl('div','chip'+(abs?' dim':St.filterSid===s.id?' on':''));
+    e.innerHTML=`<div class="av av-sm" style="background:${s.bg};color:${s.color}">${s.init}</div><div><div class="chip-name">${s.name}</div><div class="chip-role">${s.role}${abs?' · absent':''}</div></div>`;
+    e.onclick=()=>{if(abs)return;St.filterSid=St.filterSid===s.id?null:s.id;buildSidebar();renderGrid();};c.appendChild(e);
+  });
+  document.getElementById('legend').innerHTML=CFG.actTypes.map(a=>`<div class="leg-row"><div class="leg-sw" style="background:${a.bg};border-left:2px solid ${a.color}"></div><span class="leg-lbl">${a.label}</span></div>`).join('');
+}
+function clearFilter(){St.filterSid=null;buildSidebar();renderGrid();}
+function rebuildActSel(){const s=document.getElementById('m-type');if(s)s.innerHTML=CFG.actTypes.map(a=>`<option value="${a.id}">${a.label}</option>`).join('');}
+function rebuildStaffSel(){const s=document.getElementById('m-staff');if(s)s.innerHTML=STAFF.filter(x=>!isAbsent(x.id)).map(s=>`<option value="${s.id}">${s.name}</option>`).join('');}
+
+/* Grid */
+function renderGrid(){
+  let h=`<div class="sched-table-wrap"><table class="ex"><thead><tr><th class="corn"><div class="cn-t">Day</div><div class="cn-h">↕ · Room →</div></th>`;
+  ROOMS.forEach(r=>{
+    const tR=DAYS.reduce((s,d)=>s+required(r.id,d.k),0);
+    const tH=DAYS.reduce((s,d)=>s+Math.min(assigned(r.id,d.k),required(r.id,d.k)||0),0);
+    const pct=tR>0?Math.min(100,Math.round(tH/tR*100)):100;
+    const bc=pct>=100?'var(--grn)':pct>=60?'var(--amb)':'var(--red)';
+    const tip=`${escQ(r.name)}\\n${r.hrsFrom}–${r.hrsTo}${r.desc?'\\n'+escQ(r.desc):''}`;
+    h+=`<th class="col-h" onmouseenter="showTip(event,'${tip}')" onmouseleave="hideTip()">
+      <span class="col-h-name">${roomEmoji(r.type)} ${r.name}</span>
+      <span class="col-h-hrs">${r.hrsFrom}–${r.hrsTo}${r.critical?' ⚠':''}</span>
+      ${tR>0?`<div class="col-h-bar" style="background:${bc};width:${pct}%"></div><span class="col-h-stat" style="color:${bc}">${tH}/${tR}</span>`:''}
+    </th>`;
+  });
+  h+=`</tr></thead><tbody>`;
+  DAYS.forEach(day=>{
+    h+=`<tr><td class="row-h${day.wknd?' wknd':''}"><div class="rh-in"><div class="rh-n">${day.n}</div><div class="rh-d">${day.dt}</div></div></td>`;
+    ROOMS.forEach(room=>{
+      let entries=((SCH[room.id]||{})[day.k]||[]);
+      if(St.filterSid)entries=entries.filter(e=>e.sid===St.filterSid);
+      const hasCon=entries.some(e=>e.conflict&&!e.nonstandard);
+      const st=cellSt(room.id,day.k);
+      const has=assigned(room.id,day.k),req=required(room.id,day.k);
+      let cc='cell';
+      if(hasCon)cc+=' c-conf';
+      else if(st==='ok'||st==='over')cc+=' c-ok';
+      else if(st==='unmet')cc+=' c-unmet';
+      else if(st==='partial')cc+=' c-partial';
+      h+=`<td class="${cc}" onclick="openAdd('${room.id}','${day.k}')"
+          ondragover="event.preventDefault();this.classList.add('dov')"
+          ondragleave="this.classList.remove('dov')"
+          ondrop="onDrop(event,'${room.id}','${day.k}')">`;
+      entries.forEach((e,i)=>{
+        const s=STAFF.find(x=>x.id===e.sid);if(!s)return;
+        const act=CFG.actTypes.find(a=>a.id===e.t)||CFG.actTypes[0];
+        const tip=e.conflict&&!e.nonstandard?`⚠ Conflict\\n${escQ(e.cr||'')}`:e.nonstandard?`◈ Non-standard — ${escQ(s.name)}`:`${escQ(s.name)}\\n${e.from}–${e.to}${e.comment?'\\n'+escQ(e.comment):''}${e.regular?' · regular':''}`;
+        h+=`<div class="pill ${e.t||''}${e.nonstandard?' ns-pill':''}"
+            draggable="true"
+            style="${e.t?'':'background:'+act.bg+';color:'+act.color+';border-left:2.5px solid '+act.color}"
+            ondragstart="onDS(event,'${room.id}','${day.k}',${i})"
+            onmouseenter="showTip(event,'${tip}')" onmouseleave="hideTip()"
+            ondblclick="event.stopPropagation();openEdit('${room.id}','${day.k}',${i})">
+          <span class="pn">${s.name}</span>
+          <span class="pt">${e.from}–${e.to}${e.regular?' ↻':''}</span>
+          ${e.comment?`<span class="pc">${escQ(e.comment)}</span>`:''}
+          ${e.nonstandard?`<span class="pns">◈ non-standard</span>`:''}
+          ${e.conflict&&!e.nonstandard?`<span class="pw" onclick="event.stopPropagation();openAlerts()">⚠</span>`:''}
+        </div>`;
+      });
+      if(!St.filterSid||entries.length===0){
+        if(req>0&&has<req)h+=`<div class="gap-pill ${room.critical?'gap-c':'gap-n'}" onclick="event.stopPropagation();openAdd('${room.id}','${day.k}')">${room.critical?'⚠ ':''}+${req-has} needed</div>`;
+        else h+=`<div class="addb" onclick="event.stopPropagation();openAdd('${room.id}','${day.k}')">＋ add</div>`;
+      }
+      h+=`</td>`;
+    });
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table></div>${renderMobileScheduleList()}`;
+  document.getElementById('grid-tbl').innerHTML=h;
+  updateBanner();
+  savePlatformState();
+}
+function renderMobileScheduleList(){
+  let h='<div class="mobile-schedule">';
+  DAYS.forEach(day=>{
+    let rows='';
+    ROOMS.forEach(room=>{
+      let entries=((SCH[room.id]||{})[day.k]||[]);
+      if(St.filterSid)entries=entries.filter(e=>e.sid===St.filterSid);
+      const has=assigned(room.id,day.k),req=required(room.id,day.k);
+      const gap=req>0&&has<req;
+      const show=entries.length||gap||(!St.filterSid&&req>0);
+      if(!show)return;
+      let status='ok',statusText=req>0?`${Math.min(has,req)}/${req}`:'Open';
+      if(gap){status=room.critical?'crit':'warn';statusText=`+${req-has} needed`;}
+      rows+=`<div class="mobile-room" onclick="openAdd('${room.id}','${day.k}')">
+        <div class="mobile-room-top">
+          <div class="mobile-room-name">${roomEmoji(room.type)} ${room.name}</div>
+          <div class="mobile-room-hours">${room.hrsFrom}–${room.hrsTo}</div>
+          <div class="mobile-room-status ${status}">${statusText}</div>
+        </div>
+        <div class="mobile-shifts">`;
+      entries.forEach((e,i)=>{
+        const s=STAFF.find(x=>x.id===e.sid);if(!s)return;
+        const act=CFG.actTypes.find(a=>a.id===e.t)||CFG.actTypes[0];
+        rows+=`<div class="mobile-shift ${e.nonstandard?'ns-pill':''}" style="background:${act.bg};color:${act.color};border-left:3px solid ${act.color}" onclick="event.stopPropagation();openEdit('${room.id}','${day.k}',${i})">
+          <div class="av av-xs" style="background:${s.bg};color:${s.color}">${s.init}</div>
+          <div class="mobile-shift-main">
+            <span class="mobile-shift-name">${s.name}${e.conflict&&!e.nonstandard?' ⚠':''}</span>
+            <span class="mobile-shift-time">${e.from}–${e.to}${e.regular?' ↻':''}${e.nonstandard?' · non-standard':''}</span>
+            ${e.comment?`<div class="mobile-shift-note">${escQ(e.comment)}</div>`:''}
+          </div>
+        </div>`;
+      });
+      if(gap){
+        rows+=`<div class="mobile-empty-room mobile-gap ${room.critical?'crit':''}">
+          <span>${room.critical?'Critical gap':'Room staffing gap'} · ${req-has} more needed</span>
+          <span class="mobile-add">Add</span>
+        </div>`;
+      }else if(!entries.length&&!St.filterSid){
+        rows+=`<div class="mobile-empty-room"><span>No one assigned yet</span><span class="mobile-add">Add</span></div>`;
+      }
+      rows+=`</div></div>`;
+    });
+    h+=`<section class="mobile-day">
+      <div class="mobile-day-head">
+        <div class="mobile-day-title">${day.n}</div>
+        <div class="mobile-day-date">${day.dt}</div>
+      </div>
+      ${rows||`<div class="mobile-room"><div class="mobile-empty-room"><span>No active room staffing for this day</span></div></div>`}
+    </section>`;
+  });
+  h+='</div>';
+  return h;
+}
+function updateBanner(){
+  let tR=0,tH=0;ROOMS.forEach(r=>DAYS.forEach(d=>{const req=required(r.id,d.k);tR+=req;tH+=Math.min(assigned(r.id,d.k),req);}));
+  document.getElementById('fill-stat').innerHTML=`<strong>${tH}</strong>/<strong>${tR}</strong> shifts filled`;
+  const sf=document.getElementById('stat-filled');
+  if(sf){sf.querySelector('.sv').textContent=`${tH}/${tR}`;sf.className='ap-stat'+(tH>=tR?' grn':'');}
+}
+
+/* Staff view */
+function renderStaff(){
+  const el=document.getElementById('v-staff');if(!el)return;
+  const absSids=new Set(ABSENCES.map(a=>a.sid));
+  const active=STAFF.filter(s=>!absSids.has(s.id)),absent=STAFF.filter(s=>absSids.has(s.id));
+  let h=`<div class="stabs">`;
+  active.forEach(s=>h+=`<button class="stab${St.setupStaff===s.id?' on':''}" onclick="setStaffView('${s.id}')"><div class="av av-xs" style="background:${s.bg};color:${s.color}">${s.init}</div>${s.name}</button>`);
+  if(absent.length){h+=`<div style="width:1px;height:22px;background:var(--bdr);margin:0 4px;align-self:center"></div>`;absent.forEach(s=>h+=`<button class="stab abs${St.setupStaff===s.id?' on':''}" onclick="setStaffView('${s.id}')"><div class="av av-xs" style="background:${s.bg};color:${s.color}">${s.init}</div>${s.name} ✈</button>`);}
+  h+=`</div><div id="staff-inner"></div>`;
+  el.innerHTML=h;
+  if(!St.setupStaff)St.setupStaff=STAFF[0]?.id;
+  renderStaffDetail(St.setupStaff);
+}
+function setStaffView(sid){St.setupStaff=sid;renderStaff();}
+function renderStaffDetail(sid){
+  const inner=document.getElementById('staff-inner');if(!inner)return;
+  const s=STAFF.find(x=>x.id===sid);if(!s){inner.innerHTML='';return;}
+  const sup=s.supervisorId?STAFF.find(x=>x.id===s.supervisorId):null;
+  const staffAbs=ABSENCES.filter(a=>a.sid===sid);
+  const rows=[];
+  DAYS.forEach(day=>ROOMS.forEach(room=>{((SCH[room.id]||{})[day.k]||[]).filter(e=>e.sid===sid).forEach(e=>rows.push({dayN:day.n,dt:day.dt,dk:day.k,room:room.name,rid:room.id,from:e.from,to:e.to,t:e.t,comment:e.comment||'',regular:!!e.regular,ns:!!e.nonstandard,conflict:!!e.conflict&&!e.nonstandard,cr:e.cr||''}));}));
+  const totalH=rows.reduce((s,r)=>{const[fh,fm]=r.from.split(':').map(Number),[th,tm]=r.to.split(':').map(Number);return s+((th*60+tm)-(fh*60+fm))/60;},0);
+  const confs=rows.filter(r=>r.conflict);
+  let h=`<div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--bdr)">
+    <div class="av av-lg" style="background:${s.bg};color:${s.color}">${s.init}</div>
+    <div><div style="font-size:18px;font-weight:600;letter-spacing:-.01em">${s.name}</div>
+    <div style="font-size:12px;color:var(--mid);margin-top:2px">${s.role}${sup?` · Supervisor: <strong>${sup.name}</strong>`:''}</div></div>
+    <div style="margin-left:auto;display:flex;gap:20px">
+      <div style="text-align:right"><div style="font-family:var(--mono);font-size:20px;font-weight:500">${rows.length}</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">Shifts</div></div>
+      <div style="text-align:right"><div style="font-family:var(--mono);font-size:20px;font-weight:500">${Math.round(totalH)}h</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">Hours</div></div>
+    </div>
+  </div>`;
+  if(staffAbs.length){h+=`<div class="abs-section"><div style="font-size:12px;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid)">Absences</div>`;
+    staffAbs.forEach(a=>{const days=absDays(a);const pct=Math.min(100,Math.round(days/30*100));const css=ABS_CSS[a.type]||'ab-oth';
+      h+=`<div class="abs-row"><span class="abs-badge ${css}">${ABS_LABELS[a.type]||a.type}</span><span style="flex:1;font-size:12px">${a.note||''}</span><span style="font-family:var(--mono);font-size:11px;color:var(--mid)">${a.from} – ${a.to}</span><span style="font-family:var(--mono);font-size:11px;color:var(--mut);min-width:40px;text-align:right">${days}d</span><div class="prog" style="width:60px"><div class="pf" style="width:${pct}%;background:${s.color}"></div></div><button class="btn xs red" onclick="removeAbs('${a.sid}','${a.from}')">✕</button></div>`;
+    });h+=`</div>`;}
+  h+=`<div style="display:flex;gap:8px;margin-bottom:16px"><button class="btn blue" onclick="openAddForStaff('${s.id}')">＋ Add shift</button><button class="btn" onclick="openAbsModal('${s.id}')">✈ Mark absence</button></div>`;
+  confs.forEach(r=>h+=`<div class="conf-box"><h4>⚠ Conflict — ${r.dayN} · ${r.room}</h4><p>${r.cr}</p><button class="btn xs red" onclick="delEntry('${r.rid}','${r.dk}','${sid}','${r.from}')">Remove this shift</button></div>`);
+  if(!rows.length)h+=`<div class="empty"><div class="empty-ic">📭</div><p>No shifts this week</p></div>`;
+  else{h+=`<table class="sdt"><thead><tr><th>Day</th><th>Room</th><th>Time</th><th>Note</th><th>Status</th><th></th></tr></thead><tbody>`;
+    rows.forEach(r=>{h+=`<tr class="${r.conflict?'conf-r':r.ns?'ns-r':''}"><td style="font-weight:500;white-space:nowrap">${r.dayN} <span style="font-family:var(--mono);font-size:10px;color:var(--mut)">${r.dt}</span></td><td style="font-weight:600;font-family:var(--mono);font-size:12px">${r.room}</td><td style="font-family:var(--mono)">${r.from}–${r.to}${r.regular?' <span style="color:var(--mut)">↻</span>':''}</td><td style="font-size:11px;color:var(--mid)">${r.comment||'—'}</td><td>${r.conflict?`<span style="color:var(--red);font-size:11px;font-weight:500">⚠ Conflict</span>`:r.ns?`<span style="color:var(--pur);font-size:10px">◈ Non-std</span>`:`<span style="color:var(--grn)">✓</span>`}</td><td style="display:flex;gap:4px"><button class="btn xs" onclick="openEdit('${r.rid}','${r.dk}',undefined,'${sid}','${r.from}')">Edit</button><button class="btn xs red" onclick="delEntry('${r.rid}','${r.dk}','${sid}','${r.from}')">✕</button></td></tr>`;});
+    h+=`</tbody></table>`;}
+  inner.innerHTML=h;
+}
+
+/* Gaps & conflicts */
+function renderGaps(){
+  const el=document.getElementById('v-gaps');if(!el)return;
+  const gaps=getGaps(),confs=getConflicts();
+  const crit=gaps.filter(g=>g.critical),norm=gaps.filter(g=>!g.critical&&!DAYS.find(d=>d.k===g.dk)?.wknd),wknd=gaps.filter(g=>DAYS.find(d=>d.k===g.dk)?.wknd);
+  let h=`<div class="gaps-top">
+    <div class="gs-card${crit.length?' crit':' ok'}"><span class="gs-v">${crit.length}</span><span class="gs-l">Critical gaps</span></div>
+    <div class="gs-card${norm.length?' warn':' ok'}"><span class="gs-v">${norm.length}</span><span class="gs-l">Room staffing gaps</span></div>
+    <div class="gs-card${confs.length?' crit':' ok'}"><span class="gs-v">${confs.length}</span><span class="gs-l">Conflicts</span></div>
+  </div>`;
+  if(confs.length){
+    h+=`<div class="gap-sec">Conflicts (${confs.length})</div>`;
+    h+=confs.map((c,i)=>`<div class="cp-item">
+      <h4>⚠ ${c.title}</h4>
+      <div class="cp-what">${c.what}</div>
+      <div class="cp-why">${c.why}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+        <button class="cp-btn cp-r" onclick="resolveConf(${i},'remove')">✕ Remove shift</button>
+        <button class="cp-btn cp-ns" onclick="resolveConf(${i},'ns')">◈ Mark non-standard</button>
+      </div>
+    </div>`).join('');
+  }
+  const sec=(title,items,cls)=>{if(!items.length)return'';return`<div class="gap-sec">${title} (${items.length})</div><div class="gcards">${items.map(g=>`<div class="gcard ${cls}"><div class="gc-top"><div class="gc-room">${roomEmoji(g.type)} ${g.room}</div><div class="gc-tag">${g.day.slice(0,3)} ${g.dt}</div></div><div class="gc-type">${g.type} · need ${g.req}, have ${g.has}</div><button class="gc-fill" onclick="gTab('sched',document.getElementById('ht-sched'));openAdd('${g.rid}','${g.dk}')">＋ Fill this gap</button></div>`).join('')}</div>`;};
+  h+=sec('Critical gaps',crit,'gc-c');h+=sec('Room staffing gaps',norm,'gc-n');h+=sec('Weekend gaps',wknd,'gc-n');
+  if(!gaps.length&&!confs.length)h+=`<div class="empty"><div class="empty-ic">✓</div><p>No gaps or conflicts this week</p></div>`;
+  document.getElementById('cp-ov')._confs=confs;
+  el.innerHTML=h;
+}
+
+/* Settings */
+function setPane(p,btn){St.pane=p;document.querySelectorAll('.sn-item').forEach(e=>e.classList.remove('on'));if(btn)btn.classList.add('on');renderSettingsPane(p);}
+function renderSettingsPane(p){const el=document.getElementById('set-pane');if(p==='gen')el.innerHTML=paneGen();else if(p==='rooms')el.innerHTML=paneRooms();else if(p==='load')el.innerHTML=paneLoad();else if(p==='staff')el.innerHTML=paneStaff();}
+
+function paneStaff(){
+  let h=`<div class="sc-title">Staff</div>`;
+  STAFF.forEach((s,i)=>{
+    const sup=s.supervisorId?STAFF.find(x=>x.id===s.supervisorId):null;
+    const caps=s.caps||[];
+    const chks=CAPS.map(c=>`<span class="chk${caps.includes(c.id)?' on':''}" onclick="toggleSettingsCap('${s.id}','${c.id}',this)">${c.label}</span>`).join('');
+    // Per-room time rows
+    const roomTimesHtml=ROOMS.map(room=>{
+      const capKey={'Consultation':'consult','Manipulation':'manip','Urodynamic':'uro','Endoscopy':'endo','Ultrasound (USG)':'usg','On Call':'oncall'}[room.type];
+      if(!capKey||!caps.includes(capKey))return'';
+      const existing=(SCH[room.id]?.['mon']||[]).find(e=>e.sid===s.id&&e.regular);
+      const saved=s.roomHours?.[room.id];
+      const defFrom=saved?.from||existing?.from||room.hrsFrom;
+      const defTo=saved?.to||existing?.to||room.hrsTo;
+      return`<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--s2)">
+        <span style="font-size:12px;flex:1;font-weight:500">${roomEmoji(room.type)} ${room.name}</span>
+        <input type="time" value="${defFrom}" id="set-st-from-${i}-${room.id}" style="width:86px;font-family:var(--mono);font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;background:var(--surf)">
+        <span style="color:var(--mut)">–</span>
+        <input type="time" value="${defTo}" id="set-st-to-${i}-${room.id}" style="width:86px;font-family:var(--mono);font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;background:var(--surf)">
+      </div>`;
+    }).filter(Boolean).join('');
+
+    h+=`<div class="load-room-block" style="margin-bottom:8px" id="set-staff-card-${i}">
+      <div class="load-room-header">
+        <div class="av av-md" style="background:${s.bg};color:${s.color}">${s.init}</div>
+        <div style="flex:1">
+          <div class="load-room-name">${s.name} <span style="font-size:10px;font-weight:400;color:var(--mid)">${s.role}${sup?' · '+sup.name:''}</span></div>
+          <div class="chk-list" style="margin-top:5px">${chks}</div>
+        </div>
+        <button class="btn xs" onclick="toggleSetStaffEdit(${i})">Edit</button>
+      </div>
+      <div id="set-staff-edit-${i}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr)">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <div class="mf" style="margin:0;min-width:140px;flex:2"><label>Name</label><input type="text" value="${escQ(s.name)}" id="set-sname-${i}" style="padding:6px 9px;font-size:12px"></div>
+          <div class="mf" style="margin:0;min-width:100px;flex:1"><label>Role</label><select id="set-srole-${i}" style="padding:6px 9px;font-size:12px"><option${s.role==='Urologist'?' selected':''}>Urologist</option><option${s.role==='Resident'?' selected':''}>Resident</option><option${s.role==='Nurse'?' selected':''}>Nurse</option></select></div>
+          <div class="mf" style="margin:0;width:70px"><label>Initials</label><input type="text" value="${s.init}" id="set-sinit-${i}" maxlength="3" style="padding:6px 9px;font-size:12px"></div>
+        </div>
+        ${roomTimesHtml?`<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Usual hours per room</div>${roomTimesHtml}`:''}
+        <div style="display:flex;justify-content:flex-end;gap:5px;margin-top:10px">
+          <button class="btn sm ghost" onclick="toggleSetStaffEdit(${i})">Cancel</button>
+          <button class="btn sm solid" onclick="saveSetStaff(${i},'${s.id}')">Save</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  h+=`<div class="add-row" onclick="alert('Use the setup wizard to add new staff members. Settings → General → Open setup wizard')">＋ Add staff member</div>`;
+  return h;
+}
+
+function toggleSetStaffEdit(i){
+  const el=document.getElementById(`set-staff-edit-${i}`);
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+function saveSetStaff(i,sid){
+  const s=STAFF.find(x=>x.id===sid);if(!s)return;
+  s.name=document.getElementById(`set-sname-${i}`).value.trim()||s.name;
+  s.role=document.getElementById(`set-srole-${i}`).value;
+  s.init=document.getElementById(`set-sinit-${i}`).value.trim()||s.init;
+  ROOMS.forEach(room=>{
+    const from=document.getElementById(`set-st-from-${i}-${room.id}`)?.value;
+    const to=document.getElementById(`set-st-to-${i}-${room.id}`)?.value;
+    if(from||to)setStaffRoomHours(sid,room.id,from,to);
+  });
+  savePlatformState();
+  toggleSetStaffEdit(i);
+  renderSettingsPane('staff');buildSidebar();renderAll();
+}
+function toggleSettingsCap(sid,cap,el){
+  const s=STAFF.find(x=>x.id===sid);if(!s)return;
+  if(!s.caps)s.caps=[];
+  const has=s.caps.includes(cap);
+  has?s.caps=s.caps.filter(c=>c!==cap):s.caps.push(cap);
+  el.classList.toggle('on',!has);
+  savePlatformState();
+}
+function paneGen(){
+  return`<div class="sc-title">General</div>
+  <div class="load-room-block">
+    <div class="load-room-header"><span style="font-size:18px">🏥</span><div><div class="load-room-name">Department</div><div class="load-room-meta">Name shown in the header</div></div></div>
+    <div class="mf" style="margin-bottom:0"><label>Department name</label><input type="text" value="${escQ(CFG.deptName)}" onchange="CFG.deptName=this.value;document.getElementById('app-dept').textContent=this.value"></div>
+  </div>
+  <div class="load-room-block" style="margin-top:12px">
+    <div class="load-room-header"><span style="font-size:18px">⚙️</span><div><div class="load-room-name">Setup wizard</div><div class="load-room-meta">Re-run the full onboarding to change rooms, staff, or notifications</div></div></div>
+    <button class="btn" onclick="document.getElementById('app').classList.remove('visible');document.getElementById('wizard').style.display='flex';St.wizStep=1;initWizard()">Open setup wizard</button>
+  </div>`;}
+
+function paneRooms(){
+  let h=`<div class="sc-title">Rooms & Assignments</div>`;
+  ROOMS.forEach(r=>{
+    const rname=escQ(r.name);
+    h+=`<div class="load-room-block" style="margin-bottom:8px">
+      <div class="load-room-header">
+        <span style="font-size:20px">${roomEmoji(r.type)}</span>
+        <div style="flex:1">
+          <div class="load-room-name">${r.name} ${r.critical?'<span style="font-size:10px;color:var(--red);font-weight:600">⚠ critical</span>':''}</div>
+          <div class="load-room-meta">${r.type}</div>
+        </div>
+        <button class="btn xs red" onclick="if(confirm('Remove ${rname}?')){ROOMS.splice(ROOMS.findIndex(x=>x.id===\'${r.id}\'),1);renderAll();renderSettingsPane('rooms')}">Remove</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mid)">
+          <span>Hours</span>
+          <input type="time" value="${r.hrsFrom}" style="width:86px;font-family:var(--mono);font-size:12px;border:1px solid var(--bdr);border-radius:var(--r);padding:4px 7px;background:var(--surf)" onchange="ROOMS.find(x=>x.id==='${r.id}').hrsFrom=this.value;renderGrid()">
+          <span>–</span>
+          <input type="time" value="${r.hrsTo}" style="width:86px;font-family:var(--mono);font-size:12px;border:1px solid var(--bdr);border-radius:var(--r);padding:4px 7px;background:var(--surf)" onchange="ROOMS.find(x=>x.id==='${r.id}').hrsTo=this.value;renderGrid()">
+        </div>
+        ${!r.critical?`<button class="btn xs" onclick="ROOMS.find(x=>x.id==='${r.id}').critical=true;renderSettingsPane('rooms');syncUI()">Set critical</button>`:'<span style="font-size:11px;color:var(--mid)">Critical — always must be filled</span>'}
+      </div>
+    </div>`;
+  });
+  return h;}
+
+function paneLoad(){
+  let h=`<div class="sc-title">Room Staffing</div>
+  <div style="font-size:12px;color:var(--mid);margin-bottom:16px">Set required staff count, room hours, and regular shifts for each room.</div>`;
+  ROOMS.forEach(room=>{
+    if(!REQS[room.id])REQS[room.id]={};
+    const rname=escQ(room.name);
+    h+=`<div class="load-room-block" style="margin-bottom:8px" id="set-room-${room.id}">
+      <div class="load-room-header">
+        <span style="font-size:20px">${roomEmoji(room.type)}</span>
+        <div style="flex:1">
+          <div class="load-room-name">${room.name}${room.critical?' <span style="font-size:10px;color:var(--red)">⚠ critical</span>':''}</div>
+          <div class="load-room-meta">${room.type} · ${room.hrsFrom}–${room.hrsTo}</div>
+        </div>
+        <button class="btn xs" onclick="toggleRoomEdit('${room.id}')">Edit</button>
+        <button class="btn xs red" onclick="if(confirm('Remove ${rname}?')){ROOMS.splice(ROOMS.findIndex(x=>x.id===\'${room.id}\'),1);renderAll();renderSettingsPane('load')}">✕</button>
+      </div>
+      <!-- Required count per day -->
+      <div style="margin-bottom:8px">`;
+    DAYS.forEach(d=>{
+      const req=(REQS[room.id]||{})[d.k]||0,has=assigned(room.id,d.k);
+      const cls=room.critical&&req>0?'lc':req>0?'la':'';
+      const statusColor=req===0?'var(--mut)':has>=req?'var(--grn)':has>0?'var(--amb)':'var(--red)';
+      const statusText=req===0?'closed':has>=req?`${has}/${req} ✓`:`${has}/${req} needed`;
+      h+=`<div class="load-row">
+        <span class="load-day">${d.n}</span>
+        <input class="load-inp ${cls}" type="number" min="0" max="8" value="${req}"
+          onchange="setReq('${room.id}','${d.k}',this.value);this.className='load-inp '+(${room.critical}&&parseInt(this.value)>0?'lc':parseInt(this.value)>0?'la':'')">
+        <span style="font-size:11px;color:${statusColor};flex:1">${statusText}</span>
+      </div>`;
+    });
+    h+=`</div>
+      <!-- Expandable: hours + shift editor -->
+      <div id="room-edit-${room.id}" style="display:none;padding-top:10px;border-top:1px solid var(--bdr);">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Room hours</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px">
+          <span style="color:var(--mid)">From</span>
+          <input type="time" value="${room.hrsFrom}" id="rh-from-${room.id}" style="width:88px;font-family:var(--mono);font-size:12px;border:1px solid var(--bdr);border-radius:var(--r);padding:4px 7px;background:var(--surf)">
+          <span style="color:var(--mid)">to</span>
+          <input type="time" value="${room.hrsTo}" id="rh-to-${room.id}" style="width:88px;font-family:var(--mono);font-size:12px;border:1px solid var(--bdr);border-radius:var(--r);padding:4px 7px;background:var(--surf)">
+          <button class="btn xs solid" onclick="saveRoomHours('${room.id}')">Save hours</button>
+        </div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Regular shifts</div>
+        <div style="font-size:11px;color:var(--mid);margin-bottom:8px">Assign a regular (recurring) shift to a staff member for a specific day.</div>`;
+    DAYS.forEach(d=>{
+      const shifts=(SCH[room.id]?.[d.k]||[]).filter(e=>e.regular);
+      h+=`<div style="padding:5px 0;border-bottom:1px solid var(--s2);">
+        <div style="font-size:11px;font-weight:600;margin-bottom:4px;color:var(--mid)">${d.n}</div>
+        ${shifts.length?shifts.map(e=>{const s=STAFF.find(x=>x.id===e.sid);return s?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:11px">
+          <div class="av av-xs" style="background:${s.bg};color:${s.color}">${s.init}</div>
+          <span style="font-weight:500">${s.name}</span>
+          <span style="font-family:var(--mono);color:var(--mut)">${e.from}–${e.to}</span>
+          <span style="color:var(--grn);font-size:10px">↻</span>
+          <button class="btn xs red" onclick="removeRegularShift('${room.id}','${d.k}','${e.sid}')">✕</button>
+        </div>`:'';}).join(''):'<span style="font-size:11px;color:var(--mut)">No regular shifts</span>'}
+        <div style="display:flex;align-items:center;gap:5px;margin-top:5px">
+          <select id="rs-staff-${room.id}-${d.k}" style="font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;background:var(--surf)">${STAFF.filter(s=>!isAbsent(s.id)).map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
+          <input type="time" id="rs-from-${room.id}-${d.k}" value="${room.hrsFrom}" style="width:84px;font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;font-family:var(--mono);background:var(--surf)">
+          <input type="time" id="rs-to-${room.id}-${d.k}" value="${room.hrsTo}" style="width:84px;font-size:11px;border:1px solid var(--bdr);border-radius:var(--r);padding:3px 6px;font-family:var(--mono);background:var(--surf)">
+          <button class="btn xs" onclick="addRegularShift('${room.id}','${d.k}')">＋ Add</button>
+        </div>
+      </div>`;
+    });
+    h+=`</div></div>`;
+  });
+  return h;
+}
+
+function toggleRoomEdit(rid){
+  const el=document.getElementById(`room-edit-${rid}`);
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+function saveRoomHours(rid){
+  const room=ROOMS.find(r=>r.id===rid);if(!room)return;
+  const f=document.getElementById(`rh-from-${rid}`)?.value;
+  const t=document.getElementById(`rh-to-${rid}`)?.value;
+  if(f)room.hrsFrom=f;if(t)room.hrsTo=t;
+  renderGrid();renderSettingsPane('load');
+}
+function addRegularShift(rid,dk){
+  const sid=document.getElementById(`rs-staff-${rid}-${dk}`)?.value;
+  const from=document.getElementById(`rs-from-${rid}-${dk}`)?.value;
+  const to=document.getElementById(`rs-to-${rid}-${dk}`)?.value;
+  if(!sid||!from||!to)return;
+  if(!SCH[rid])SCH[rid]={};if(!SCH[rid][dk])SCH[rid][dk]=[];
+  SCH[rid][dk]=SCH[rid][dk].filter(e=>!(e.sid===sid&&e.regular));
+  SCH[rid][dk].push({sid,from,to,t:entryType(rid),regular:true});
+  renderGrid();renderSettingsPane('load');
+}
+function removeRegularShift(rid,dk,sid){
+  if(!SCH[rid]?.[dk])return;
+  SCH[rid][dk]=SCH[rid][dk].filter(e=>!(e.sid===sid&&e.regular));
+  renderGrid();renderSettingsPane('load');
+}
+function setReq(rid,dk,v){if(!REQS[rid])REQS[rid]={};REQS[rid][dk]=Math.max(0,parseInt(v)||0);renderGrid();syncUI();}
+
+/* Add / Edit */
+function resetToggles(){St.addRegular=false;St.addNS=false;document.getElementById('m-reg-track').classList.remove('on');document.getElementById('m-ns-track').classList.remove('on');}
+function bindToggles(){
+  document.getElementById('m-reg-tog').onclick=()=>{St.addRegular=!St.addRegular;document.getElementById('m-reg-track').classList.toggle('on',St.addRegular);};
+  document.getElementById('m-ns-tog').onclick=()=>{St.addNS=!St.addNS;document.getElementById('m-ns-track').classList.toggle('on',St.addNS);};
+}
+function openAdd(rid,dk){
+  St.pending={rid,dk};St.editEntry=null;
+  const room=rid?ROOMS.find(r=>r.id===rid):null;
+  const day=dk?DAYS.find(d=>d.k===dk):null;
+  document.getElementById('add-title').textContent='Add shift';
+  document.getElementById('add-sub').textContent=rid?`${roomEmoji(room?.type||'')} ${room?.name} · ${day?.n} ${day?.dt}`:'';
+  document.getElementById('m-from').value=room?.hrsFrom||'08:00';
+  document.getElementById('m-to').value=room?.hrsTo||'16:00';
+  document.getElementById('m-comment').value='';
+  resetToggles();rebuildStaffSel();bindToggles();openOv('add-ov');
+}
+function openAddForStaff(sid){
+  St.pending={rid:null,dk:null};St.editEntry=null;
+  document.getElementById('add-title').textContent='Add shift';
+  document.getElementById('add-sub').textContent=STAFF.find(s=>s.id===sid)?.name||'';
+  document.getElementById('m-from').value='08:00';document.getElementById('m-to').value='16:00';
+  document.getElementById('m-comment').value='';
+  resetToggles();rebuildStaffSel();document.getElementById('m-staff').value=sid;bindToggles();openOv('add-ov');
+}
+function openEdit(rid,dk,idxOrUndef,sidOrUndef,fromOrUndef){
+  let idx;
+  if(fromOrUndef!==undefined)idx=(SCH[rid]?.[dk]||[]).findIndex(e=>e.sid===sidOrUndef&&e.from===fromOrUndef);
+  else idx=parseInt(idxOrUndef);
+  if(idx<0||isNaN(idx))return;
+  const e=(SCH[rid]?.[dk]||[])[idx];if(!e)return;
+  St.editEntry={rid,dk,idx};St.pending={rid,dk};
+  const room=ROOMS.find(r=>r.id===rid),day=DAYS.find(d=>d.k===dk);
+  document.getElementById('add-title').textContent='Edit shift';
+  document.getElementById('add-sub').textContent=`${roomEmoji(room?.type||'')} ${room?.name} · ${day?.n}`;
+  rebuildStaffSel();document.getElementById('m-staff').value=e.sid;
+  document.getElementById('m-from').value=e.from;document.getElementById('m-to').value=e.to;
+  document.getElementById('m-comment').value=e.comment||'';
+  St.addRegular=!!e.regular;St.addNS=!!e.nonstandard;
+  document.getElementById('m-reg-track').classList.toggle('on',St.addRegular);
+  document.getElementById('m-ns-track').classList.toggle('on',St.addNS);
+  bindToggles();openOv('add-ov');
+}
+function saveShift(){
+  if(!St.pending)return;
+  const sid=document.getElementById('m-staff').value;
+  const from=document.getElementById('m-from').value,to=document.getElementById('m-to').value;
+  const comment=document.getElementById('m-comment').value.trim();
+  const regular=St.addRegular,ns=St.addNS;
+  let rid=St.pending.rid,dk=St.pending.dk;
+  if(!rid)rid=ROOMS[0]?.id;if(!dk)dk=DAYS[0].k;
+  if(!ns&&!St.editEntry&&hasConflictOnAdd(rid,dk,from,to)){
+    St.nsPayload={rid,dk,sid,from,to,comment,regular};
+    const room=ROOMS.find(r=>r.id===rid),day=DAYS.find(d=>d.k===dk);
+    document.getElementById('ns-msg').textContent=`${room?.name} on ${day?.n} already has someone assigned at this time. Are both working together?`;
+    closeOv('add-ov');openOv('ns-ov');return;
+  }
+  commitShift(rid,dk,sid,from,to,comment,regular,ns);
+}
+function confirmNS(){closeOv('ns-ov');const p=St.nsPayload;if(!p)return;commitShift(p.rid,p.dk,p.sid,p.from,p.to,p.comment,p.regular,true);St.nsPayload=null;}
+function commitShift(rid,dk,sid,from,to,comment,regular,ns){
+  if(!SCH[rid])SCH[rid]={};if(!SCH[rid][dk])SCH[rid][dk]=[];
+  const entry={sid,from,to,t:entryType(rid),regular,nonstandard:ns};if(comment)entry.comment=comment;
+  if(St.editEntry)SCH[St.editEntry.rid][St.editEntry.dk][St.editEntry.idx]=entry;
+  else SCH[rid][dk].push(entry);
+  closeOv('add-ov');renderAll();if(St.setupStaff)renderStaffDetail(St.setupStaff);
+}
+
+/* Absence */
+function openAbsModal(sid){St.absSid=sid;const s=STAFF.find(x=>x.id===sid);document.getElementById('abs-title').textContent='Add absence';document.getElementById('abs-sub').textContent=s?.name||'';['abs-from','abs-to','abs-note'].forEach(id=>document.getElementById(id).value='');document.getElementById('abs-type').value='abs-vac';document.getElementById('abs-cw').style.display='none';openOv('abs-ov');}
+function checkAbsCust(){document.getElementById('abs-cw').style.display=document.getElementById('abs-type').value==='__custom'?'':'none';}
+function saveAbs(){if(!St.absSid)return;let type=document.getElementById('abs-type').value;if(type==='__custom')type='abs-cust';const from=document.getElementById('abs-from').value,to=document.getElementById('abs-to').value;if(!from||!to){alert('Please enter dates.');return;}ABSENCES.push({sid:St.absSid,type,note:document.getElementById('abs-note').value.trim(),from,to});savePlatformState();closeOv('abs-ov');buildSidebar();renderStaff();syncUI();}
+function removeAbs(sid,from){ABSENCES.splice(ABSENCES.findIndex(a=>a.sid===sid&&a.from===from),1);savePlatformState();buildSidebar();renderStaff();syncUI();}
+
+/* Gaps & conflicts */
+function resolveConf(i,action){
+  const c=document.getElementById('cp-ov')._confs[i];if(!c?.rid||!c?.dk)return;
+  if(action==='remove')SCH[c.rid][c.dk]=SCH[c.rid][c.dk].filter(e=>!(e.sid===c.sid&&e.from===c.from));
+  else{const e=SCH[c.rid][c.dk].find(e=>e.sid===c.sid&&e.from===c.from);if(e)e.nonstandard=true;}
+  closeOv('cp-ov');renderAll();
+}
+
+/* Auto-plan */
+const SCHEDULE_OPTION_CATEGORIES=[
+  {id:'coverage',title:'Coverage',items:[
+    {id:'full-coverage',label:'Full coverage',enabled:true,tag:'Live',scope:'all',strat:'balanced',desc:'Fill every open room staffing gap and balance assignments across the team.'},
+    {id:'critical-first',label:'Critical first',enabled:true,tag:'Live',scope:'critical',strat:'minimal',desc:'Fill only rooms marked critical so mandatory coverage is handled first.'},
+    {id:'weekday-fill',label:'Weekday fill',enabled:true,tag:'Live',scope:'weekday',strat:'balanced',desc:'Fill Monday through Friday gaps and leave weekends for manual review.'},
+    {id:'weekend-support',label:'Weekend support',enabled:true,tag:'Live',scope:'weekend',strat:'senior',desc:'Focus only on Saturday and Sunday gaps with a senior-first preference.'},
+  ]},
+  {id:'continuity',title:'Continuity & Change Control',items:[
+    {id:'regular-shifts',label:'Regular shifts',enabled:true,tag:'Live',scope:'all',strat:'regular',desc:'Prefer existing recurring assignments and keep the weekly pattern stable.'},
+    {id:'minimal-change',label:'Minimal changes',enabled:false,tag:'Future',scope:'all',strat:'regular',desc:'Preserve the published schedule and suggest the smallest possible edits.'},
+    {id:'same-room',label:'Same-room continuity',enabled:false,tag:'Future',scope:'all',strat:'regular',desc:'Keep staff in rooms they commonly cover to reduce handoffs.'},
+    {id:'split-shift',label:'Split-shift coverage',enabled:false,tag:'Future',scope:'all',strat:'balanced',desc:'Create morning and afternoon assignments when full-day coverage is not possible.'},
+  ]},
+  {id:'fairness',title:'Fairness & Training',items:[
+    {id:'balanced-load',label:'Balanced load',enabled:true,tag:'Live',scope:'all',strat:'balanced',desc:'Distribute shifts toward lighter weekly workloads.'},
+    {id:'senior-led',label:'Senior-led coverage',enabled:true,tag:'Live',scope:'all',strat:'senior',desc:'Prefer senior clinicians when filling risky or complex coverage gaps.'},
+    {id:'resident-training',label:'Resident training',enabled:false,tag:'Future',scope:'all',strat:'balanced',desc:'Place residents in supervised rooms while preserving attending coverage.'},
+    {id:'overtime-aware',label:'Overtime aware',enabled:false,tag:'Future',scope:'all',strat:'balanced',desc:'Avoid excessive weekly hours and surface overtime tradeoffs.'},
+  ]},
+  {id:'constraints',title:'Constraints & Compliance',items:[
+    {id:'skill-match',label:'Skill matched',enabled:true,tag:'Live',scope:'all',strat:'balanced',desc:'Respect room capability tags such as endoscopy, USG, nursing, and on-call.'},
+    {id:'absence-aware',label:'Absence aware',enabled:true,tag:'Live',scope:'all',strat:'balanced',desc:'Exclude staff who are marked absent in the platform.'},
+    {id:'max-consecutive',label:'Max consecutive days',enabled:false,tag:'Future',scope:'all',strat:'balanced',desc:'Limit long streaks and propose alternates when someone is overused.'},
+    {id:'approval-required',label:'Approval required',enabled:false,tag:'Future',scope:'all',strat:'balanced',desc:'Route sensitive changes through coordinator approval before publishing.'},
+  ]},
+  {id:'communications',title:'Publishing & Notifications',items:[
+    {id:'publish-confirm',label:'Publish with confirmations',enabled:false,tag:'Future',scope:'all',strat:'balanced',desc:'Send the selected plan to staff and collect confirmations.'},
+    {id:'swap-ready',label:'Swap-ready draft',enabled:false,tag:'Future',scope:'all',strat:'balanced',desc:'Create a draft optimized for staff swap requests before final approval.'},
+    {id:'change-summary',label:'Change summary',enabled:false,tag:'Future',scope:'all',strat:'balanced',desc:'Generate a coordinator-facing summary of what changed and why.'},
+  ]},
+];
+function flatScheduleOptions(){return SCHEDULE_OPTION_CATEGORIES.flatMap(c=>c.items.map(o=>({...o,catId:c.id,catTitle:c.title})));}
+function getScheduleOption(id){return flatScheduleOptions().find(o=>o.id===id)||flatScheduleOptions()[0];}
+function currentScheduleOption(){return getScheduleOption(St.apOptionId);}
+function gapsForScheduleOption(opt,currentGaps=getGaps()){
+  if(!opt?.enabled)return[];
+  if(opt.scope==='critical')return currentGaps.filter(g=>g.critical);
+  if(opt.scope==='weekday')return currentGaps.filter(g=>!DAYS.find(d=>d.k===g.dk)?.wknd);
+  if(opt.scope==='weekend')return currentGaps.filter(g=>DAYS.find(d=>d.k===g.dk)?.wknd);
+  return currentGaps;
+}
+function openAutoPlan(){
+  St.apOptionId='full-coverage';St.apStrat='balanced';
+  buildPreviewCards();
+  openOv('ap-ov');
+}
+
+function selectStrat(s){/* kept for backward compat */}
+
+// Build expandable schedule option categories
+function buildPreviewCards(){
+  const gaps=getGaps(),current=currentScheduleOption();
+  const pc=document.getElementById('preview-cards');
+  pc.innerHTML=SCHEDULE_OPTION_CATEGORIES.map(cat=>{
+    const isOpen=St.apOpenCats[cat.id]!==false;
+    return`<div class="opt-cat${isOpen?' open':''}">
+      <button class="opt-cat-head" onclick="toggleOptionCategory('${cat.id}')">
+        <span class="opt-cat-chev">›</span>
+        <span class="opt-cat-title">${cat.title}</span>
+        <span class="opt-cat-meta">${cat.items.length} options</span>
+      </button>
+      <div class="opt-list">
+        ${cat.items.map(o=>{
+          const selected=St.apOptionId===o.id;
+          const count=gapsForScheduleOption(o,gaps).length;
+          return`<div class="sched-option${selected?' on':''}${o.enabled?'':' future'}" onclick="selectScheduleOption('${o.id}')">
+            <div class="sched-option-top">
+              <div class="sched-option-title">${o.label}</div>
+              <span class="sched-option-tag ${o.enabled?'tag-live':'tag-future'}">${o.tag}</span>
+            </div>
+            <div class="sched-option-desc">${o.desc}</div>
+            <div style="margin-top:auto;font-size:10px;color:var(--mut);font-family:var(--mono)">${o.enabled?`${count} matching gap${count!==1?'s':''}`:'Visible for future use'}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('')+`<div class="option-detail"><strong>${current.label}</strong> · ${current.enabled?'Ready to preview and apply.':'Future option placeholder.'}<br>${current.desc}</div>`;
+  buildAPData();
+  renderFullWeekPreview();
+  renderAPSlots();
+}
+
+function toggleOptionCategory(id){
+  St.apOpenCats[id]=St.apOpenCats[id]===false;
+  buildPreviewCards();
+}
+
+function selectScheduleOption(id){
+  const opt=getScheduleOption(id);
+  St.apOptionId=opt.id;
+  St.apStrat=opt.strat||'balanced';
+  buildPreviewCards();
+}
+
+function selectOption(i){
+  const live=flatScheduleOptions().filter(o=>o.enabled);
+  selectScheduleOption(live[i]?.id||'full-coverage');
+}
+
+function selectedOptionIsLive(){return !!currentScheduleOption()?.enabled;}
+
+function refreshApplyState(){
+  const btn=document.getElementById('ap-apply-btn');
+  if(btn)btn.disabled=!selectedOptionIsLive()||Object.keys(St.apChoices).length===0;
+}
+
+function updateAPSum(){
+  const opt=currentScheduleOption();
+  const n=Object.keys(St.apChoices).length;
+  document.getElementById('ap-sum').textContent=opt.enabled?`${n} shifts ready to apply`:`${opt.label} is listed for future use`;
+  refreshApplyState();
+}
+
+function buildAPSlots(){buildAPData();renderFullWeekPreview();renderAPSlots();}
+
+function rebuildPreview(){renderFullWeekPreview();}
+
+function getCurrentOptionGaps(){return gapsForScheduleOption(currentScheduleOption(),getGaps());}
+
+function getCurrentOptionStrategy(){return currentScheduleOption()?.strat||St.apStrat||'balanced';}
+
+// Calculate what would be assigned for current option
+function buildAPData(){
+  const opt=currentScheduleOption();
+  const strat=getCurrentOptionStrategy();
+  const toFill=gapsForScheduleOption(opt);
+  St.apChoices={};
+  if(!opt.enabled)return;
+  toFill.forEach(slot=>{
+    const key=slot.rid+'_'+slot.dk;
+    const cands=STAFF.filter(s=>!isAbsent(s.id))
+      .map(s=>({...scoreStaff(s.id,slot.rid,slot.dk,strat),s}))
+      .sort((a,b)=>b.score-a.score);
+    if(cands.length)St.apChoices[key]=cands[0].s.id;
+  });
+}
+
+// Full-week grid preview showing ENTIRE schedule (existing + new highlighted)
+function renderFullWeekPreview(){
+  const el=document.getElementById('ap-full-preview');
+  let h=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:8px">Full schedule preview <span style="font-weight:400;color:var(--mut);text-transform:none;letter-spacing:0">— new assignments highlighted in yellow</span></div>
+  <div style="overflow-x:auto;border:1px solid var(--bdr);border-radius:var(--r2);">
+  <table style="border-collapse:collapse;min-width:100%;font-size:11px;">
+    <thead><tr>
+      <th style="background:var(--s2);border:1px solid var(--bdr);padding:6px 10px;text-align:left;font-weight:600;font-size:10px;white-space:nowrap;position:sticky;left:0;z-index:5">Room</th>`;
+  DAYS.forEach(d=>h+=`<th style="background:var(--s2);border:1px solid var(--bdr);padding:5px 6px;text-align:center;font-weight:600;font-size:10px;min-width:88px">${d.n}<br><span style="font-weight:400;color:var(--mut)">${d.dt}</span></th>`);
+  h+=`</tr></thead><tbody>`;
+
+  ROOMS.forEach(room=>{
+    h+=`<tr><td style="border:1px solid var(--bdr);padding:6px 10px;font-weight:600;font-size:11px;background:var(--s2);white-space:nowrap;position:sticky;left:0;z-index:2">${roomEmoji(room.type)} ${room.name}</td>`;
+    DAYS.forEach(day=>{
+      const key=room.id+'_'+day.k;
+      const existing=((SCH[room.id]||{})[day.k]||[]);
+      const newSid=St.apChoices[key];
+      const hasNew=!!newSid&&!existing.some(e=>e.sid===newSid);
+      h+=`<td style="border:1px solid var(--bdr);padding:4px;vertical-align:top;${hasNew?'background:#fffde6;':''}min-width:88px">`;
+      existing.forEach(e=>{
+        const s=STAFF.find(x=>x.id===e.sid);if(!s)return;
+        const act=CFG.actTypes.find(a=>a.id===e.t)||CFG.actTypes[0];
+        h+=`<div style="background:${act.bg};color:${act.color};border-left:2px solid ${act.color};border-radius:2px;padding:2px 4px;margin:1px 0;font-size:10px;font-weight:500;white-space:nowrap">${s.name}</div>`;
+      });
+      if(hasNew){
+        const ns=STAFF.find(x=>x.id===newSid);
+        const act=CFG.actTypes.find(a=>a.id===entryType(room.id))||CFG.actTypes[0];
+        h+=`<div style="background:${act.bg};color:${act.color};border:1.5px dashed ${act.color};border-radius:2px;padding:2px 4px;margin:1px 0;font-size:10px;font-weight:700;white-space:nowrap">＋ ${ns?.name||''}</div>`;
+      }
+      if(!existing.length&&!hasNew){
+        const req=required(room.id,day.k);
+        h+=`<div style="font-size:9px;color:${req>0?'var(--red)':'var(--mut)'}">—</div>`;
+      }
+      h+=`</td>`;
+    });
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table></div>
+  <div style="font-size:10px;color:var(--mut);margin-top:5px">🟡 Yellow cell + dashed border = new assignment · — = no shift scheduled</div>`;
+  el.innerHTML=h;
+  updateAPSum();
+}
+
+function renderAPSlots(){
+  const opt=currentScheduleOption();
+  const toFill=gapsForScheduleOption(opt);
+  if(!opt.enabled){
+    document.getElementById('ap-body').innerHTML=`<div style="text-align:center;padding:20px;color:var(--mid);font-size:12px;background:var(--bg);border-radius:var(--r2);border:1px solid var(--bdr);font-weight:500">${opt.label} is visible for future use. Select a Live option to generate assignments today.</div>`;
+    updateAPSum();
+    return;
+  }
+  if(!toFill.length){
+    document.getElementById('ap-body').innerHTML=`<div style="text-align:center;padding:20px;color:var(--mid);font-size:12px;background:var(--gn-bg);border-radius:var(--r2);border:1px solid var(--gn-b);color:var(--grn);font-weight:500">✓ No matching gaps for this option</div>`;
+    updateAPSum();
+    return;
+  }
+  const strat=getCurrentOptionStrategy();
+  let h=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:10px">Review & adjust assignments</div>`;
+  toFill.forEach(slot=>{
+    const key=slot.rid+'_'+slot.dk;
+    const cands=STAFF.filter(s=>!isAbsent(s.id))
+      .map(s=>({...scoreStaff(s.id,slot.rid,slot.dk,strat),s}))
+      .sort((a,b)=>b.score-a.score).slice(0,3);
+    h+=`<div class="ap-slot">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        ${slot.critical?'<span style="font-size:10px;font-weight:700;color:var(--red);background:var(--rd-bg);padding:2px 7px;border-radius:3px">⚠ Critical</span>':''}
+        <span style="font-size:13px;font-weight:600">${roomEmoji(slot.type)} ${slot.room}</span>
+        <span style="font-size:11px;color:var(--mid)">— ${slot.day} ${slot.dt}</span>
+      </div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:8px">Need <strong>${slot.needed}</strong> more ${slot.needed===1?'person':'people'}</div>`;
+    if(!cands.length){h+=`<div style="font-size:12px;color:var(--red)">No available staff.</div>`;}
+    else cands.forEach(c=>{
+      const g=c.score>=80?'sc-a':c.score>=50?'sc-b':'sc-c';
+      const gl=c.score>=80?'Best fit':c.score>=50?'Acceptable':'Less ideal';
+      const sup=c.s.supervisorId?STAFF.find(x=>x.id===c.s.supervisorId):null;
+      h+=`<div class="ap-opt${St.apChoices[key]===c.s.id?' sel':''}" onclick="selAP('${key}','${c.s.id}',this)">
+        <div class="ap-radio"></div>
+        <div class="ap-opt-top">
+          <div style="font-size:13px;font-weight:600">${c.s.name} <span style="font-size:10px;color:var(--mid);font-weight:400">${c.s.role}${sup?' · '+sup.name:''}</span></div>
+          <span class="ap-score ${g}">${gl}</span>
+        </div>
+        <div style="font-size:11px;color:var(--mid);line-height:1.5">${c.reasons.join(' · ')}</div>
+      </div>`;
+    });
+    h+=`<span style="font-size:11px;color:var(--mut);cursor:pointer;padding:2px 8px;border:1px dashed var(--bdr);border-radius:var(--r);display:inline-block;margin-top:4px" onclick="delete St.apChoices['${key}'];this.closest('.ap-slot').querySelectorAll('.ap-opt').forEach(o=>o.classList.remove('sel'));renderFullWeekPreview();updateAPSum()">Skip this gap</span></div>`;
+  });
+  document.getElementById('ap-body').innerHTML=h;
+}
+
+function selAP(key,sid,el){
+  St.apChoices[key]=sid;
+  el.closest('.ap-slot').querySelectorAll('.ap-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  renderFullWeekPreview();
+  updateAPSum();
+}
+function applyPlan(){
+  const opt=currentScheduleOption();
+  if(!opt.enabled){alert(`${opt.label} is visible for future use and cannot be applied yet.`);return;}
+  let n=0;Object.entries(St.apChoices).forEach(([key,sid])=>{if(!sid)return;const[rid,dk]=key.split('_');if(!SCH[rid])SCH[rid]={};if(!SCH[rid][dk])SCH[rid][dk]=[];const h=getStaffRoomHours(sid,rid);SCH[rid][dk].push({sid,from:h.from,to:h.to,t:entryType(rid)});n++;});
+  closeOv('ap-ov');renderAll();
+}
+
+/* PDF */
+function openPdf(){
+  const dept=CFG.deptName,wk=document.getElementById('wklbl').textContent;
+  let h=`<h1>${dept}</h1><div class="pdf-meta">Weekly Schedule · ${wk} · ${new Date().toLocaleDateString('en-GB')}</div>`;
+  h+=`<table class="pdf-t"><thead><tr><th class="pdf-rh">Day</th>`;
+  ROOMS.forEach(r=>h+=`<th>${roomEmoji(r.type)}<br>${r.name}<br><span style="font-weight:400;color:#888;font-size:5.5pt">${r.hrsFrom}–${r.hrsTo}</span></th>`);
+  h+=`</tr></thead><tbody>`;
+  DAYS.forEach(day=>{h+=`<tr><td class="pdf-rh">${day.n}<br><span style="font-weight:400;color:#555">${day.dt}</span></td>`;
+    ROOMS.forEach(room=>{h+=`<td>`;
+      ((SCH[room.id]||{})[day.k]||[]).forEach(e=>{const s=STAFF.find(x=>x.id===e.sid);if(!s)return;const act=CFG.actTypes.find(a=>a.id===e.t)||CFG.actTypes[0];const parts=s.name.split(' ');const name=parts.length>1?parts[0]+'<br>'+parts.slice(1).join(' '):s.name;h+=`<div class="pdf-pill" style="background:${act.bg};color:${act.color};border-left:2pt solid ${act.color}">${name}<br>${e.from}–${e.to}${e.regular?' ↻':''}${e.comment?`<br><em>${e.comment}</em>`:''}</div>`;});
+      if(!((SCH[room.id]||{})[day.k]||[]).length)h+=`<span style="color:#ccc;font-size:5pt">—</span>`;h+=`</td>`;
+    });h+=`</tr>`;
+  });
+  h+=`</tbody></table><div class="pdf-legend">${CFG.actTypes.map(a=>`<div class="pdf-leg"><div class="pdf-leg-sw" style="background:${a.bg};border-left:2pt solid ${a.color}"></div>${a.label}</div>`).join('')}<span style="margin-left:auto">↻ regular · ◈ non-standard</span></div>`;
+  document.getElementById('pdf-content').innerHTML=h;openOv('pdf-ov');
+}
+
+/* DnD */
+function onDS(e,rid,dk,idx){St.dragSrc={rid,dk,idx};e.dataTransfer.effectAllowed='move';}
+function onDrop(e,toRid,toDk){
+  e.preventDefault();e.currentTarget.classList.remove('dov');if(!St.dragSrc)return;
+  const{rid:fr,dk:fd,idx}=St.dragSrc;if(fr===toRid&&fd===toDk){St.dragSrc=null;return;}
+  const entry=SCH[fr][fd].splice(idx,1)[0];
+  if(!SCH[toRid])SCH[toRid]={};if(!SCH[toRid][toDk])SCH[toRid][toDk]=[];
+  SCH[toRid][toDk].push(entry);St.dragSrc=null;renderAll();
+}
+function delEntry(rid,dk,sid,from){if(!SCH[rid]?.[dk])return;SCH[rid][dk]=SCH[rid][dk].filter(e=>!(e.sid===sid&&e.from===from));renderAll();if(St.setupStaff===sid)renderStaffDetail(sid);}
+
+/* Sync */
+function syncUI(){
+  const gaps=getGaps(),confs=getConflicts();
+  const total=gaps.length+confs.length;
+  const badge=document.getElementById('gc-tab-badge');
+  if(badge){
+    badge.style.display=total>0?'':'none';
+    badge.className='hbadge '+(gaps.some(g=>g.critical)||confs.length?'':'warn');
+    badge.textContent=total;
+  }
+  updateBanner();
+}
+
+function openGapsConflicts(){
+  const confs=getConflicts(),gaps=getGaps();
+  let h='';
+
+  if(confs.length){
+    h+=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red);margin-bottom:10px">Conflicts (${confs.length})</div>`;
+    h+=confs.map((c,i)=>`<div class="cp-item">
+      <h4>⚠ ${c.title}</h4>
+      <div class="cp-what">${c.what}</div>
+      <div class="cp-why">${c.why}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+        <button class="cp-btn cp-r" onclick="resolveConf(${i},'remove')">✕ Remove shift</button>
+        <button class="cp-btn cp-ns" onclick="resolveConf(${i},'ns')">◈ Mark non-standard</button>
+      </div>
+    </div>`).join('');
+  }
+
+  if(gaps.length){
+    const critGaps=gaps.filter(g=>g.critical);
+    const otherGaps=gaps.filter(g=>!g.critical);
+    if(critGaps.length){
+      h+=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red);margin:${confs.length?'16px':0} 0 10px">Critical gaps (${critGaps.length})</div>`;
+      h+=critGaps.map(g=>`<div style="border:1px solid var(--rd-b);border-radius:var(--r2);padding:12px;margin-bottom:6px;background:var(--rd-bg);display:flex;align-items:center;gap:12px">
+        <div style="flex:1"><div style="font-weight:700;font-size:12px;color:var(--red)">${roomEmoji(g.type)} ${g.room} — ${g.day}</div>
+        <div style="font-size:11px;color:var(--mid);margin-top:2px">${g.type} · needs ${g.needed} more ${g.needed===1?'person':'people'}</div></div>
+        <button class="cp-btn cp-r" onclick="closeOv('cp-ov');openAdd('${g.rid}','${g.dk}')">Fill →</button>
+      </div>`).join('');
+    }
+    if(otherGaps.length){
+      h+=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--amb);margin:${critGaps.length||confs.length?'16px':0} 0 10px">Other gaps (${otherGaps.length})</div>`;
+      h+=otherGaps.map(g=>`<div style="border:1px solid var(--am-b);border-radius:var(--r2);padding:12px;margin-bottom:6px;background:var(--am-bg);display:flex;align-items:center;gap:12px">
+        <div style="flex:1"><div style="font-weight:600;font-size:12px;color:var(--amb)">${roomEmoji(g.type)} ${g.room} — ${g.day}</div>
+        <div style="font-size:11px;color:var(--mid);margin-top:2px">${g.type} · needs ${g.needed} more</div></div>
+        <button class="cp-btn" style="border-color:var(--am-b);color:var(--amb)" onclick="closeOv('cp-ov');openAdd('${g.rid}','${g.dk}')">Fill →</button>
+      </div>`).join('');
+    }
+  }
+
+  if(!h) h=`<div class="empty"><div class="empty-ic">✓</div><p>No gaps or conflicts this week</p></div>`;
+  document.getElementById('cp-list').innerHTML=h;
+  document.getElementById('cp-ov')._confs=confs;
+  openOv('cp-ov');
+}
+
+function openAlerts(){openGapsConflicts();}
+
+/* Tooltip */
+function showTip(e,txt){const t=document.getElementById('tip');t.innerHTML=txt.replace(/\\n/g,'<br>');t.style.left=Math.min(e.clientX+14,window.innerWidth-300)+'px';t.style.top=Math.max(e.clientY-42,8)+'px';t.classList.add('show');}
+function hideTip(){document.getElementById('tip').classList.remove('show');}
+
+/* Modals */
+function openOv(id){document.getElementById(id).classList.add('open');}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+['add-ov','cp-ov','ap-ov','pdf-ov','ns-ov','abs-ov'].forEach(id=>document.getElementById(id)?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeOv(id);}));
+
+/* Week nav */
+function chWeek(d){
+  St.weekOffset+=d;const base=new Date(2025,11,1);base.setDate(base.getDate()+St.weekOffset*7);
+  const end=new Date(base);end.setDate(end.getDate()+6);
+  const f=x=>x.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+  document.getElementById('wklbl').textContent=`${f(base)}–${f(end)}, ${end.getFullYear()}`;
+}
+
+/* Utils */
+function mkEl(tag,cls){const e=document.createElement(tag);if(cls)e.className=cls;return e;}
+function escQ(s){return(s||'').replace(/\\/g,'\\\\').replace(/'/g,'`').replace(/"/g,'`').replace(/\n/g,' ');}
+
+window.onload=()=>{
+  loadPlatformState();St.wizStep=1;initWizard();
+  if(CFG.onboarded){
+    document.getElementById('wizard').style.display='none';
+    document.getElementById('app').classList.add('visible');
+    document.getElementById('app-dept').textContent=CFG.deptName;
+    initApp();
+  }
+};
+</script>
+</body>
+</html>
