@@ -1,0 +1,37 @@
+{
+  "$schema": "./missions.schema.json",
+  "version": "2.1.0",
+  "missions": [
+    {
+      "mission_id": "M-000", "track": "legacy_integrity", "priority": 1,
+      "title": "Recover legacy referential integrity", "blocks_production": true,
+      "problem": "The retained corpus contains 6,990 dangling rows across 2,035 IDs.",
+      "done_when": "The recovery gate is independently verified against the frozen evidence snapshot."
+    },
+    {
+      "mission_id": "M-100", "track": "parsing_capability", "priority": 1,
+      "title": "Build the isolated run-centered parsing foundation", "blocks_production": true,
+      "problem": "The previous schema could not represent field-level evidence, run outcomes, or multi-artifact fetches.",
+      "done_when": "Schema, queue, artifact store, field observations and terminal-state tests pass in an isolated database."
+    },
+    {
+      "mission_id": "M-110", "track": "parsing_capability", "priority": 2,
+      "title": "Freeze a measurable source universe", "blocks_production": true,
+      "problem": "Comprehensive coverage cannot be stated without a versioned eligible route denominator.",
+      "done_when": "Every pilot source and route has eligibility, policy review, expected-record basis and a frozen universe version."
+    },
+    {
+      "mission_id": "M-120", "track": "parsing_capability", "priority": 3,
+      "title": "Prove five parsing archetypes", "blocks_production": true,
+      "problem": "A single static HTML route does not validate a comprehensive parsing instrument.",
+      "done_when": "Download, structured, paginated, PDF and client-rendered routes each pass fixtures, reconciliation and replay."
+    },
+    {
+      "mission_id": "M-900", "track": "cross_track", "priority": 1,
+      "title": "Open production materialization", "blocks_production": true,
+      "problem": "Legacy integrity and parsing capability must converge without contaminating each other.",
+      "done_when": "M-000, M-100, M-110 and M-120 are complete and a production merge rehearsal passes all invariants."
+    }
+  ]
+}
+

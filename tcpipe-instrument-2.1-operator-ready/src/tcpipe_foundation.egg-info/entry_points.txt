@@ -1,0 +1,2 @@
+[console_scripts]
+tcpipe = tcpipe.operator_cli:main

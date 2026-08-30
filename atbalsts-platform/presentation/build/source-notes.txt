@@ -1,0 +1,25 @@
+External claims used in the Atbalsts government briefing
+
+1. Latvian Crisis Management Centre
+   https://www.mk.gov.lv/lv/krizes-vadibas-centrs
+   Used for: the Centre coordinates institutions and crisis communication; its SITCEN direction includes 24/7 monitoring and information aggregation.
+
+2. Civil Protection and Disaster Management Law
+   https://likumi.lv/ta/id/282333-civilas-aizsardzibas-un-katastrofas-parvaldisanas-likums
+   Used for: society is part of civil protection; VUGD and municipalities have defined powers to involve natural persons, legal persons and resources; the software does not create legal authority.
+
+3. EU Artificial Intelligence Act, Regulation (EU) 2024/1689
+   https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A32024R1689
+   Used for: AI used to evaluate/classify emergency calls or dispatch/prioritise emergency first response is identified as high-risk.
+
+4. Latvian Data State Inspectorate — NIDA
+   https://www.dvi.gov.lv/lv/jaunums/dviskaidro-NIDA
+   Used for: a data-protection impact assessment identifies and mitigates risks to people’s rights and freedoms.
+
+Internal sources
+
+- ../docs/ARCHITECTURE.md
+- ../docs/UX-SPEC.md
+- ../prototype/index.html
+
+No external visual assets are used. All quantities shown in exercise interfaces are clearly labelled as illustrative exercise data or proposed pilot parameters.

@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gpsolution.app/tcpipe/adapter-rules.schema.json",
+  "title": "Adapter rules document v2.1",
+  "type": "object",
+  "required": [
+    "adapter_id",
+    "version",
+    "output_contract_version",
+    "applies_to",
+    "list",
+    "fields",
+    "fixtures"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "adapter_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+__[a-z0-9_]+$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "output_contract_version": {
+      "const": "2.1"
+    },
+    "applies_to": {
+      "type": "object",
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "template_fingerprint"
+          ]
+        },
+        {
+          "required": [
+            "url_pattern"
+          ]
+        }
+      ],
+      "properties": {
+        "template_fingerprint": {
+          "type": "string",
+          "minLength": 8
+        },
+        "url_pattern": {
+          "type": "string",
+          "format": "regex"
+        }
+      }
+    },
+    "list": {
+      "type": "object",
+      "required": [
+        "container",
+        "row",
+        "empty_is_valid",
+        "structural_count"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "container": {
+          "$ref": "#/$defs/selector"
+        },
+        "row": {
+          "$ref": "#/$defs/selector"
+        },
+        "min_expected_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "empty_is_valid": {
+          "type": "boolean"
+        },
+        "published_count": {
+          "$ref": "#/$defs/selector"
+        },
+        "structural_count": {
+          "$ref": "#/$defs/selector"
+        }
+      }
+    },
+    "fields": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "enum": [
+          "published_name",
+          "published_address",
+          "published_country",
+          "published_phone",
+          "published_website",
+          "published_apply_url",
+          "official_relationship_wording",
+          "certificate_name",
+          "price_text",
+          "provider_id",
+          "published_locality",
+          "package_name",
+          "package_contents",
+          "delivery_mode_text"
+        ]
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/field"
+      }
+    },
+    "pagination": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "none",
+            "url_template",
+            "next_link",
+            "xhr_replay",
+            "click_action"
+          ]
+        },
+        "url_template": {
+          "type": "string"
+        },
+        "next_selector": {
+          "$ref": "#/$defs/selector"
+        },
+        "max_pages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "url_template"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "url_template",
+              "max_pages"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "next_link",
+                  "click_action"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "next_selector",
+              "max_pages"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "xhr_replay"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "max_pages"
+            ]
+          }
+        }
+      ]
+    },
+    "rejects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "when",
+          "parse_state"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "when": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parse_state": {
+            "enum": [
+              "rejected_not_centre",
+              "quarantined_schema_drift",
+              "blocked_source"
+            ]
+          }
+        }
+      }
+    },
+    "fixtures": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    }
+  },
+  "$defs": {
+    "strategy": {
+      "type": "object",
+      "required": [
+        "strategy",
+        "value"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "strategy": {
+          "enum": [
+            "css",
+            "css_text",
+            "css_attr",
+            "xpath",
+            "regex_on_text",
+            "json_pointer",
+            "pdf_line_regex",
+            "role_text"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "selector": {
+      "type": "object",
+      "required": [
+        "primary",
+        "fallback_policy"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "primary": {
+          "$ref": "#/$defs/strategy"
+        },
+        "fallback_policy": {
+          "enum": [
+            "required",
+            "none_with_reason"
+          ]
+        },
+        "fallback_1": {
+          "$ref": "#/$defs/strategy"
+        },
+        "fallback_2": {
+          "$ref": "#/$defs/strategy"
+        },
+        "fallback_reason": {
+          "type": "string",
+          "minLength": 10
+        },
+        "count_mode": {
+          "enum": [
+            "nodes",
+            "value"
+          ],
+          "description": "For structural_count/published_count only: 'nodes' counts matches, 'value' reads the number out of the matched text."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "fallback_policy": {
+                "const": "required"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "fallback_1",
+              "fallback_2"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "fallback_policy": {
+                "const": "none_with_reason"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "fallback_reason"
+            ]
+          }
+        }
+      ]
+    },
+    "field": {
+      "type": "object",
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "selector": {
+          "$ref": "#/$defs/selector"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "normalize": {
+          "enum": [
+            "none",
+            "trim",
+            "phone_e164_or_verbatim",
+            "url_absolute",
+            "country_iso2",
+            "currency_amount"
+          ]
+        },
+        "scope": {
+          "enum": [
+            "row",
+            "page"
+          ],
+          "default": "row"
+        },
+        "cardinality": {
+          "enum": [
+            "one",
+            "many"
+          ],
+          "default": "one"
+        }
+      }
+    }
+  }
+}

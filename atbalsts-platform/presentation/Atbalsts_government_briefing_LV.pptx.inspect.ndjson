@@ -1,0 +1,196 @@
+{"kind":"deck","id":"pr/p46ixu","name":"Deck"}
+{"kind":"layout","layoutId":"b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"253fce28-729f-4f22-be33-7293570d0fb6","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/dabcwx","slide":1,"title":"ATBALSTS","textShapes":6}
+{"kind":"shape","id":"sh/vidkri1k","slide":1,"bbox":[48,35,24,24]}
+{"kind":"shape","id":"sh/wjml0n2p","slide":1,"bbox":[54,45,12,4]}
+{"kind":"shape","id":"sh/xkv2tsja","slide":1,"bbox":[58,41,4,12]}
+{"kind":"textbox","id":"sh/mtkjudkn","slide":1,"text":"ATBALSTS","textPreview":"ATBALSTS","textChars":8,"textLines":1,"bbox":[82,35,150,28]}
+{"kind":"textbox","id":"sh/nutkni18","slide":1,"text":"PRIEKŠLIKUMS KONTROLĒTAM RĪGAS MĀCĪBU PILOTPROJEKTAM","textPreview":"PRIEKŠLIKUMS KONTROLĒTAM RĪGAS MĀCĪBU PILOTPROJEKTAM","textChars":52,"textLines":1,"bbox":[48,92,780,28]}
+{"kind":"textbox","id":"sh/8v2lwn2t","slide":1,"text":"Iedzīvotāju kapacitāte,\nko var droši koordinēt","textPreview":"Iedzīvotāju kapacitāte, | ko var droši koordinēt","textChars":46,"textLines":2,"bbox":[48,190,1010,230]}
+{"kind":"textbox","id":"sh/9gb2p8je","slide":1,"text":"Atbalsts papildina esošo krīžu vadības struktūru ar izsekojamu, piekrišanā balstītu kopienas koordinācijas slāni.","textPreview":"Atbalsts papildina esošo krīžu vadības struktūru ar izsekojamu, piekrišanā balstītu kopienas koordinācijas slāni.","textChars":113,"textLines":1,"bbox":[48,484,820,92]}
+{"kind":"shape","id":"sh/ep0jqtkr","slide":1,"bbox":[48,642,1184,0]}
+{"kind":"textbox","id":"sh/zqtkjy1c","slide":1,"text":"Koncepcija apspriešanai · 2026","textPreview":"Koncepcija apspriešanai · 2026","textChars":30,"textLines":1,"bbox":[48,658,420,24]}
+{"kind":"textbox","id":"sh/j2x8r2ho","slide":1,"text":"LATVIJA","textPreview":"LATVIJA","textChars":7,"textLines":1,"bbox":[1120,658,112,24]}
+{"kind":"notes","id":"nt/dabcwx","slide":1,"text":"Atklājiet ar konkrētu pozicionējumu: šis nav jauns dispečerdienests, bet kontrolēts koordinācijas slānis.\n\n[Sources]\n- Atbalsts architecture concept v0.1, 28 Aug 2026 (internal)\n[/Sources]"}
+{"kind":"slide","id":"sl/7aq48m","slide":2,"title":"INSTITUCIONĀLAIS NOVIETOJUMS","textShapes":12}
+{"kind":"textbox","id":"sh/gre90fid","slide":2,"text":"INSTITUCIONĀLAIS NOVIETOJUMS","textPreview":"INSTITUCIONĀLAIS NOVIETOJUMS","textChars":28,"textLines":1,"bbox":[48,42,310,22]}
+{"kind":"textbox","id":"sh/fql87a1s","slide":2,"text":"Atbalsts papildina esošo komandstruktūru — tas to neaizvieto","textPreview":"Atbalsts papildina esošo komandstruktūru — tas to neaizvieto","textChars":60,"textLines":1,"bbox":[48,82,1160,112]}
+{"kind":"shape","id":"sh/upcryp0n","slide":2,"bbox":[48,672,1184,0]}
+{"kind":"textbox","id":"sh/to3q5kj2","slide":2,"text":"KONCEPCIJA APSPRIEŠANAI","textPreview":"KONCEPCIJA APSPRIEŠANAI","textChars":23,"textLines":1,"bbox":[48,680,360,20]}
+{"kind":"textbox","id":"sh/snu9wfih","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1178,680,54,20]}
+{"kind":"shape","id":"sh/7ml83a1w","slide":2,"bbox":[640,222,0,0]}
+{"kind":"shape","id":"sh/6lcru50b","slide":2,"bbox":[639,222,1,350]}
+{"kind":"textbox","id":"sh/5k3q10jq","slide":2,"text":"Esošais pamats","textPreview":"Esošais pamats","textChars":14,"textLines":1,"bbox":[48,224,520,42]}
+{"kind":"textbox","id":"sh/kja9svi5","slide":2,"text":"Krīzes vadības centrs","textPreview":"Krīzes vadības centrs","textChars":21,"textLines":1,"bbox":[48,300,520,30]}
+{"kind":"textbox","id":"sh/yh4vipo7","slide":2,"text":"Starpinstitucionāla koordinācija, krīzes komunikācija un situācijas monitorings.","textPreview":"Starpinstitucionāla koordinācija, krīzes komunikācija un situācijas monitorings.","textChars":80,"textLines":1,"bbox":[48,338,520,70]}
+{"kind":"textbox","id":"sh/jidwrups","slide":2,"text":"VUGD un pašvaldības","textPreview":"VUGD un pašvaldības","textChars":19,"textLines":1,"bbox":[48,438,520,30]}
+{"kind":"textbox","id":"sh/kjmdkz6d","slide":2,"text":"Likumā noteikta glābšanas darbu vadība un tiesības iesaistīt personas un resursus definētā kārtībā.","textPreview":"Likumā noteikta glābšanas darbu vadība un tiesības iesaistīt personas un resursus definētā kārtībā.","textChars":99,"textLines":1,"bbox":[48,476,520,82]}
+{"kind":"textbox","id":"sh/lkvet47y","slide":2,"text":"Atbalsts risināmais uzdevums","textPreview":"Atbalsts risināmais uzdevums","textChars":28,"textLines":1,"bbox":[688,224,520,42]}
+{"kind":"textbox","id":"sh/atkvepob","slide":2,"text":"Padarīt kopienas kapacitāti atrodamu un iesaistāmu, neatklājot publisku cilvēku vai resursu sarakstu.","textPreview":"Padarīt kopienas kapacitāti atrodamu un iesaistāmu, neatklājot publisku cilvēku vai resursu sarakstu.","textChars":101,"textLines":1,"bbox":[688,304,500,150]}
+{"kind":"textbox","id":"sh/butwnupg","slide":2,"text":"Programmatūra palīdz īstenot pilnvaras; tā pati pilnvaras nerada.","textPreview":"Programmatūra palīdz īstenot pilnvaras; tā pati pilnvaras nerada.","textChars":65,"textLines":1,"bbox":[688,500,500,62]}
+{"kind":"notes","id":"nt/7aq48m","slide":2,"text":"Uzsveriet papildinošo lomu un nepieciešamību kopīgi definēt institucionālo īpašnieku katram uzdevuma veidam.\n\n[Sources]\n- https://www.mk.gov.lv/lv/krizes-vadibas-centrs\n- https://likumi.lv/ta/id/282333-civilas-aizsardzibas-un-katastrofas-parvaldisanas-likums\n[/Sources]"}
+{"kind":"slide","id":"sl/2tzo3i","slide":3,"title":"MINIMĀLS UX","textShapes":21}
+{"kind":"textbox","id":"sh/hsryh0bm","slide":3,"text":"MINIMĀLS UX","textPreview":"MINIMĀLS UX","textChars":11,"textLines":1,"bbox":[48,42,310,22]}
+{"kind":"textbox","id":"sh/up0fm5cb","slide":3,"text":"Iedzīvotāja princips: pasaki, pārbaudi, piekrīti","textPreview":"Iedzīvotāja princips: pasaki, pārbaudi, piekrīti","textChars":48,"textLines":1,"bbox":[48,82,1160,112]}
+{"kind":"shape","id":"sh/fq9gfqtg","slide":3,"bbox":[48,672,1184,0]}
+{"kind":"textbox","id":"sh/4v2xsfud","slide":3,"text":"KONCEPCIJA APSPRIEŠANAI","textPreview":"KONCEPCIJA APSPRIEŠANAI","textChars":23,"textLines":1,"bbox":[48,680,360,20]}
+{"kind":"textbox","id":"sh/pwbylkby","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1178,680,54,20]}
+{"kind":"textbox","id":"sh/2t0fq5c7","slide":3,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[48,238,54,36]}
+{"kind":"textbox","id":"sh/3u9gjats","slide":3,"text":"Pasaki","textPreview":"Pasaki","textChars":6,"textLines":1,"bbox":[118,238,400,36]}
+{"kind":"textbox","id":"sh/kzyxgbut","slide":3,"text":"Latviski vai angliski, rakstot vai nospiežot un runājot.","textPreview":"Latviski vai angliski, rakstot vai nospiežot un runājot.","textChars":56,"textLines":1,"bbox":[118,280,400,66]}
+{"kind":"textbox","id":"sh/l07e9gbe","slide":3,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[48,368,54,36]}
+{"kind":"textbox","id":"sh/hkvilwj6","slide":3,"text":"Pārbaudi","textPreview":"Pārbaudi","textChars":8,"textLines":1,"bbox":[118,368,400,36]}
+{"kind":"textbox","id":"sh/wjmhsril","slide":3,"text":"Sistēma parāda nozīmi, redzamību, nākamo darbību un termiņu.","textPreview":"Sistēma parāda nozīmi, redzamību, nākamo darbību un termiņu.","textChars":60,"textLines":1,"bbox":[118,410,400,66]}
+{"kind":"textbox","id":"sh/vit0jm10","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[48,498,54,36]}
+{"kind":"textbox","id":"sh/uhkzqh0f","slide":3,"text":"Piekrīti","textPreview":"Piekrīti","textChars":8,"textLines":1,"bbox":[118,498,400,36]}
+{"kind":"textbox","id":"sh/5ovipwj2","slide":3,"text":"Nekas netiek piedāvāts vai atklāts cilvēka vārdā bez apstiprinājuma.","textPreview":"Nekas netiek piedāvāts vai atklāts cilvēka vārdā bez apstiprinājuma.","textChars":68,"textLines":1,"bbox":[118,540,400,66]}
+{"kind":"shape","id":"sh/4nmhwbih","slide":3,"bbox":[570,226,638,356]}
+{"kind":"textbox","id":"sh/jmd0n61w","slide":3,"text":"“Man ir busiņš, un brīvdienās varu palīdzēt pārvadāt mantas Rīgā.”","textPreview":"“Man ir busiņš, un brīvdienās varu palīdzēt pārvadāt mantas Rīgā.”","textChars":66,"textLines":1,"bbox":[602,254,570,76]}
+{"kind":"shape","id":"sh/il4zu10r","slide":3,"bbox":[602,346,570,0]}
+{"kind":"textbox","id":"sh/tcfitgje","slide":3,"text":"KO SISTĒMA SAPRATA","textPreview":"KO SISTĒMA SAPRATA","textChars":18,"textLines":1,"bbox":[602,366,260,20]}
+{"kind":"textbox","id":"sh/sb6h0bit","slide":3,"text":"Spēja","textPreview":"Spēja","textChars":5,"textLines":1,"bbox":[602,406,110,24]}
+{"kind":"textbox","id":"sh/cve1wfqp","slide":3,"text":"Mantu pārvadāšana ar busiņu","textPreview":"Mantu pārvadāšana ar busiņu","textChars":27,"textLines":1,"bbox":[730,406,430,24]}
+{"kind":"textbox","id":"sh/dwn2pkra","slide":3,"text":"Robeža","textPreview":"Robeža","textChars":6,"textLines":1,"bbox":[602,452,110,24]}
+{"kind":"textbox","id":"sh/qtcjup8z","slide":3,"text":"Nav pasažieru vai bīstamu darbu","textPreview":"Nav pasažieru vai bīstamu darbu","textChars":31,"textLines":1,"bbox":[730,452,430,24]}
+{"kind":"textbox","id":"sh/bu5kna9k","slide":3,"text":"Redzamība","textPreview":"Redzamība","textChars":9,"textLines":1,"bbox":[602,498,110,24]}
+{"kind":"textbox","id":"sh/0je10zq1","slide":3,"text":"Kopiena redz tikai, ka kapacitāte pastāv","textPreview":"Kopiena redz tikai, ka kapacitāte pastāv","textChars":40,"textLines":1,"bbox":[730,498,430,50]}
+{"kind":"notes","id":"nt/2tzo3i","slide":3,"text":"Demonstrējiet vienu sarunas piemēru. Galvenais ir redzamā kontrole pirms jebkādas darbības.\n\n[Sources]\n- Atbalsts conversational UX specification v0.1 (internal)\n- Atbalsts interactive prototype (internal)\n[/Sources]"}
+{"kind":"slide","id":"sl/6ay1h4","slide":4,"title":"AUTORITĀTES UX","textShapes":16}
+{"kind":"textbox","id":"sh/fq14r2lw","slide":4,"text":"AUTORITĀTES UX","textPreview":"AUTORITĀTES UX","textChars":14,"textLines":1,"bbox":[48,42,310,22]}
+{"kind":"textbox","id":"sh/grul072h","slide":4,"text":"Koordinators vaicā pēc kapacitātes — nevis pārlūko cilvēku sarakstu","textPreview":"Koordinators vaicā pēc kapacitātes — nevis pārlūko cilvēku sarakstu","textChars":67,"textLines":1,"bbox":[48,82,1160,112]}
+{"kind":"shape","id":"sh/1s3mtc32","slide":4,"bbox":[48,672,1184,0]}
+{"kind":"textbox","id":"sh/2tc32hkn","slide":4,"text":"KONCEPCIJA APSPRIEŠANAI","textPreview":"KONCEPCIJA APSPRIEŠANAI","textChars":23,"textLines":1,"bbox":[48,680,360,20]}
+{"kind":"textbox","id":"sh/3ul4vml8","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1178,680,54,20]}
+{"kind":"textbox","id":"sh/ovul4r2t","slide":4,"text":"VAICĀJUMS","textPreview":"VAICĀJUMS","textChars":9,"textLines":1,"bbox":[48,226,200,20]}
+{"kind":"shape","id":"sh/pw3mxc3e","slide":4,"bbox":[48,258,1184,96]}
+{"kind":"textbox","id":"sh/qxcn6hkj","slide":4,"text":"“Parādi transporta kapacitāti ūdens piegādei Āgenskalnā šodien no 16.00 līdz 18.00.”","textPreview":"“Parādi transporta kapacitāti ūdens piegādei Āgenskalnā šodien no 16.00 līdz 18.00.”","textChars":84,"textLines":1,"bbox":[74,279,1124,54]}
+{"kind":"textbox","id":"sh/byl4zml4","slide":4,"text":"STRUKTURĒTA ATBILDE · ILUSTRATĪVI MĀCĪBU DATI","textPreview":"STRUKTURĒTA ATBILDE · ILUSTRATĪVI MĀCĪBU DATI","textChars":45,"textLines":1,"bbox":[48,396,520,20]}
+{"kind":"textbox","id":"sh/z6tkf2xg","slide":4,"text":"Transporta kapacitāte ir pieejama","textPreview":"Transporta kapacitāte ir pieejama","textChars":33,"textLines":1,"bbox":[48,430,700,48]}
+{"kind":"textbox","id":"sh/y5kjmxgv","slide":4,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[48,510,90,58]}
+{"kind":"textbox","id":"sh/l8b2hcf6","slide":4,"text":"atbilstošas personas","textPreview":"atbilstošas personas","textChars":20,"textLines":1,"bbox":[48,574,210,32]}
+{"kind":"textbox","id":"sh/k721o7yl","slide":4,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[318,510,90,58]}
+{"kind":"textbox","id":"sh/bitkb2x4","slide":4,"text":"piemēroti transportlīdzekļi","textPreview":"piemēroti transportlīdzekļi","textChars":27,"textLines":1,"bbox":[318,574,250,32]}
+{"kind":"textbox","id":"sh/qh0jixgj","slide":4,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[638,510,90,58]}
+{"kind":"textbox","id":"sh/dkb2dcfa","slide":4,"text":"maksimālais pirmais uzaicinājums","textPreview":"maksimālais pirmais uzaicinājums","textChars":32,"textLines":1,"bbox":[638,574,300,32]}
+{"kind":"shape","id":"sh/cj21k7yp","slide":4,"bbox":[970,430,238,156]}
+{"kind":"textbox","id":"sh/vedknmx8","slide":4,"text":"Identitātes slēptas","textPreview":"Identitātes slēptas","textChars":19,"textLines":1,"bbox":[994,456,190,32]}
+{"kind":"textbox","id":"sh/ud4juhg3","slide":4,"text":"Detaļas atklāj tikai pēc politikas pārbaudes un dalībnieka piekrišanas.","textPreview":"Detaļas atklāj tikai pēc politikas pārbaudes un dalībnieka piekrišanas.","textChars":71,"textLines":1,"bbox":[994,502,190,70]}
+{"kind":"notes","id":"nt/6ay1h4","slide":4,"text":"Skaitļi ir ilustratīvi. Demonstrējiet principu: kapacitātes vaicājums atgriež piemērotību, nevis eksportē cilvēku sarakstu.\n\n[Sources]\n- Atbalsts architecture concept v0.1 (internal)\n- Atbalsts interactive prototype — exercise authority view (internal)\n[/Sources]"}
+{"kind":"slide","id":"sl/zq8js8","slide":5,"title":"KONTROLES ARHITEKTŪRA","textShapes":18}
+{"kind":"textbox","id":"sh/2d4ja90f","slide":5,"text":"KONTROLES ARHITEKTŪRA","textPreview":"KONTROLES ARHITEKTŪRA","textChars":21,"textLines":1,"bbox":[48,42,310,22]}
+{"kind":"textbox","id":"sh/p0f2lojq","slide":5,"text":"AI interpretē valodu; pilnvaroti cilvēki pieņem lēmumus","textPreview":"AI interpretē valodu; pilnvaroti cilvēki pieņem lēmumus","textChars":55,"textLines":1,"bbox":[48,82,1160,112]}
+{"kind":"shape","id":"sh/ozm1cjil","slide":5,"bbox":[48,672,1184,0]}
+{"kind":"textbox","id":"sh/fadkfe1o","slide":5,"text":"KONCEPCIJA APSPRIEŠANAI","textPreview":"KONCEPCIJA APSPRIEŠANAI","textChars":23,"textLines":1,"bbox":[48,680,360,20]}
+{"kind":"textbox","id":"sh/e94j6903","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1178,680,54,20]}
+{"kind":"shape","id":"sh/1cv2h4ju","slide":5,"bbox":[48,250,210,128]}
+{"kind":"textbox","id":"sh/0bm18zi9","slide":5,"text":"1 · Saruna","textPreview":"1 · Saruna","textChars":10,"textLines":1,"bbox":[64,264,178,29]}
+{"kind":"textbox","id":"sh/z6xkry18","slide":5,"text":"Teksts vai balss\nLV / EN","textPreview":"Teksts vai balss | LV / EN","textChars":24,"textLines":2,"bbox":[64,298,178,70]}
+{"kind":"shape","id":"sh/y5o3it0n","slide":5,"bbox":[286,250,220,128]}
+{"kind":"textbox","id":"sh/kn2tg7a9","slide":5,"text":"2 · Priekšlikums","textPreview":"2 · Priekšlikums","textChars":16,"textLines":1,"bbox":[302,264,188,29]}
+{"kind":"textbox","id":"sh/58ba9cbu","slide":5,"text":"Strukturēts nolūks\nun nenoteiktība","textPreview":"Strukturēts nolūks | un nenoteiktība","textChars":34,"textLines":2,"bbox":[302,298,188,70]}
+{"kind":"shape","id":"sh/ilkbexs3","slide":5,"bbox":[534,250,232,128]}
+{"kind":"textbox","id":"sh/jmts72to","slide":5,"text":"3 · Politikas vārti","textPreview":"3 · Politikas vārti","textChars":19,"textLines":1,"bbox":[550,264,200,29]}
+{"kind":"textbox","id":"sh/wji9c7ad","slide":5,"text":"Loma · risks · piekrišana\n· atklājamie lauki","textPreview":"Loma · risks · piekrišana | · atklājamie lauki","textChars":44,"textLines":2,"bbox":[550,298,200,70]}
+{"kind":"shape","id":"sh/xkra5cbi","slide":5,"bbox":[794,250,220,128]}
+{"kind":"textbox","id":"sh/ah0raxs7","slide":5,"text":"4 · Darbplūsma","textPreview":"4 · Darbplūsma","textChars":14,"textLines":1,"bbox":[810,264,188,29]}
+{"kind":"textbox","id":"sh/vi9s32ts","slide":5,"text":"Apstiprinājums · uzdevums\n· nodošana · atcelšana","textPreview":"Apstiprinājums · uzdevums | · nodošana · atcelšana","textChars":48,"textLines":2,"bbox":[810,298,188,70]}
+{"kind":"shape","id":"sh/8fi98na1","slide":5,"bbox":[1042,250,190,128]}
+{"kind":"textbox","id":"sh/9gra1sbm","slide":5,"text":"5 · Privāta atlase","textPreview":"5 · Privāta atlase","textChars":18,"textLines":1,"bbox":[1058,264,158,29]}
+{"kind":"textbox","id":"sh/pcjq5o3a","slide":5,"text":"Neliela uzaicinājumu grupa\n· skaidrs atteikums","textPreview":"Neliela uzaicinājumu grupa | · skaidrs atteikums","textChars":46,"textLines":2,"bbox":[1058,298,158,70]}
+{"kind":"shape","id":"sh/obapwj2p","slide":5,"bbox":[258,314,28,0]}
+{"kind":"shape","id":"sh/3a183elk","slide":5,"bbox":[506,314,28,0]}
+{"kind":"shape","id":"sh/2987u9kz","slide":5,"bbox":[766,314,28,0]}
+{"kind":"shape","id":"sh/18zq143e","slide":5,"bbox":[1014,314,28,0]}
+{"kind":"shape","id":"sh/g7qpsz2t","slide":5,"bbox":[48,446,1184,118]}
+{"kind":"textbox","id":"sh/f6h8zel8","slide":5,"text":"Pierādījumu plūsma","textPreview":"Pierādījumu plūsma","textChars":18,"textLines":1,"bbox":[76,470,260,30]}
+{"kind":"textbox","id":"sh/el87q9kn","slide":5,"text":"ievade → transkripcija → interpretācija → labojums → piekrišana → politikas lēmums → atklāšana → rezultāts","textPreview":"ievade → transkripcija → interpretācija → labojums → piekrišana → politikas lēmums → atklāšana → rezultāts","textChars":106,"textLines":1,"bbox":[76,516,1100,30]}
+{"kind":"textbox","id":"sh/l43qd83i","slide":5,"text":"AI darbības robeža","textPreview":"AI darbības robeža","textChars":18,"textLines":1,"bbox":[286,398,220,24]}
+{"kind":"textbox","id":"sh/k3u9432x","slide":5,"text":"Determinēta kontrole sākas šeit","textPreview":"Determinēta kontrole sākas šeit","textChars":31,"textLines":1,"bbox":[534,398,360,24]}
+{"kind":"notes","id":"nt/zq8js8","slide":5,"text":"Nošķiriet elastīgu valodas interpretāciju no determinētas atļauju un stāvokļu kontroles.\n\n[Sources]\n- Atbalsts architecture concept v0.1, sections 6–8 (internal)\n[/Sources]"}
+{"kind":"slide","id":"sl/cs3tc8","slide":6,"title":"DROŠĪBAS ROBEŽA","textShapes":15}
+{"kind":"textbox","id":"sh/w3mdg7mp","slide":6,"text":"DROŠĪBAS ROBEŽA","textPreview":"DROŠĪBAS ROBEŽA","textChars":15,"textLines":1,"bbox":[48,42,310,22]}
+{"kind":"textbox","id":"sh/v2dwn254","slide":6,"text":"Vispirms mācību režīms; dzīva integrācija tikai pēc pierādījumiem","textPreview":"Vispirms mācību režīms; dzīva integrācija tikai pēc pierādījumiem","textChars":65,"textLines":1,"bbox":[48,82,1160,112]}
+{"kind":"shape","id":"sh/a14veh4j","slide":6,"bbox":[48,672,1184,0]}
+{"kind":"textbox","id":"sh/90velcny","slide":6,"text":"KONCEPCIJA APSPRIEŠANAI","textPreview":"KONCEPCIJA APSPRIEŠANAI","textChars":23,"textLines":1,"bbox":[48,680,360,20]}
+{"kind":"textbox","id":"sh/8z2dc7md","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1178,680,54,20]}
+{"kind":"textbox","id":"sh/nytwj25s","slide":6,"text":"Autoritātes režīms ir atsevišķa drošības vide ar definētām lomām, termiņiem un jurisdikciju.","textPreview":"Autoritātes režīms ir atsevišķa drošības vide ar definētām lomām, termiņiem un jurisdikciju.","textChars":92,"textLines":1,"bbox":[48,198,1080,56]}
+{"kind":"shape","id":"sh/mxkvax4n","slide":6,"bbox":[48,300,354,246]}
+{"kind":"textbox","id":"sh/twfexwni","slide":6,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[72,324,48,28]}
+{"kind":"textbox","id":"sh/sv6xormx","slide":6,"text":"Pilnvaras ir ierobežotas","textPreview":"Pilnvaras ir ierobežotas","textChars":24,"textLines":1,"bbox":[72,370,304,58]}
+{"kind":"textbox","id":"sh/ypo3yhcr","slide":6,"text":"Institūcija · loma · incidents · darbība · ģeogrāfija · termiņš. Plašiem paziņojumiem un noteiktām darbībām — divu personu apstiprinājums.","textPreview":"Institūcija · loma · incidents · darbība · ģeogrāfija · termiņš. Plašiem paziņojumiem un noteiktām darbībām — divu personu apstiprinājums.","textChars":138,"textLines":1,"bbox":[72,442,304,84]}
+{"kind":"shape","id":"sh/zqxk7mdw","slide":6,"bbox":[450,300,354,246]}
+{"kind":"textbox","id":"sh/0r6l0ruh","slide":6,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[474,324,48,28]}
+{"kind":"textbox","id":"sh/lsf29wv2","slide":6,"text":"Cilvēks saglabā kontroli","textPreview":"Cilvēks saglabā kontroli","textChars":24,"textLines":1,"bbox":[474,370,304,58]}
+{"kind":"textbox","id":"sh/q143uhcf","slide":6,"text":"Sistēma neuzņemas uzdevumu cilvēka vārdā. Precīza identitāte, atrašanās vieta un resursi tiek atklāti tikai nepieciešamajā posmā.","textPreview":"Sistēma neuzņemas uzdevumu cilvēka vārdā. Precīza identitāte, atrašanās vieta un resursi tiek atklāti tikai nepieciešamajā posmā.","textChars":129,"textLines":1,"bbox":[474,442,304,84]}
+{"kind":"shape","id":"sh/bmdk3md0","slide":6,"bbox":[852,300,354,246]}
+{"kind":"textbox","id":"sh/cnmlwrul","slide":6,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[876,324,48,28]}
+{"kind":"textbox","id":"sh/dov25cv6","slide":6,"text":"Viss ir rekonstruējams","textPreview":"Viss ir rekonstruējams","textChars":22,"textLines":1,"bbox":[876,370,304,58]}
+{"kind":"textbox","id":"sh/ax8361cj","slide":6,"text":"Katram tulkojumam, politikas lēmumam, uzaicinājumam, piekrišanai, nodošanai un atcelšanai ir pierādījumu pēda.","textPreview":"Katram tulkojumam, politikas lēmumam, uzaicinājumam, piekrišanai, nodošanai un atcelšanai ir pierādījumu pēda.","textChars":110,"textLines":1,"bbox":[876,442,304,84]}
+{"kind":"textbox","id":"sh/vih4f6t4","slide":6,"text":"Sākotnēji: nav savienojuma ar 112 · nav dzīvas dispečerizācijas · nav nepilngadīgo vai bīstamu uzdevumu","textPreview":"Sākotnēji: nav savienojuma ar 112 · nav dzīvas dispečerizācijas · nav nepilngadīgo vai bīstamu uzdevumu","textChars":103,"textLines":1,"bbox":[48,594,1140,32]}
+{"kind":"notes","id":"nt/cs3tc8","slide":6,"text":"Augsta riska AI pienākumi nav risināmi ar vienkāršu apzīmējumu “lēmumu atbalsts”; robeža un juridiskais novērtējums jāveido jau pilotprojekta sākumā.\n\n[Sources]\n- https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A32024R1689\n- https://www.dvi.gov.lv/lv/jaunums/dviskaidro-NIDA\n- Atbalsts architecture concept v0.1 (internal)\n[/Sources]"}
+{"kind":"slide","id":"sl/slirku","slide":7,"title":"IEROSINĀTS RĪGAS PILOTPROJEKTS","textShapes":14}
+{"kind":"textbox","id":"sh/21oral4v","slide":7,"text":"IEROSINĀTS RĪGAS PILOTPROJEKTS","textPreview":"IEROSINĀTS RĪGAS PILOTPROJEKTS","textChars":30,"textLines":1,"bbox":[48,42,310,22]}
+{"kind":"textbox","id":"sh/p4fq503m","slide":7,"text":"12 nedēļās pārbaudām modeli, neiejaucoties dzīvajās sistēmās","textPreview":"12 nedēļās pārbaudām modeli, neiejaucoties dzīvajās sistēmās","textChars":60,"textLines":1,"bbox":[48,82,1160,112]}
+{"kind":"shape","id":"sh/4369cvm1","slide":7,"bbox":[48,672,1184,0]}
+{"kind":"textbox","id":"sh/fed8zq54","slide":7,"text":"KONCEPCIJA APSPRIEŠANAI","textPreview":"KONCEPCIJA APSPRIEŠANAI","textChars":23,"textLines":1,"bbox":[48,680,360,20]}
+{"kind":"textbox","id":"sh/ud4r6l4z","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1178,680,54,20]}
+{"kind":"shape","id":"sh/h0vq1gna","slide":7,"bbox":[48,354,1160,0]}
+{"kind":"shape","id":"sh/gfm98vmp","slide":7,"bbox":[48,346,16,16]}
+{"kind":"textbox","id":"sh/7ad8v658","slide":7,"text":"1.–4. nedēļa","textPreview":"1.–4. nedēļa","textChars":12,"textLines":1,"bbox":[48,286,220,28]}
+{"kind":"textbox","id":"sh/694r214n","slide":7,"text":"Kopienas pamats","textPreview":"Kopienas pamats","textChars":15,"textLines":1,"bbox":[48,398,320,36]}
+{"kind":"textbox","id":"sh/w7mlwr61","slide":7,"text":"25–40 uzaicināti pieaugušie · prasmes un resursi · privātuma priekšskatījums · zema riska pieprasījumi","textPreview":"25–40 uzaicināti pieaugušie · prasmes un resursi · privātuma priekšskatījums · zema riska pieprasījumi","textChars":102,"textLines":1,"bbox":[48,450,320,110]}
+{"kind":"shape","id":"sh/x8v2pwnm","slide":7,"bbox":[452,346,16,16]}
+{"kind":"textbox","id":"sh/a54juhob","slide":7,"text":"5.–8. nedēļa","textPreview":"5.–8. nedēļa","textChars":12,"textLines":1,"bbox":[452,286,220,28]}
+{"kind":"textbox","id":"sh/v6dknm5g","slide":7,"text":"Autoritātes simulators","textPreview":"Autoritātes simulators","textChars":22,"textLines":1,"bbox":[452,398,320,36]}
+{"kind":"textbox","id":"sh/8j21sr65","slide":7,"text":"Mācību incidents · ierobežotas lomas · uzdevumi · uzaicinājumi · kontrolatzīmes · nodošana un atcelšana","textPreview":"Mācību incidents · ierobežotas lomas · uzdevumi · uzaicinājumi · kontrolatzīmes · nodošana un atcelšana","textChars":103,"textLines":1,"bbox":[452,450,320,110]}
+{"kind":"shape","id":"sh/9kb2lwnq","slide":7,"bbox":[856,346,16,16]}
+{"kind":"textbox","id":"sh/mhkjqhoz","slide":7,"text":"9.–12. nedēļa","textPreview":"9.–12. nedēļa","textChars":13,"textLines":1,"bbox":[856,286,220,28]}
+{"kind":"textbox","id":"sh/nitkjm5k","slide":7,"text":"Kontrolētas mācības","textPreview":"Kontrolētas mācības","textChars":19,"textLines":1,"bbox":[856,398,320,36]}
+{"kind":"textbox","id":"sh/sf6l4b69","slide":7,"text":"LV / EN scenārijs · kļūmju testi · novērotāji · NIDA projekts · audita un drošības pierādījumi","textPreview":"LV / EN scenārijs · kļūmju testi · novērotāji · NIDA projekts · audita un drošības pierādījumi","textChars":94,"textLines":1,"bbox":[856,450,320,110]}
+{"kind":"shape","id":"sh/tgf2xgnu","slide":7,"bbox":[48,594,1160,44]}
+{"kind":"textbox","id":"sh/1wb2hgfy","slide":7,"text":"Pilotprojekta iznākums ir pierādījumu kopums un institucionāli definēts nākamais lēmums — nevis automātiska ieviešana.","textPreview":"Pilotprojekta iznākums ir pierādījumu kopums un institucionāli definēts nākamais lēmums — nevis automātiska ieviešana.","textChars":118,"textLines":1,"bbox":[70,604,1116,24]}
+{"kind":"notes","id":"nt/slirku","slide":7,"text":"Termiņš un apjoms ir apspriešanai paredzēts priekšlikums. Piedāvājiet sākt bez integrācijas dzīvajās sistēmās.\n\n[Sources]\n- Atbalsts proposed development loop and architecture v0.1 (internal)\n[/Sources]"}
+{"kind":"slide","id":"sl/bfyccm","slide":8,"title":"IEEJAS UN IZEJAS KRITĒRIJI","textShapes":22}
+{"kind":"textbox","id":"sh/uhczypoj","slide":8,"text":"IEEJAS UN IZEJAS KRITĒRIJI","textPreview":"IEEJAS UN IZEJAS KRITĒRIJI","textChars":26,"textLines":1,"bbox":[48,42,310,22]}
+{"kind":"textbox","id":"sh/hk3y94na","slide":8,"text":"Pilotprojekts virzās tālāk tikai ar pārbaudāmiem pierādījumiem","textPreview":"Pilotprojekts virzās tālāk tikai ar pārbaudāmiem pierādījumiem","textChars":62,"textLines":1,"bbox":[48,82,1160,112]}
+{"kind":"shape","id":"sh/gjuh0z6p","slide":8,"bbox":[48,672,1184,0]}
+{"kind":"textbox","id":"sh/7elg3up8","slide":8,"text":"KONCEPCIJA APSPRIEŠANAI","textPreview":"KONCEPCIJA APSPRIEŠANAI","textChars":23,"textLines":1,"bbox":[48,680,360,20]}
+{"kind":"textbox","id":"sh/6dczupon","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1178,680,54,20]}
+{"kind":"textbox","id":"sh/tg3y5k7e","slide":8,"text":"Virzīt tālāk, ja","textPreview":"Virzīt tālāk, ja","textChars":16,"textLines":1,"bbox":[48,226,520,42]}
+{"kind":"textbox","id":"sh/8fuhwz6t","slide":8,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[48,294,28,28]}
+{"kind":"textbox","id":"sh/ra50fe5c","slide":8,"text":"LV / EN nolūki tiek interpretēti pareizi un labojami","textPreview":"LV / EN nolūki tiek interpretēti pareizi un labojami","textChars":52,"textLines":1,"bbox":[90,290,500,52]}
+{"kind":"textbox","id":"sh/q9wz69or","slide":8,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[48,366,28,28]}
+{"kind":"textbox","id":"sh/ob6lc7yp","slide":8,"text":"nav neatļautas identitātes vai resursu atklāšanas","textPreview":"nav neatļautas identitātes vai resursu atklāšanas","textChars":49,"textLines":1,"bbox":[90,362,500,52]}
+{"kind":"textbox","id":"sh/9cfm5cfa","slide":8,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[48,438,28,28]}
+{"kind":"textbox","id":"sh/mp43ahgz","slide":8,"text":"atteikums, klusums un sakaru zudums rada drošu stāvokli","textPreview":"atteikums, klusums un sakaru zudums rada drošu stāvokli","textChars":55,"textLines":1,"bbox":[90,434,500,52]}
+{"kind":"textbox","id":"sh/nqxk32xk","slide":8,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[48,510,28,28]}
+{"kind":"textbox","id":"sh/0nml87yt","slide":8,"text":"operators var rekonstruēt katru lēmumu un nodošanu","textPreview":"operators var rekonstruēt katru lēmumu un nodošanu","textChars":50,"textLines":1,"bbox":[90,506,500,52]}
+{"kind":"shape","id":"sh/1ov21cfe","slide":8,"bbox":[638,222,1,360]}
+{"kind":"textbox","id":"sh/el436xgn","slide":8,"text":"Apturēt vai pārstrādāt, ja","textPreview":"Apturēt vai pārstrādāt, ja","textChars":26,"textLines":1,"bbox":[688,226,520,42]}
+{"kind":"textbox","id":"sh/zmdkz2x8","slide":8,"text":"×","textPreview":"×","textChars":1,"textLines":1,"bbox":[688,294,28,28]}
+{"kind":"textbox","id":"sh/cjml4nyx","slide":8,"text":"AI min trūkstošus faktus vai apiet apstiprinājumu","textPreview":"AI min trūkstošus faktus vai apiet apstiprinājumu","textChars":49,"textLines":1,"bbox":[730,290,478,52]}
+{"kind":"textbox","id":"sh/dkv2xsz2","slide":8,"text":"×","textPreview":"×","textChars":1,"textLines":1,"bbox":[688,366,28,28]}
+{"kind":"textbox","id":"sh/tgni1or6","slide":8,"text":"autoritatīva un kopienas informācija nav atšķirama","textPreview":"autoritatīva un kopienas informācija nav atšķirama","textChars":50,"textLines":1,"bbox":[730,362,478,52]}
+{"kind":"textbox","id":"sh/sfe1sjql","slide":8,"text":"×","textPreview":"×","textChars":1,"textLines":1,"bbox":[688,438,28,28]}
+{"kind":"textbox","id":"sh/rel0ze90","slide":8,"text":"sociālās pazīšanās trūkums ietekmē palīdzības pieejamību","textPreview":"sociālās pazīšanās trūkums ietekmē palīdzības pieejamību","textChars":56,"textLines":1,"bbox":[730,434,478,52]}
+{"kind":"textbox","id":"sh/6dcjq98f","slide":8,"text":"×","textPreview":"×","textChars":1,"textLines":1,"bbox":[688,510,28,28]}
+{"kind":"textbox","id":"sh/5c3ix4ru","slide":8,"text":"nav skaidra institucionālā īpašnieka vai sistēmas ieraksta","textPreview":"nav skaidra institucionālā īpašnieka vai sistēmas ieraksta","textChars":58,"textLines":1,"bbox":[730,506,478,52]}
+{"kind":"notes","id":"nt/bfyccm","slide":8,"text":"Šie ir sākotnējie kvalitātes vārti. Gala kritēriji jāapstiprina pilotprojekta institucionālajiem īpašniekiem.\n\n[Sources]\n- Atbalsts architecture concept v0.1, reliability and development loop (internal)\n- https://www.dvi.gov.lv/lv/jaunums/dviskaidro-NIDA\n[/Sources]"}
+{"kind":"slide","id":"sl/zt5j7w","slide":9,"title":"ATBALSTS","textShapes":11}
+{"kind":"shape","id":"sh/j2h8vud0","slide":9,"bbox":[48,35,24,24]}
+{"kind":"shape","id":"sh/k3a9ozul","slide":9,"bbox":[54,45,12,4]}
+{"kind":"shape","id":"sh/5ojqx4v6","slide":9,"bbox":[58,41,4,12]}
+{"kind":"textbox","id":"sh/6psrqpcr","slide":9,"text":"ATBALSTS","textPreview":"ATBALSTS","textChars":8,"textLines":1,"bbox":[82,35,150,28]}
+{"kind":"textbox","id":"sh/7q18zudc","slide":9,"text":"LĒMUMS, KO LŪDZAM ŠODIEN","textPreview":"LĒMUMS, KO LŪDZAM ŠODIEN","textChars":24,"textLines":1,"bbox":[48,104,580,24]}
+{"kind":"textbox","id":"sh/sra9szuh","slide":9,"text":"Viena kontaktpersona.\nViens mācību scenārijs.\nKopīgi drošības kritēriji.","textPreview":"Viena kontaktpersona. | Viens mācību scenārijs. | Kopīgi drošības kritēriji.","textChars":72,"textLines":3,"bbox":[48,178,1030,246]}
+{"kind":"shape","id":"sh/tsja14v2","slide":9,"bbox":[48,478,1184,0]}
+{"kind":"textbox","id":"sh/etsru9cn","slide":9,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[48,514,48,30]}
+{"kind":"textbox","id":"sh/fuls3ed8","slide":9,"text":"Nosaukt institucionālo kontaktpunktu","textPreview":"Nosaukt institucionālo kontaktpunktu","textChars":36,"textLines":1,"bbox":[110,512,300,48]}
+{"kind":"textbox","id":"sh/zqhg7i9k","slide":9,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[444,514,48,30]}
+{"kind":"textbox","id":"sh/ypofexsz","slide":9,"text":"Izvēlēties vienu Rīgas mācību scenāriju","textPreview":"Izvēlēties vienu Rīgas mācību scenāriju","textChars":39,"textLines":1,"bbox":[506,512,300,48]}
+{"kind":"textbox","id":"sh/lszy9srq","slide":9,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[838,514,48,30]}
+{"kind":"textbox","id":"sh/0rqhgna5","slide":9,"text":"Vienoties par ieejas un izejas kritērijiem","textPreview":"Vienoties par ieejas un izejas kritērijiem","textChars":42,"textLines":1,"bbox":[900,512,300,48]}
+{"kind":"textbox","id":"sh/bmxg3i9o","slide":9,"text":"Šajā posmā netiek lūgta integrācija, iepirkums vai dzīva operacionālā saistība.","textPreview":"Šajā posmā netiek lūgta integrācija, iepirkums vai dzīva operacionālā saistība.","textChars":79,"textLines":1,"bbox":[48,636,980,28]}
+{"kind":"textbox","id":"sh/qlofads3","slide":9,"text":"ATBALSTS","textPreview":"ATBALSTS","textChars":8,"textLines":1,"bbox":[1120,636,112,28]}
+{"kind":"notes","id":"nt/zt5j7w","slide":9,"text":"Noslēdziet ar konkrētu un zema riska lēmumu: kopīgi definēt pilotprojektu, nevis apstiprināt dzīvu ieviešanu.\n\n[Sources]\n- Atbalsts pilot proposal v0.1 (internal)\n[/Sources]"}

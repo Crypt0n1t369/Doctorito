@@ -1,0 +1,96 @@
+{
+  "adapter_id": "iala__pdf",
+  "version": "1.0.0",
+  "output_contract_version": "2.1",
+  "applies_to": {
+    "url_pattern": "^https://academy\\.iala\\.int/.*\\.pdf$"
+  },
+  "list": {
+    "container": {
+      "primary": {
+        "strategy": "pdf_line_regex",
+        "value": "^\\s*\\d+\\.\\s+.+\\|"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit"
+    },
+    "row": {
+      "primary": {
+        "strategy": "pdf_line_regex",
+        "value": "^\\s*\\d+\\.\\s+.+\\|"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit"
+    },
+    "empty_is_valid": false,
+    "structural_count": {
+      "primary": {
+        "strategy": "pdf_line_regex",
+        "value": "^\\s*\\d+\\.\\s+.+\\|"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit",
+      "count_mode": "nodes"
+    },
+    "published_count": {
+      "primary": {
+        "strategy": "pdf_line_regex",
+        "value": "Total(?:\\s+of)?\\s+(\\d+)\\s+organi[sz]ations"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit",
+      "count_mode": "value"
+    }
+  },
+  "fields": {
+    "published_name": {
+      "selector": {
+        "primary": {
+          "strategy": "pdf_line_regex",
+          "value": "^\\s*\\d+\\.\\s+([^|]+?)\\s*\\|"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "required": true,
+      "normalize": "trim"
+    },
+    "published_country": {
+      "selector": {
+        "primary": {
+          "strategy": "pdf_line_regex",
+          "value": "\\|\\s*([A-Z]{2})\\s*\\|"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "country_iso2"
+    },
+    "published_locality": {
+      "selector": {
+        "primary": {
+          "strategy": "pdf_line_regex",
+          "value": "\\|\\s*[A-Z]{2}\\s*\\|\\s*([^|]+?)\\s*\\|"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    },
+    "certificate_name": {
+      "selector": {
+        "primary": {
+          "strategy": "pdf_line_regex",
+          "value": "\\|\\s*(VTS[^|]*?)\\s*(?:\\||$)"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "cardinality": "many",
+      "normalize": "trim"
+    }
+  },
+  "fixtures": [
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ]
+}

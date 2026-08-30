@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "total": 2
+  },
+  "data": [
+    {
+      "center_id": "OTIEC-441",
+      "organization": "Gulf Coast Safety Institute",
+      "country": "US",
+      "city": "Texas City",
+      "phone": "+1 409 933 8345",
+      "url": "https://gcsi.example.edu",
+      "schedule_url": "https://gcsi.example.edu/schedule",
+      "courses": [
+        "OSHA 510 Construction",
+        "OSHA 511 General Industry"
+      ]
+    },
+    {
+      "center_id": "OTIEC-702",
+      "organization": "Great Lakes OTI Center",
+      "country": "US",
+      "city": "Chicago",
+      "phone": "+1 312 555 0100",
+      "url": "https://glotic.example.org",
+      "schedule_url": "https://glotic.example.org/courses",
+      "courses": [
+        "OSHA 500 Trainer Course"
+      ]
+    }
+  ]
+}

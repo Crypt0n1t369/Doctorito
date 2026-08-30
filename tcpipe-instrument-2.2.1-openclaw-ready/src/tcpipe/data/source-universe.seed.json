@@ -1,0 +1,99 @@
+{
+  "universe": {
+    "universe_id": "PILOT-2026Q3-V1",
+    "version": 1,
+    "scope_statement": "Five parsing archetypes used to validate the isolated parsing capability track before production materialization.",
+    "status": "draft",
+    "created_at_utc": "2026-08-19T00:00:00Z",
+    "frozen_at_utc": null
+  },
+  "sources": [
+    {
+      "source_id": "SRC-0001", "legal_name": "Global Wind Organisation", "acronym": "GWO",
+      "source_kind": "scheme_owner", "country_iso2": null, "official_website": "https://www.globalwindsafety.org/",
+      "discovered_via": "seed", "intake_state": "confirmed", "eligibility": "candidate",
+      "exclusion_reason": null, "terms_url": "https://winda.globalwindsafety.org/about/terms-and-conditions/",
+      "license_basis": null, "allowed_purpose": null, "retention_period": null,
+      "legal_review_state": "pending", "last_legal_review_utc": null, "created_at_utc": "2026-08-19T00:00:00Z"
+    },
+    {
+      "source_id": "SRC-0002", "legal_name": "Occupational Safety and Health Administration", "acronym": "OSHA",
+      "source_kind": "national_authority", "country_iso2": "US", "official_website": "https://www.osha.gov/",
+      "discovered_via": "seed", "intake_state": "confirmed", "eligibility": "candidate",
+      "exclusion_reason": null, "terms_url": null, "license_basis": null, "allowed_purpose": null,
+      "retention_period": null, "legal_review_state": "pending", "last_legal_review_utc": null,
+      "created_at_utc": "2026-08-19T00:00:00Z"
+    },
+    {
+      "source_id": "SRC-0003", "legal_name": "IRATA International", "acronym": "IRATA",
+      "source_kind": "association", "country_iso2": null, "official_website": "https://irata.org/",
+      "discovered_via": "seed", "intake_state": "confirmed", "eligibility": "candidate",
+      "exclusion_reason": null, "terms_url": null, "license_basis": null, "allowed_purpose": null,
+      "retention_period": null, "legal_review_state": "pending", "last_legal_review_utc": null,
+      "created_at_utc": "2026-08-19T00:00:00Z"
+    },
+    {
+      "source_id": "SRC-0004", "legal_name": "International Organization for Marine Aids to Navigation", "acronym": "IALA",
+      "source_kind": "association", "country_iso2": null, "official_website": "https://www.iala.int/",
+      "discovered_via": "seed", "intake_state": "confirmed", "eligibility": "candidate",
+      "exclusion_reason": null, "terms_url": null, "license_basis": null, "allowed_purpose": null,
+      "retention_period": null, "legal_review_state": "pending", "last_legal_review_utc": null,
+      "created_at_utc": "2026-08-19T00:00:00Z"
+    },
+    {
+      "source_id": "SRC-0005", "legal_name": "Offshore Petroleum Industry Training Organisation", "acronym": "OPITO",
+      "source_kind": "scheme_owner", "country_iso2": null, "official_website": "https://opito.com/",
+      "discovered_via": "seed", "intake_state": "confirmed", "eligibility": "candidate",
+      "exclusion_reason": null, "terms_url": null, "license_basis": null, "allowed_purpose": null,
+      "retention_period": null, "legal_review_state": "pending", "last_legal_review_utc": null,
+      "created_at_utc": "2026-08-19T00:00:00Z"
+    }
+  ],
+  "routes": [
+    {
+      "route_id": "RT-0001", "source_id": "SRC-0001",
+      "route_url": "https://winda.globalwindsafety.org/training-providers-map/download-trainingproviders-list/",
+      "scheme_scope": "", "route_kind": "download", "acquisition_method": "official_download",
+      "access_class": "public",
+      "eligibility": "candidate", "exclusion_reason": null, "policy_state": "pending", "robots_state": "unknown",
+      "robots_snapshot_sha": null, "crawl_delay_s": 5, "volatility_class": "monthly", "refetch_days": 30,
+      "expected_records": 652, "expected_basis": "Addendum 2.0 pilot hypothesis; must be remeasured before universe freeze",
+      "expected_as_of_utc": "2026-08-19T00:00:00Z", "created_at_utc": "2026-08-19T00:00:00Z"
+    },
+    {
+      "route_id": "RT-0002", "source_id": "SRC-0002", "route_url": "https://www.osha.gov/otiec/courses/schedule",
+      "scheme_scope": "", "route_kind": "search_form", "acquisition_method": "api",
+      "access_class": "public",
+      "eligibility": "candidate", "exclusion_reason": null, "policy_state": "pending", "robots_state": "unknown",
+      "robots_snapshot_sha": null, "crawl_delay_s": 5, "volatility_class": "weekly", "refetch_days": 7,
+      "expected_records": null, "expected_basis": null, "expected_as_of_utc": null, "created_at_utc": "2026-08-19T00:00:00Z"
+    },
+    {
+      "route_id": "RT-0003", "source_id": "SRC-0003", "route_url": "https://irata.org/members",
+      "scheme_scope": "trainer companies", "route_kind": "html_paginated", "acquisition_method": "http",
+      "access_class": "public",
+      "eligibility": "candidate", "exclusion_reason": null, "policy_state": "pending", "robots_state": "unknown",
+      "robots_snapshot_sha": null, "crawl_delay_s": 5, "volatility_class": "monthly", "refetch_days": 30,
+      "expected_records": null, "expected_basis": null, "expected_as_of_utc": null, "created_at_utc": "2026-08-19T00:00:00Z"
+    },
+    {
+      "route_id": "RT-0004", "source_id": "SRC-0004",
+      "route_url": "https://academy.iala.int/wp-content/uploads/2025/03/VTS-Accredited-Training-Organizations-24-03-2025.pdf",
+      "scheme_scope": "VTS", "route_kind": "pdf", "acquisition_method": "official_download",
+      "access_class": "public",
+      "eligibility": "candidate", "exclusion_reason": null, "policy_state": "pending", "robots_state": "unknown",
+      "robots_snapshot_sha": null, "crawl_delay_s": 5, "volatility_class": "quarterly", "refetch_days": 90,
+      "expected_records": 40, "expected_basis": "Frozen V2 evidence-pack checkpoint dated 2026-08-17",
+      "expected_as_of_utc": "2026-08-17T10:59:00Z", "created_at_utc": "2026-08-19T00:00:00Z"
+    },
+    {
+      "route_id": "RT-0005", "source_id": "SRC-0005", "route_url": "https://opito.com/centre-network",
+      "scheme_scope": "", "route_kind": "js_app", "acquisition_method": "api",
+      "access_class": "public",
+      "eligibility": "candidate", "exclusion_reason": null, "policy_state": "pending", "robots_state": "unknown",
+      "robots_snapshot_sha": null, "crawl_delay_s": 5, "volatility_class": "monthly", "refetch_days": 30,
+      "expected_records": 244, "expected_basis": "Frozen V2 route-map observation retrieved 2026-07-30",
+      "expected_as_of_utc": "2026-07-30T00:00:00Z", "created_at_utc": "2026-08-19T00:00:00Z"
+    }
+  ]
+}

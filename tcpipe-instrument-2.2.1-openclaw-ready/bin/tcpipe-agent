@@ -1,0 +1,195 @@
+#!/bin/sh
+# OpenClaw-facing capability boundary. No eval, arbitrary command, or caller-owned paths.
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+POLICY_FILE=${TCPIPE_AGENT_POLICY:-"$ROOT/openclaw/agent-policy.conf"}
+
+policy_writes=1
+policy_source_edits=1
+policy_dependencies=1
+policy_migrations=1
+policy_tests=1
+policy_adapter_activation=1
+policy_public_preflight=1
+policy_network=1
+policy_require_proxy=0
+policy_approvals=0
+policy_audit=0
+policy_destructive=0
+policy_credentials=0
+policy_external_state=0
+crawler_user_agent='tcpipe/2.3 (+transparent governed public-source parser)'
+
+if [ -f "$POLICY_FILE" ]; then
+    while IFS='=' read -r key value; do
+        case "$key" in
+            ''|'#'*) continue ;;
+            ALLOW_DB_WRITES) policy_writes=$value ;;
+            ALLOW_SOURCE_EDITS) policy_source_edits=$value ;;
+            ALLOW_PROJECT_DEPENDENCIES) policy_dependencies=$value ;;
+            ALLOW_MIGRATIONS) policy_migrations=$value ;;
+            ALLOW_TESTS) policy_tests=$value ;;
+            ALLOW_ADAPTER_ACTIVATION) policy_adapter_activation=$value ;;
+            ALLOW_PUBLIC_PREFLIGHT) policy_public_preflight=$value ;;
+            ALLOW_NETWORK) policy_network=$value ;;
+            REQUIRE_PROXY) policy_require_proxy=$value ;;
+            ALLOW_APPROVAL_DECISIONS) policy_approvals=$value ;;
+            ALLOW_AUDIT_ATTESTATION) policy_audit=$value ;;
+            ALLOW_DESTRUCTIVE_OPERATIONS) policy_destructive=$value ;;
+            ALLOW_CREDENTIAL_CHANGES) policy_credentials=$value ;;
+            ALLOW_EXTERNAL_STATE) policy_external_state=$value ;;
+            CRAWLER_USER_AGENT) crawler_user_agent=$value ;;
+            *) echo "ERROR: unknown agent policy key: $key" >&2; exit 64 ;;
+        esac
+    done < "$POLICY_FILE"
+fi
+
+for value in "$policy_writes" "$policy_source_edits" "$policy_dependencies" \
+             "$policy_migrations" "$policy_tests" "$policy_adapter_activation" \
+             "$policy_public_preflight" "$policy_network" "$policy_require_proxy" \
+             "$policy_approvals" "$policy_audit" "$policy_destructive" \
+             "$policy_credentials" "$policy_external_state"; do
+    case "$value" in 0|1) ;; *) echo "ERROR: boolean policy values must be 0 or 1" >&2; exit 64 ;; esac
+done
+
+# These are declarations of a hard boundary, not switches the workspace agent may turn on.
+if [ "$policy_approvals" != 0 ] || [ "$policy_audit" != 0 ] || \
+   [ "$policy_destructive" != 0 ] || [ "$policy_credentials" != 0 ] || \
+   [ "$policy_external_state" != 0 ]; then
+    echo "ERROR: human-only gates cannot be enabled from workspace agent policy" >&2
+    exit 77
+fi
+
+allow_network=${TCPIPE_AGENT_ALLOW_NETWORK:-$policy_network}
+require_proxy=${TCPIPE_AGENT_REQUIRE_PROXY:-$policy_require_proxy}
+allow_external_state=${TCPIPE_AGENT_ALLOW_EXTERNAL_STATE:-$policy_external_state}
+DB=${TCPIPE_DB:-"$ROOT/work/pilot.db"}
+ARTIFACTS=${TCPIPE_ARTIFACTS:-"$ROOT/work/artifacts"}
+MIGRATIONS="$ROOT/migrations"
+
+if [ "$allow_external_state" != 1 ]; then
+    case "$DB" in "$ROOT"/*) ;; *) echo "ERROR: database must remain inside workspace" >&2; exit 64 ;; esac
+    case "$ARTIFACTS" in "$ROOT"/*) ;; *) echo "ERROR: artifacts must remain inside workspace" >&2; exit 64 ;; esac
+fi
+
+set_cli() {
+    if [ -x "$ROOT/.venv/bin/tcpipe" ]; then CLI="$ROOT/.venv/bin/tcpipe"; else CLI="$ROOT/tcpipe"; fi
+}
+set_cli
+
+need() {
+    value=$1
+    message=$2
+    if [ "$value" != 1 ]; then echo "ERROR: $message" >&2; exit 77; fi
+}
+
+install_dependencies() {
+    need "$policy_dependencies" "project-local dependency bootstrap is disabled"
+    if [ ! -x "$ROOT/.venv/bin/python" ]; then python3 -m venv "$ROOT/.venv"; fi
+    "$ROOT/.venv/bin/python" -m pip install --disable-pip-version-check --no-input \
+        --index-url https://pypi.org/simple --editable "$ROOT[pdf]"
+    set_cli
+}
+
+command_name=${1:-help}
+if [ "$#" -gt 0 ]; then shift; fi
+
+# The wrapper owns paths, rules, executable identity and all egress identity/options.
+for arg in "$@"; do
+    case "$arg" in
+        --db|--db=*|--artifacts|--artifacts=*|--migrations|--migrations=*|\
+        --rules|--rules=*|--url|--url=*|--worker|--worker=*|\
+        --git-commit|--git-commit=*|--proxy|--proxy=*|--user-agent|--user-agent=*|\
+        --no-conditional|--public-only|--auto-public-preflight)
+            echo "ERROR: $arg is controlled by the tcpipe agent boundary" >&2; exit 64 ;;
+        --audit-errors|--audit-errors=*|--audit-sample|--audit-sample=*)
+            need "$policy_audit" "audit counts are human attestations" ;;
+    esac
+done
+
+case "$command_name" in
+    help|-h|--help) exec "$CLI" --help ;;
+    deps)
+        install_dependencies
+        "$CLI" preflight --db "$DB" --artifacts "$ARTIFACTS"
+        ;;
+    bootstrap)
+        install_dependencies
+        if [ ! -f "$DB" ]; then "$CLI" init --db "$DB" --artifacts "$ARTIFACTS"; fi
+        need "$policy_migrations" "database migrations are disabled"
+        "$CLI" migrate --db "$DB" --migrations "$MIGRATIONS" --by openclaw-agent
+        exec "$CLI" preflight --db "$DB" --artifacts "$ARTIFACTS"
+        ;;
+    test)
+        need "$policy_tests" "tests are disabled"
+        [ -x "$ROOT/.venv/bin/python" ] || install_dependencies
+        exec "$ROOT/.venv/bin/python" -m unittest discover -v "$@"
+        ;;
+    fixtures)
+        need "$policy_tests" "fixture replay is disabled"
+        [ -x "$ROOT/.venv/bin/python" ] || install_dependencies
+        exec "$ROOT/.venv/bin/python" -m unittest -v tests.test_adapter tests.test_pipeline "$@"
+        ;;
+    preflight) exec "$CLI" preflight "$@" --db "$DB" --artifacts "$ARTIFACTS" ;;
+    status|readiness|missions|jobs|routes|observations|corrections|reviews|doctor)
+        exec "$CLI" "$command_name" "$@" --db "$DB" ;;
+    init)
+        need "$policy_writes" "database writes are disabled"
+        exec "$CLI" init "$@" --db "$DB" --artifacts "$ARTIFACTS" ;;
+    migrate)
+        need "$policy_writes" "database writes are disabled"
+        need "$policy_migrations" "database migrations are disabled"
+        exec "$CLI" migrate "$@" --db "$DB" --migrations "$MIGRATIONS" --by openclaw-agent ;;
+    recover)
+        need "$policy_writes" "database writes are disabled"
+        exec "$CLI" recover "$@" --db "$DB" --by openclaw-recovery ;;
+    enqueue)
+        need "$policy_writes" "database writes are disabled"
+        exec "$CLI" enqueue "$@" --db "$DB" --git-commit openclaw-agent ;;
+    correction-propose)
+        need "$policy_writes" "database writes are disabled"
+        exec "$CLI" correction-propose "$@" --db "$DB" ;;
+    correction-decide|review-decide)
+        need "$policy_writes" "database writes are disabled"
+        need "$policy_approvals" "correction/rule approval decisions remain human-gated"
+        exec "$CLI" "$command_name" "$@" --db "$DB" ;;
+    public-preflight)
+        need "$policy_writes" "database writes are disabled"
+        need "$policy_public_preflight" "automated public preflight is disabled"
+        need "$allow_network" "controlled public network fetching is disabled"
+        if [ "$require_proxy" = 1 ]; then
+            exec env TCPIPE_USER_AGENT="$crawler_user_agent" "$CLI" public-preflight "$@" \
+                --db "$DB" --artifacts "$ARTIFACTS" --require-proxy
+        fi
+        exec env TCPIPE_USER_AGENT="$crawler_user_agent" "$CLI" public-preflight "$@" \
+            --db "$DB" --artifacts "$ARTIFACTS"
+        ;;
+    adapter-activate)
+        need "$policy_writes" "database writes are disabled"
+        need "$policy_adapter_activation" "fixture-verified adapter activation is disabled"
+        exec "$CLI" adapter-activate "$@" --db "$DB" --by openclaw-agent ;;
+    adapter-fixture)
+        need "$policy_writes" "database writes are disabled"
+        need "$policy_tests" "fixture replay is disabled"
+        exec "$CLI" adapter-fixture "$@" --db "$DB" --artifacts "$ARTIFACTS" ;;
+    fetch)
+        need "$policy_writes" "database writes are disabled"
+        need "$policy_public_preflight" "automated public preflight is disabled"
+        need "$allow_network" "controlled public network fetching is disabled"
+        if [ "$require_proxy" = 1 ]; then
+            exec env TCPIPE_USER_AGENT="$crawler_user_agent" "$CLI" fetch "$@" \
+                --db "$DB" --artifacts "$ARTIFACTS" --worker openclaw-agent \
+                --git-commit openclaw-agent --auto-public-preflight --public-only --require-proxy
+        fi
+        exec env TCPIPE_USER_AGENT="$crawler_user_agent" "$CLI" fetch "$@" \
+            --db "$DB" --artifacts "$ARTIFACTS" --worker openclaw-agent \
+            --git-commit openclaw-agent --auto-public-preflight --public-only
+        ;;
+    run)
+        need "$policy_writes" "database writes are disabled"
+        exec "$CLI" run "$@" --db "$DB" --artifacts "$ARTIFACTS" \
+            --worker openclaw-agent --git-commit openclaw-agent ;;
+    *) echo "ERROR: command is not exposed to the agent: $command_name" >&2; exit 64 ;;
+esac

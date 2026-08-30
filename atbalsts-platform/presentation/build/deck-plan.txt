@@ -1,0 +1,19 @@
+Communication job
+
+By the end, senior Latvian government and crisis-management officials should agree to a bounded design partnership and exercise pilot because Atbalsts complements existing command with an auditable, consent-aware way to map and engage community capacity.
+
+Narrative
+
+1. Introduce the proposal and bounded ask.
+2. Position Atbalsts under existing Latvian authority.
+3. Demonstrate the minimal citizen interaction.
+4. Demonstrate the minimal authority interaction.
+5. Show the control architecture and AI boundary.
+6. Establish exercise-first safety and compliance.
+7. Propose a 12-week development and exercise path.
+8. Define the evidence gate for any expansion.
+9. Ask for one liaison, one scenario and shared safety criteria.
+
+Visual direction
+
+Adapt Codex Grid layouts 01, 05, 09 and 17: white canvas, strong typographic hierarchy, thin rules, light grey structural fields and one restrained dark-teal highlight. Keep the deck Latvian-first, sparse and decision-oriented. Use editable PowerPoint objects; one simple architecture diagram only.

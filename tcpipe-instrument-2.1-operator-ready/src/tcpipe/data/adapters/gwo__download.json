@@ -1,0 +1,180 @@
+{
+  "adapter_id": "gwo__download",
+  "version": "1.0.0",
+  "output_contract_version": "2.1",
+  "applies_to": {
+    "url_pattern": "^https://winda\\.globalwindsafety\\.org/.*download.*"
+  },
+  "list": {
+    "container": {
+      "primary": {
+        "strategy": "css",
+        "value": "table.providers"
+      },
+      "fallback_policy": "required",
+      "fallback_1": {
+        "strategy": "css",
+        "value": "table"
+      },
+      "fallback_2": {
+        "strategy": "xpath",
+        "value": "//table[1]"
+      }
+    },
+    "row": {
+      "primary": {
+        "strategy": "css",
+        "value": "tr.provider"
+      },
+      "fallback_policy": "required",
+      "fallback_1": {
+        "strategy": "css",
+        "value": "tbody tr"
+      },
+      "fallback_2": {
+        "strategy": "xpath",
+        "value": ".//tr[position()>1]"
+      }
+    },
+    "empty_is_valid": false,
+    "min_expected_rows": 100,
+    "structural_count": {
+      "primary": {
+        "strategy": "css",
+        "value": "tr.provider"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit",
+      "count_mode": "nodes"
+    },
+    "published_count": {
+      "primary": {
+        "strategy": "css_text",
+        "value": "p.result-total"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit",
+      "count_mode": "value"
+    }
+  },
+  "fields": {
+    "published_name": {
+      "selector": {
+        "primary": {
+          "strategy": "css_text",
+          "value": "td.provider-name"
+        },
+        "fallback_policy": "required",
+        "fallback_1": {
+          "strategy": "css_text",
+          "value": "td:nth-child(1)"
+        },
+        "fallback_2": {
+          "strategy": "xpath",
+          "value": "./td[1]"
+        }
+      },
+      "required": true,
+      "normalize": "trim"
+    },
+    "provider_id": {
+      "selector": {
+        "primary": {
+          "strategy": "css_text",
+          "value": "td.winda-id"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    },
+    "published_country": {
+      "selector": {
+        "primary": {
+          "strategy": "css_text",
+          "value": "td.country"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "country_iso2"
+    },
+    "published_locality": {
+      "selector": {
+        "primary": {
+          "strategy": "css_text",
+          "value": "td.city"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    },
+    "published_address": {
+      "selector": {
+        "primary": {
+          "strategy": "css_text",
+          "value": "td.address"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    },
+    "published_phone": {
+      "selector": {
+        "primary": {
+          "strategy": "css_text",
+          "value": "td.phone"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "phone_e164_or_verbatim",
+      "cardinality": "many"
+    },
+    "published_website": {
+      "selector": {
+        "primary": {
+          "strategy": "css_attr",
+          "value": "td.website a@href"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "url_absolute"
+    },
+    "certificate_name": {
+      "selector": {
+        "primary": {
+          "strategy": "css_text",
+          "value": "td.standards span.standard"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "cardinality": "many",
+      "normalize": "trim"
+    },
+    "official_relationship_wording": {
+      "selector": {
+        "primary": {
+          "strategy": "css_text",
+          "value": "td.status"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    }
+  },
+  "rejects": [
+    {
+      "when": "\\b(withdrawn|suspended|expired|terminated)\\b",
+      "parse_state": "rejected_not_centre"
+    }
+  ],
+  "fixtures": [
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ]
+}

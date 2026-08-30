@@ -1,0 +1,1607 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/zq8js8",
+    "id": "zq8js8",
+    "slide": 5,
+    "layoutId": "253fce28-729f-4f22-be33-7293570d0fb6",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FFFFFF",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Helvetica Neue"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "253fce28-729f-4f22-be33-7293570d0fb6",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2d4ja90f",
+      "id": "1",
+      "bbox": [
+        48,
+        42,
+        310,
+        22
+      ],
+      "geometry": "rect",
+      "text": "KONTROLES ARHITEKTŪRA",
+      "textPreview": "KONTROLES ARHITEKTŪRA",
+      "resolvedFontSize": 10.33,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#23675F",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.74,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "KONTROLES ARHITEKTŪRA"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "KONTROLES ARHITEKTŪRA",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#23675F",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "KONTROLES ARHITEKTŪRA",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#23675F",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p0f2lojq",
+      "id": "2",
+      "bbox": [
+        48,
+        82,
+        1160,
+        112
+      ],
+      "geometry": "rect",
+      "text": "AI interpretē valodu; pilnvaroti cilvēki pieņem lēmumus",
+      "textPreview": "AI interpretē valodu; pilnvaroti cilvēki pieņem lēmumus",
+      "resolvedFontSize": 43.77,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 46,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.95,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "AI interpretē valodu; pilnvaroti cilvēki pieņem"
+          },
+          {
+            "index": 2,
+            "text": "lēmumus"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "AI interpretē valodu; pilnvaroti cilvēki pieņem lēmumus",
+          "resolvedTextStyle": {
+            "fontSize": 46,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "AI interpretē valodu; pilnvaroti cilvēki pieņem lēmumus",
+              "fontSize": 46,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ozm1cjil",
+      "id": "3",
+      "bbox": [
+        48,
+        672,
+        1184,
+        0
+      ],
+      "geometry": "line",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 1
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fadkfe1o",
+      "id": "4",
+      "bbox": [
+        48,
+        680,
+        360,
+        20
+      ],
+      "geometry": "rect",
+      "text": "KONCEPCIJA APSPRIEŠANAI",
+      "textPreview": "KONCEPCIJA APSPRIEŠANAI",
+      "resolvedFontSize": 8.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 12,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.72,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "KONCEPCIJA APSPRIEŠANAI"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "KONCEPCIJA APSPRIEŠANAI",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "KONCEPCIJA APSPRIEŠANAI",
+              "fontSize": 12,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/e94j6903",
+      "id": "5",
+      "bbox": [
+        1178,
+        680,
+        54,
+        20
+      ],
+      "geometry": "rect",
+      "text": "05",
+      "textPreview": "05",
+      "resolvedFontSize": 8.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 12,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "bold": true,
+        "alignment": "right",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.72,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "05"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "05",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "05",
+              "fontSize": 12,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "bold": true,
+              "alignment": "right"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1cv2h4ju",
+      "id": "6",
+      "bbox": [
+        48,
+        250,
+        210,
+        128
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 1.3
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0bm18zi9",
+      "id": "7",
+      "bbox": [
+        64,
+        264,
+        178,
+        29
+      ],
+      "geometry": "rect",
+      "text": "1 · Saruna",
+      "textPreview": "1 · Saruna",
+      "resolvedFontSize": 16.17,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 19,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.85,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1 · Saruna"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1 · Saruna",
+          "resolvedTextStyle": {
+            "fontSize": 19,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "1 · Saruna",
+              "fontSize": 19,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z6xkry18",
+      "id": "8",
+      "bbox": [
+        64,
+        298,
+        178,
+        70
+      ],
+      "geometry": "rect",
+      "text": "Teksts vai balss\nLV / EN",
+      "textPreview": "Teksts vai balss | LV / EN",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Teksts vai balss"
+          },
+          {
+            "index": 2,
+            "text": "LV / EN"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Teksts vai balss",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Teksts vai balss",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "LV / EN",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "LV / EN",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/y5o3it0n",
+      "id": "9",
+      "bbox": [
+        286,
+        250,
+        220,
+        128
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#E5F1ED",
+      "lineColor": "#A8C8C1",
+      "lineWidth": 1.3
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kn2tg7a9",
+      "id": "10",
+      "bbox": [
+        302,
+        264,
+        188,
+        29
+      ],
+      "geometry": "rect",
+      "text": "2 · Priekšlikums",
+      "textPreview": "2 · Priekšlikums",
+      "resolvedFontSize": 16.17,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 19,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.85,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "2 · Priekšlikums"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "2 · Priekšlikums",
+          "resolvedTextStyle": {
+            "fontSize": 19,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "2 · Priekšlikums",
+              "fontSize": 19,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/58ba9cbu",
+      "id": "11",
+      "bbox": [
+        302,
+        298,
+        188,
+        70
+      ],
+      "geometry": "rect",
+      "text": "Strukturēts nolūks\nun nenoteiktība",
+      "textPreview": "Strukturēts nolūks | un nenoteiktība",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Strukturēts nolūks"
+          },
+          {
+            "index": 2,
+            "text": "un nenoteiktība"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Strukturēts nolūks",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Strukturēts nolūks",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "un nenoteiktība",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "un nenoteiktība",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ilkbexs3",
+      "id": "12",
+      "bbox": [
+        534,
+        250,
+        232,
+        128
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 1.3
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/jmts72to",
+      "id": "13",
+      "bbox": [
+        550,
+        264,
+        200,
+        29
+      ],
+      "geometry": "rect",
+      "text": "3 · Politikas vārti",
+      "textPreview": "3 · Politikas vārti",
+      "resolvedFontSize": 16.17,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 19,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.85,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "3 · Politikas vārti"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "3 · Politikas vārti",
+          "resolvedTextStyle": {
+            "fontSize": 19,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "3 · Politikas vārti",
+              "fontSize": 19,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wji9c7ad",
+      "id": "14",
+      "bbox": [
+        550,
+        298,
+        200,
+        70
+      ],
+      "geometry": "rect",
+      "text": "Loma · risks · piekrišana\n· atklājamie lauki",
+      "textPreview": "Loma · risks · piekrišana | · atklājamie lauki",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Loma · risks · piekrišana"
+          },
+          {
+            "index": 2,
+            "text": "· atklājamie lauki"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Loma · risks · piekrišana",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Loma · risks · piekrišana",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "· atklājamie lauki",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "· atklājamie lauki",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xkra5cbi",
+      "id": "15",
+      "bbox": [
+        794,
+        250,
+        220,
+        128
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 1.3
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ah0raxs7",
+      "id": "16",
+      "bbox": [
+        810,
+        264,
+        188,
+        29
+      ],
+      "geometry": "rect",
+      "text": "4 · Darbplūsma",
+      "textPreview": "4 · Darbplūsma",
+      "resolvedFontSize": 16.17,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 19,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.85,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "4 · Darbplūsma"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "4 · Darbplūsma",
+          "resolvedTextStyle": {
+            "fontSize": 19,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "4 · Darbplūsma",
+              "fontSize": 19,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vi9s32ts",
+      "id": "17",
+      "bbox": [
+        810,
+        298,
+        188,
+        70
+      ],
+      "geometry": "rect",
+      "text": "Apstiprinājums · uzdevums\n· nodošana · atcelšana",
+      "textPreview": "Apstiprinājums · uzdevums | · nodošana · atcelšana",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Apstiprinājums ·"
+          },
+          {
+            "index": 2,
+            "text": "uzdevums"
+          },
+          {
+            "index": 3,
+            "text": "· nodošana · atcelšana"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Apstiprinājums · uzdevums",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Apstiprinājums · uzdevums",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "· nodošana · atcelšana",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "· nodošana · atcelšana",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8fi98na1",
+      "id": "18",
+      "bbox": [
+        1042,
+        250,
+        190,
+        128
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 1.3
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9gra1sbm",
+      "id": "19",
+      "bbox": [
+        1058,
+        264,
+        158,
+        29
+      ],
+      "geometry": "rect",
+      "text": "5 · Privāta atlase",
+      "textPreview": "5 · Privāta atlase",
+      "resolvedFontSize": 16.17,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 19,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.85,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "5 · Privāta atlase"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "5 · Privāta atlase",
+          "resolvedTextStyle": {
+            "fontSize": 19,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "5 · Privāta atlase",
+              "fontSize": 19,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pcjq5o3a",
+      "id": "20",
+      "bbox": [
+        1058,
+        298,
+        158,
+        70
+      ],
+      "geometry": "rect",
+      "text": "Neliela uzaicinājumu grupa\n· skaidrs atteikums",
+      "textPreview": "Neliela uzaicinājumu grupa | · skaidrs atteikums",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Neliela uzaicinājumu"
+          },
+          {
+            "index": 2,
+            "text": "grupa"
+          },
+          {
+            "index": 3,
+            "text": "· skaidrs atteikums"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Neliela uzaicinājumu grupa",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Neliela uzaicinājumu grupa",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "· skaidrs atteikums",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "· skaidrs atteikums",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/obapwj2p",
+      "id": "21",
+      "bbox": [
+        258,
+        314,
+        28,
+        0
+      ],
+      "geometry": "straightConnector1",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 2
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3a183elk",
+      "id": "22",
+      "bbox": [
+        506,
+        314,
+        28,
+        0
+      ],
+      "geometry": "straightConnector1",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 2
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2987u9kz",
+      "id": "23",
+      "bbox": [
+        766,
+        314,
+        28,
+        0
+      ],
+      "geometry": "straightConnector1",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 2
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/18zq143e",
+      "id": "24",
+      "bbox": [
+        1014,
+        314,
+        28,
+        0
+      ],
+      "geometry": "straightConnector1",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 2
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/g7qpsz2t",
+      "id": "25",
+      "bbox": [
+        48,
+        446,
+        1184,
+        118
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#102D38",
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/f6h8zel8",
+      "id": "26",
+      "bbox": [
+        76,
+        470,
+        260,
+        30
+      ],
+      "geometry": "rect",
+      "text": "Pierādījumu plūsma",
+      "textPreview": "Pierādījumu plūsma",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 22,
+        "typeface": "Helvetica Neue",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.77,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Pierādījumu plūsma"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Pierādījumu plūsma",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "typeface": "Helvetica Neue",
+            "color": "#FFFFFF",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Pierādījumu plūsma",
+              "fontSize": 22,
+              "typeface": "Helvetica Neue",
+              "color": "#FFFFFF",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/el87q9kn",
+      "id": "27",
+      "bbox": [
+        76,
+        516,
+        1100,
+        30
+      ],
+      "geometry": "rect",
+      "text": "ievade → transkripcija → interpretācija → labojums → piekrišana → politikas lēmums → atklāšana → rezultāts",
+      "textPreview": "ievade → transkripcija → interpretācija → labojums → piekrišana → politikas lēmums → atklāšana → rezultāts",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 18,
+        "typeface": "Helvetica Neue",
+        "color": "#C7D4D8",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.94,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "ievade → transkripcija → interpretācija → labojums → piekrišana → politikas lēmums → atklāšana → rezultāts"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "ievade → transkripcija → interpretācija → labojums → piekrišana → politikas lēmums → atklāšana → rezultāts",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Helvetica Neue",
+            "color": "#C7D4D8",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "ievade → transkripcija → interpretācija → labojums → piekrišana → politikas lēmums → atklāšana → rezultāts",
+              "fontSize": 18,
+              "typeface": "Helvetica Neue",
+              "color": "#C7D4D8",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/l43qd83i",
+      "id": "28",
+      "bbox": [
+        286,
+        398,
+        220,
+        24
+      ],
+      "geometry": "rect",
+      "text": "AI darbības robeža",
+      "textPreview": "AI darbības robeža",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#23675F",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.86,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "AI darbības robeža"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "AI darbības robeža",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#23675F",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "AI darbības robeža",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#23675F",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/k3u9432x",
+      "id": "29",
+      "bbox": [
+        534,
+        398,
+        360,
+        24
+      ],
+      "geometry": "rect",
+      "text": "Determinēta kontrole sākas šeit",
+      "textPreview": "Determinēta kontrole sākas šeit",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.86,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Determinēta kontrole sākas šeit"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Determinēta kontrole sākas šeit",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Determinēta kontrole sākas šeit",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

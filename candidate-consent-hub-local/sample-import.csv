@@ -1,0 +1,2 @@
+first_name,last_name,email,phone,location,source_context,cv_reference,received_at,original_basis,eligibility,status,retention_until,privacy_notice_version,campaign_name
+Sample,Candidate,sample.candidate@example.test,,Riga,Energy engineer application,secure-file-reference,2026-08-01,future_roles_consent,eligible,new,2027-08-01,draft-v1,Energy Match — Invitation

@@ -1,0 +1,162 @@
+{
+  "adapter_id": "opito__js_app",
+  "version": "1.0.0",
+  "output_contract_version": "2.1",
+  "applies_to": {
+    "url_pattern": "^https://opito\\.com/centre-network.*"
+  },
+  "list": {
+    "container": {
+      "primary": {
+        "strategy": "json_pointer",
+        "value": "/results"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit"
+    },
+    "row": {
+      "primary": {
+        "strategy": "json_pointer",
+        "value": "/-"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit"
+    },
+    "empty_is_valid": false,
+    "structural_count": {
+      "primary": {
+        "strategy": "json_pointer",
+        "value": "/-"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit",
+      "count_mode": "nodes"
+    },
+    "published_count": {
+      "primary": {
+        "strategy": "json_pointer",
+        "value": "/pagination/total_results"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit",
+      "count_mode": "value"
+    }
+  },
+  "fields": {
+    "published_name": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/centre_name"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "required": true,
+      "normalize": "trim"
+    },
+    "provider_id": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/opito_centre_code"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    },
+    "published_country": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/address/country_code"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "country_iso2"
+    },
+    "published_locality": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/address/city"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    },
+    "published_address": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/address/line1"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    },
+    "published_phone": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/contact/telephone"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "phone_e164_or_verbatim",
+      "cardinality": "many"
+    },
+    "published_website": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/contact/website"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "url_absolute"
+    },
+    "certificate_name": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/approved_standards"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "cardinality": "many",
+      "normalize": "trim"
+    },
+    "official_relationship_wording": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/approval_status"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    }
+  },
+  "pagination": {
+    "kind": "xhr_replay",
+    "max_pages": 40
+  },
+  "rejects": [
+    {
+      "when": "\\b(withdrawn|lapsed)\\b",
+      "parse_state": "rejected_not_centre"
+    }
+  ],
+  "fixtures": [
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ]
+}

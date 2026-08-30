@@ -1,0 +1,25 @@
+Metadata-Version: 2.4
+Name: tcpipe-foundation
+Version: 2.2.1
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: jsonschema>=4.17
+Requires-Dist: lxml>=4.9
+Requires-Dist: cssselect>=1.2
+Provides-Extra: pdf
+Requires-Dist: pypdf>=4.0; extra == "pdf"
+
+# tcpipe foundation 2.2.1
+
+tcpipe is a governed, evidence-preserving instrument for comprehensive parsing of
+training-centre sources. It is not a user-facing product.
+
+Start with `00-README-HANDOFF.md`. Human operators use `OPERATOR-GUIDE.md`; OpenClaw
+operators use `openclaw/INSTALL.md` and the guarded `bin/tcpipe-agent` command.
+
+Verify the complete handoff with:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/verify_bundle.py
+```
+

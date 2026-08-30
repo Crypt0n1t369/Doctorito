@@ -1,0 +1,58 @@
+# config/sources.yaml — Source Policy Registry
+# Authority: V3 Part 3.1, Part 5. IMMUTABLE (chattr +i). Changes by operator + commit only.
+#
+# SPEC ────────────────────────────────────────────────────────────────────────
+# sources:
+#   - source_id:        SRC-####            required, stable, never reused
+#     legal_name:       str                 required, as officially published
+#     acronym:          str | null
+#     source_kind:      association | scheme_owner | national_authority | registry | federation
+#     country_iso2:     ISO-3166-1 alpha-2 | null   (null for international bodies)
+#     official_website: url
+#     discovered_via:   seed | reverse_discovery | manual
+#     intake_state:     candidate | confirmed | rejected_not_accreditor | duplicate
+#     routes:
+#       - route_id:          RT-####        required, stable
+#         route_url:         url            required
+#         scheme_scope:      str            "" means route-wide. NEVER null.
+#         route_kind:        html_list | html_paginated | json_api | powerbi | pdf | js_app | search_form
+#         fetch_tier:        1 | 2 | 3
+#         crawl_delay_s:     float >= 1.0   raised to any published Crawl-delay
+#         volatility_class:  daily | weekly | monthly | quarterly | static
+#         published_count:   int | null     what the SOURCE states, not what we extracted
+#         count_quality:     published | derived_from_category_text | not_published
+#         notes:             str            free text; never parsed
+#
+# RULES
+#  - robots_allowed is NOT set here. It is determined at fetch time from live robots.txt
+#    and recorded on the route row. A human may not override it in config.
+#  - published_count is a claim by the source. It is never our extraction count.
+#  - A route with count_quality: not_published can still reach a terminal complete state
+#    via complete_count_unpublished (V3 Part 12.1). Do not invent a count to force it.
+#  - Adding a source here does NOT enqueue work. The supervisor enqueues from missions.
+
+# SEED ────────────────────────────────────────────────────────────────────────
+sources:
+  - source_id: SRC-0001
+    legal_name: Occupational Safety and Health Administration — OSHA Training Institute Education Centers
+    acronym: OSHA OTI
+    source_kind: national_authority
+    country_iso2: US
+    official_website: https://www.osha.gov/
+    discovered_via: seed
+    intake_state: confirmed
+    routes:
+      - route_id: RT-0001
+        route_url: https://www.osha.gov/otiec/education-centers
+        scheme_scope: ""
+        route_kind: html_list
+        fetch_tier: 1
+        crawl_delay_s: 5.0
+        volatility_class: quarterly
+        published_count: 36
+        count_quality: published
+        notes: >
+          Phase 1 pilot route. 36 official authorized OTI Education Center records observed
+          2026-08-17. Small enough for exhaustive human verification, which becomes the
+          first golden fixture. Confirm the live URL before first fetch; the historical
+          checkpoint recorded a contact-sheet route rather than this listing page.

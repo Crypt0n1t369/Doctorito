@@ -1,0 +1,137 @@
+#!/bin/sh
+# Narrow OpenClaw-facing command boundary. This script deliberately does not use eval.
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+CLI="$ROOT/tcpipe"
+POLICY_FILE=${TCPIPE_AGENT_POLICY:-"$ROOT/openclaw/agent-policy.conf"}
+
+policy_writes=1
+policy_network=0
+policy_require_proxy=1
+policy_approvals=0
+policy_audit=0
+policy_external_state=0
+
+if [ -f "$POLICY_FILE" ]; then
+    while IFS='=' read -r key value; do
+        case "$key" in
+            ''|'#'*) continue ;;
+            ALLOW_DB_WRITES) policy_writes=$value ;;
+            ALLOW_NETWORK) policy_network=$value ;;
+            REQUIRE_PROXY) policy_require_proxy=$value ;;
+            ALLOW_APPROVAL_DECISIONS) policy_approvals=$value ;;
+            ALLOW_AUDIT_ATTESTATION) policy_audit=$value ;;
+            ALLOW_EXTERNAL_STATE) policy_external_state=$value ;;
+            *) echo "ERROR: unknown agent policy key: $key" >&2; exit 64 ;;
+        esac
+    done < "$POLICY_FILE"
+fi
+
+for value in "$policy_writes" "$policy_network" "$policy_require_proxy" \
+             "$policy_approvals" "$policy_audit" "$policy_external_state"; do
+    case "$value" in 0|1) ;; *) echo "ERROR: policy values must be 0 or 1" >&2; exit 64 ;; esac
+done
+
+allow_writes=${TCPIPE_AGENT_ALLOW_WRITES:-$policy_writes}
+allow_network=${TCPIPE_AGENT_ALLOW_NETWORK:-$policy_network}
+require_proxy=${TCPIPE_AGENT_REQUIRE_PROXY:-$policy_require_proxy}
+allow_approvals=${TCPIPE_AGENT_ALLOW_APPROVALS:-$policy_approvals}
+allow_audit=${TCPIPE_AGENT_ALLOW_AUDIT_ATTESTATION:-$policy_audit}
+allow_external_state=${TCPIPE_AGENT_ALLOW_EXTERNAL_STATE:-$policy_external_state}
+DB=${TCPIPE_DB:-"$ROOT/work/pilot.db"}
+ARTIFACTS=${TCPIPE_ARTIFACTS:-"$ROOT/work/artifacts"}
+
+if [ "$allow_external_state" != 1 ]; then
+    case "$DB" in "$ROOT"/*) ;; *) echo "ERROR: database must remain inside workspace" >&2; exit 64 ;; esac
+    case "$ARTIFACTS" in "$ROOT"/*) ;; *) echo "ERROR: artifacts must remain inside workspace" >&2; exit 64 ;; esac
+fi
+
+command_name=${1:-help}
+if [ "$#" -gt 0 ]; then shift; fi
+
+# The wrapper owns paths, executable identity and egress options. Letting the agent replace
+# these would turn one allowlisted binary into a generic filesystem/network capability.
+for arg in "$@"; do
+    case "$arg" in
+        --db|--db=*|--artifacts|--artifacts=*|--rules|--rules=*|--url|--url=*|\
+        --worker|--worker=*|--git-commit|--git-commit=*|--proxy|--proxy=*|\
+        --user-agent|--user-agent=*|--no-conditional)
+            echo "ERROR: $arg is controlled by the tcpipe agent boundary" >&2
+            exit 64
+            ;;
+        --audit-errors|--audit-errors=*|--audit-sample|--audit-sample=*)
+            if [ "$allow_audit" != 1 ]; then
+                echo "ERROR: audit counts are human attestations and are disabled for the agent" >&2
+                exit 77
+            fi
+            ;;
+    esac
+done
+
+need_writes() {
+    if [ "$allow_writes" != 1 ]; then
+        echo "ERROR: database mutations are disabled by openclaw/agent-policy.conf" >&2
+        exit 77
+    fi
+}
+
+case "$command_name" in
+    help|-h|--help)
+        exec "$CLI" --help
+        ;;
+    preflight)
+        exec "$CLI" preflight "$@" --db "$DB" --artifacts "$ARTIFACTS"
+        ;;
+    status|readiness|missions|jobs|routes|observations|corrections|reviews|doctor)
+        exec "$CLI" "$command_name" "$@" --db "$DB"
+        ;;
+    init)
+        need_writes
+        exec "$CLI" init "$@" --db "$DB" --artifacts "$ARTIFACTS"
+        ;;
+    recover)
+        need_writes
+        exec "$CLI" recover "$@" --db "$DB" --by openclaw-recovery
+        ;;
+    enqueue)
+        need_writes
+        exec "$CLI" enqueue "$@" --db "$DB" --git-commit openclaw-agent
+        ;;
+    correction-propose)
+        need_writes
+        exec "$CLI" correction-propose "$@" --db "$DB"
+        ;;
+    correction-decide|review-decide)
+        need_writes
+        if [ "$allow_approvals" != 1 ]; then
+            echo "ERROR: approval decisions are human-gated; use the operator CLI or explicitly enable them" >&2
+            exit 77
+        fi
+        exec "$CLI" "$command_name" "$@" --db "$DB"
+        ;;
+    fetch)
+        need_writes
+        if [ "$allow_network" != 1 ]; then
+            echo "ERROR: network fetch is disabled; complete G2, configure egress, then set ALLOW_NETWORK=1" >&2
+            exit 77
+        fi
+        if [ "$require_proxy" = 1 ]; then
+            exec "$CLI" fetch "$@" --db "$DB" --artifacts "$ARTIFACTS" \
+                --worker openclaw-agent --git-commit openclaw-agent --require-proxy
+        fi
+        exec "$CLI" fetch "$@" --db "$DB" --artifacts "$ARTIFACTS" \
+            --worker openclaw-agent --git-commit openclaw-agent
+        ;;
+    run)
+        need_writes
+        exec "$CLI" run "$@" --db "$DB" --artifacts "$ARTIFACTS" \
+            --worker openclaw-agent --git-commit openclaw-agent
+        ;;
+    *)
+        echo "ERROR: command is not exposed to the agent: $command_name" >&2
+        exit 64
+        ;;
+esac
+

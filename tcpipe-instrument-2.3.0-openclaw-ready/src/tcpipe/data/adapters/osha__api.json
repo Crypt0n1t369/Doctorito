@@ -1,0 +1,141 @@
+{
+  "adapter_id": "osha__api",
+  "version": "1.0.0",
+  "output_contract_version": "2.1",
+  "applies_to": {
+    "url_pattern": "^https://www\\.osha\\.gov/otiec/.*"
+  },
+  "list": {
+    "container": {
+      "primary": {
+        "strategy": "json_pointer",
+        "value": "/data"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit"
+    },
+    "row": {
+      "primary": {
+        "strategy": "json_pointer",
+        "value": "/-"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit"
+    },
+    "empty_is_valid": true,
+    "structural_count": {
+      "primary": {
+        "strategy": "json_pointer",
+        "value": "/-"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit",
+      "count_mode": "nodes"
+    },
+    "published_count": {
+      "primary": {
+        "strategy": "json_pointer",
+        "value": "/meta/total"
+      },
+      "fallback_policy": "none_with_reason",
+      "fallback_reason": "single authoritative locator; drift must be explicit",
+      "count_mode": "value"
+    }
+  },
+  "fields": {
+    "published_name": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/organization"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "required": true,
+      "normalize": "trim"
+    },
+    "provider_id": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/center_id"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    },
+    "published_country": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/country"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "country_iso2"
+    },
+    "published_locality": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/city"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "trim"
+    },
+    "published_phone": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/phone"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "phone_e164_or_verbatim",
+      "cardinality": "many"
+    },
+    "published_website": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/url"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "url_absolute"
+    },
+    "certificate_name": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/courses"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "cardinality": "many",
+      "normalize": "trim"
+    },
+    "published_apply_url": {
+      "selector": {
+        "primary": {
+          "strategy": "json_pointer",
+          "value": "/schedule_url"
+        },
+        "fallback_policy": "none_with_reason",
+        "fallback_reason": "single authoritative locator; drift must be explicit"
+      },
+      "normalize": "url_absolute"
+    }
+  },
+  "fixtures": [
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ]
+}

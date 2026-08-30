@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Private candidate consent and outreach control centre." />
+    <title>Candidate Consent Hub</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#overview" aria-label="Candidate Consent Hub home">
+          <span class="brand-mark">C</span>
+          <span><strong>Consent</strong><small>Candidate hub</small></span>
+        </a>
+        <nav aria-label="Primary navigation">
+          <button class="nav-item active" data-view="overview"><span>◫</span>Overview</button>
+          <button class="nav-item" data-view="candidates"><span>◎</span>Candidates</button>
+          <button class="nav-item" data-view="campaigns"><span>↗</span>Campaigns</button>
+          <button class="nav-item" data-view="audit"><span>≡</span>Consent log</button>
+          <button class="nav-item" data-view="settings"><span>⚙</span>Settings</button>
+        </nav>
+        <div class="sidebar-note">
+          <span class="pulse"></span>
+          <div><strong>Local & private</strong><small>Data stays on this computer</small></div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Energy talent operations</p>
+            <h1 id="page-title">Candidate control centre</h1>
+          </div>
+          <div class="topbar-actions">
+            <label class="import-button" for="csv-input">Import CSV</label>
+            <input id="csv-input" type="file" accept=".csv,text/csv" hidden />
+            <a class="button secondary" href="/api/candidates/export.csv">Export</a>
+            <button class="button primary" id="open-add">Add candidate</button>
+          </div>
+        </header>
+
+        <section class="view active" id="overview-view">
+          <div class="sample-banner" id="sample-banner">
+            <div><strong>Sample workspace</strong><span>These example records show the workflow. Replace them with legally eligible candidates.</span></div>
+            <button id="clear-demo">Clear samples</button>
+          </div>
+          <div class="metric-grid" id="metric-grid">
+            <article class="metric-card featured"><span>Eligible to invite</span><strong id="metric-eligible">—</strong><small>lawful-contact gate passed</small></article>
+            <article class="metric-card"><span>Awaiting decision</span><strong id="metric-review">—</strong><small>needs verification or review</small></article>
+            <article class="metric-card"><span>CV consent granted</span><strong id="metric-consented">—</strong><small>matching may proceed</small></article>
+            <article class="metric-card"><span>Suppressed</span><strong id="metric-suppressed">—</strong><small>declined, withdrawn or DNC</small></article>
+          </div>
+
+          <div class="overview-grid">
+            <section class="panel candidate-panel">
+              <div class="panel-heading">
+                <div><p class="eyebrow">Operational register</p><h2>Candidates</h2></div>
+                <button class="text-button" data-view-link="candidates">View all →</button>
+              </div>
+              <div class="table-wrap"><table><thead><tr><th>Candidate</th><th>Eligibility</th><th>Consent</th><th>Status</th><th>Retention</th></tr></thead><tbody id="overview-candidates"></tbody></table></div>
+            </section>
+
+            <aside class="panel review-panel">
+              <div class="panel-heading"><div><p class="eyebrow">Human checkpoint</p><h2>Review queue</h2></div><span class="queue-count" id="queue-count">0</span></div>
+              <div id="review-queue" class="review-list"></div>
+            </aside>
+          </div>
+
+          <section class="panel flow-panel">
+            <div class="panel-heading"><div><p class="eyebrow">Safe automation</p><h2>Consent journey</h2></div><span class="connection-pill" id="connection-pill">Manual mode</span></div>
+            <div class="journey" aria-label="Candidate consent journey">
+              <div><span>1</span><strong>Eligibility gate</strong><small>Confirm original basis</small></div><i>→</i>
+              <div><span>2</span><strong>Smartlead invite</strong><small>One reminder maximum</small></div><i>→</i>
+              <div><span>3</span><strong>Interest signal</strong><small>Reply or consent-page visit</small></div><i>→</i>
+              <div><span>4</span><strong>Explicit choice</strong><small>Separate permissions</small></div><i>→</i>
+              <div><span>5</span><strong>Match or suppress</strong><small>Audit trail retained</small></div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="candidates-view">
+          <section class="panel">
+            <div class="panel-heading candidate-tools">
+              <div><p class="eyebrow">Source of truth</p><h2>Candidate register</h2></div>
+              <div class="candidate-controls"><a class="button smartlead-export" href="/api/candidates/smartlead.csv">Export eligible for Smartlead</a><div class="filters"><input id="search" type="search" placeholder="Search name or email" /><select id="status-filter"><option value="">All statuses</option><option value="legal_review">Legal review</option><option value="invited">Invited</option><option value="interested_unverified">Interested — unverified</option><option value="consented">Consented</option><option value="declined">Declined</option><option value="do_not_contact">Do not contact</option></select></div></div>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Candidate</th><th>Source</th><th>Eligibility</th><th>CV matching</th><th>Direct contact</th><th>Status</th><th>Actions</th></tr></thead><tbody id="candidate-table"></tbody></table></div>
+          </section>
+        </section>
+
+        <section class="view" id="campaigns-view">
+          <div class="section-intro"><p class="eyebrow">Smartlead companion</p><h2>Campaign architecture</h2><p>Keep communication in Smartlead and permission evidence here. Base works manually; Pro unlocks automatic API and webhook synchronization.</p><button class="button primary" id="open-campaign">Add campaign definition</button></div>
+          <div class="campaign-grid" id="campaign-grid"></div>
+        </section>
+
+        <section class="view" id="audit-view">
+          <section class="panel"><div class="panel-heading"><div><p class="eyebrow">Evidence</p><h2>Consent audit trail</h2></div><span class="connection-pill">Append-only events</span></div><div id="audit-log" class="audit-list"></div></section>
+        </section>
+
+        <section class="view" id="settings-view">
+          <div class="settings-grid">
+            <section class="panel"><p class="eyebrow">Integration</p><h2>Smartlead connection</h2><dl class="settings-list"><div><dt>Mode</dt><dd id="setting-mode">—</dd></div><div><dt>Public consent URL</dt><dd><code id="setting-public-url">—</code></dd></div><div><dt>Webhook endpoint</dt><dd><code id="setting-webhook">—</code></dd></div><div><dt>Webhook signature</dt><dd id="setting-secret">—</dd></div></dl><p class="muted">Automatic sync requires Smartlead Pro API/webhook access. Until then, import and export CSV from this dashboard.</p></section>
+            <section class="panel" id="privacy-note"><p class="eyebrow">Before launch</p><h2>Required configuration</h2><ul class="checklist"><li>Replace the draft privacy notice version</li><li>Set a real privacy-notice URL</li><li>Approve retention periods with your DPO</li><li>Configure a webhook secret before public hosting</li><li>Test with internal addresses before candidate outreach</li></ul></section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="add-dialog">
+      <form id="add-form" method="dialog">
+        <div class="dialog-heading"><div><p class="eyebrow">New record</p><h2>Add a candidate</h2></div><button type="button" class="icon-button" id="close-add" aria-label="Close">×</button></div>
+        <div class="form-grid">
+          <label>First name<input name="first_name" autocomplete="given-name" /></label>
+          <label>Last name<input name="last_name" autocomplete="family-name" /></label>
+          <label class="wide">Email<input name="email" type="email" autocomplete="email" required /></label>
+          <label class="wide">Original CV context<input name="source_context" placeholder="e.g. Wind engineer application" required /></label>
+          <label>CV received<input name="received_at" type="date" /></label>
+          <label>Retention until<input name="retention_until" type="date" /></label>
+          <label>Eligibility<select name="eligibility"><option value="review_required">Review required</option><option value="eligible">Eligible</option><option value="do_not_contact">Do not contact</option></select></label>
+          <label>Original basis<select name="original_basis"><option value="review_required">Review required</option><option value="future_roles_consent">Future roles consent</option><option value="compatible_recruitment_purpose">Compatible recruitment purpose</option><option value="contract_request">Candidate requested service</option></select></label>
+          <label class="wide">CV reference<input name="cv_reference" placeholder="Secure ATS/file reference — do not paste CV contents" /></label>
+        </div>
+        <p class="form-error" id="form-error"></p>
+        <div class="dialog-actions"><button type="button" class="button secondary" id="cancel-add">Cancel</button><button class="button primary" type="submit">Save candidate</button></div>
+      </form>
+    </dialog>
+    <dialog id="edit-dialog">
+      <form id="edit-form" method="dialog">
+        <div class="dialog-heading"><div><p class="eyebrow">Candidate control</p><h2 id="edit-candidate-name">Manage candidate</h2></div><button type="button" class="icon-button" data-close-dialog="edit-dialog" aria-label="Close">×</button></div>
+        <input name="id" type="hidden" />
+        <div class="record-summary"><div><small>Candidate ID</small><strong id="edit-candidate-key">—</strong></div><div><small>Recorded consent</small><strong id="edit-consent-summary">—</strong></div></div>
+        <div class="form-grid">
+          <label>Status<select name="status"><option value="new">New</option><option value="legal_review">Legal review</option><option value="invited">Invited</option><option value="replied">Replied</option><option value="interested_unverified">Interested — unverified</option><option value="consented">Consented</option><option value="declined">Declined</option><option value="do_not_contact">Do not contact</option><option value="deletion_requested">Deletion requested</option><option value="bounced">Bounced</option></select></label>
+          <label>Eligibility<select name="eligibility"><option value="review_required">Review required</option><option value="eligible">Eligible</option><option value="do_not_contact">Do not contact</option></select></label>
+          <label>Retention until<input name="retention_until" type="date" /></label>
+          <label>Privacy notice version<input name="privacy_notice_version" /></label>
+          <label class="wide">Campaign<select name="campaign_name" id="edit-campaign-select"><option value="">No campaign</option></select></label>
+          <label class="wide">CV reference<input name="cv_reference" placeholder="Secure internal file or ATS reference" /></label>
+        </div>
+        <p class="form-hint">Consent decisions are not editable here. They must come from the candidate’s secure form so the evidence remains auditable.</p>
+        <p class="form-error" id="edit-error"></p>
+        <div class="dialog-actions"><a id="edit-consent-link" class="button secondary" target="_blank" rel="noreferrer">Open consent link</a><button class="button primary" type="submit">Save changes</button></div>
+      </form>
+    </dialog>
+    <dialog id="campaign-dialog">
+      <form id="campaign-form" method="dialog">
+        <div class="dialog-heading"><div><p class="eyebrow">Campaign map</p><h2>Add campaign definition</h2></div><button type="button" class="icon-button" data-close-dialog="campaign-dialog" aria-label="Close">×</button></div>
+        <div class="form-grid">
+          <label class="wide">Campaign name<input name="name" required placeholder="Energy Match — Invitation" /></label>
+          <label>Phase<select name="phase"><option value="informing">Informing</option><option value="verification">Verification</option><option value="onboarding">Onboarding</option></select></label>
+          <label>Status<select name="status"><option value="draft">Draft</option><option value="active">Active</option><option value="paused">Paused</option></select></label>
+          <label class="wide">Smartlead campaign ID<input name="smartlead_campaign_id" placeholder="Optional until connected" /></label>
+          <label class="wide">Description<input name="description" placeholder="Purpose and routing rule" /></label>
+        </div>
+        <p class="form-error" id="campaign-error"></p>
+        <div class="dialog-actions"><button type="button" class="button secondary" data-close-dialog="campaign-dialog">Cancel</button><button class="button primary" type="submit">Save definition</button></div>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

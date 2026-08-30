@@ -1,0 +1,6 @@
+jsonschema>=4.17
+lxml>=4.9
+cssselect>=1.2
+
+[pdf]
+pypdf>=4.0

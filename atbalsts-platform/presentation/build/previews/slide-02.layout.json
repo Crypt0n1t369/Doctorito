@@ -1,0 +1,960 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/7aq48m",
+    "id": "7aq48m",
+    "slide": 2,
+    "layoutId": "253fce28-729f-4f22-be33-7293570d0fb6",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FFFFFF",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Helvetica Neue"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "253fce28-729f-4f22-be33-7293570d0fb6",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gre90fid",
+      "id": "1",
+      "bbox": [
+        48,
+        42,
+        310,
+        22
+      ],
+      "geometry": "rect",
+      "text": "INSTITUCIONĀLAIS NOVIETOJUMS",
+      "textPreview": "INSTITUCIONĀLAIS NOVIETOJUMS",
+      "resolvedFontSize": 10.33,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#23675F",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.74,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "INSTITUCIONĀLAIS NOVIETOJUMS"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "INSTITUCIONĀLAIS NOVIETOJUMS",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#23675F",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "INSTITUCIONĀLAIS NOVIETOJUMS",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#23675F",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fql87a1s",
+      "id": "2",
+      "bbox": [
+        48,
+        82,
+        1160,
+        112
+      ],
+      "geometry": "rect",
+      "text": "Atbalsts papildina esošo komandstruktūru — tas to neaizvieto",
+      "textPreview": "Atbalsts papildina esošo komandstruktūru — tas to neaizvieto",
+      "resolvedFontSize": 42.67,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 46,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.93,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Atbalsts papildina esošo komandstruktūru — tas to"
+          },
+          {
+            "index": 2,
+            "text": "neaizvieto"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Atbalsts papildina esošo komandstruktūru — tas to neaizvieto",
+          "resolvedTextStyle": {
+            "fontSize": 46,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Atbalsts papildina esošo komandstruktūru — tas to neaizvieto",
+              "fontSize": 46,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/upcryp0n",
+      "id": "3",
+      "bbox": [
+        48,
+        672,
+        1184,
+        0
+      ],
+      "geometry": "line",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 1
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/to3q5kj2",
+      "id": "4",
+      "bbox": [
+        48,
+        680,
+        360,
+        20
+      ],
+      "geometry": "rect",
+      "text": "KONCEPCIJA APSPRIEŠANAI",
+      "textPreview": "KONCEPCIJA APSPRIEŠANAI",
+      "resolvedFontSize": 8.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 12,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.72,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "KONCEPCIJA APSPRIEŠANAI"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "KONCEPCIJA APSPRIEŠANAI",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "KONCEPCIJA APSPRIEŠANAI",
+              "fontSize": 12,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/snu9wfih",
+      "id": "5",
+      "bbox": [
+        1178,
+        680,
+        54,
+        20
+      ],
+      "geometry": "rect",
+      "text": "02",
+      "textPreview": "02",
+      "resolvedFontSize": 8.67,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 12,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "bold": true,
+        "alignment": "right",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.72,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "02"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "02",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "02",
+              "fontSize": 12,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "bold": true,
+              "alignment": "right"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7ml83a1w",
+      "id": "6",
+      "bbox": [
+        640,
+        222,
+        0,
+        0
+      ],
+      "geometry": "line",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 1
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6lcru50b",
+      "id": "7",
+      "bbox": [
+        639,
+        222,
+        1,
+        350
+      ],
+      "geometry": "rect",
+      "fillColor": "#C9D1CE",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5k3q10jq",
+      "id": "8",
+      "bbox": [
+        48,
+        224,
+        520,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Esošais pamats",
+      "textPreview": "Esošais pamats",
+      "resolvedFontSize": 27,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 28,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.96,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Esošais pamats"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Esošais pamats",
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Esošais pamats",
+              "fontSize": 28,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kja9svi5",
+      "id": "9",
+      "bbox": [
+        48,
+        300,
+        520,
+        30
+      ],
+      "geometry": "rect",
+      "text": "Krīzes vadības centrs",
+      "textPreview": "Krīzes vadības centrs",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 22,
+        "typeface": "Helvetica Neue",
+        "color": "#315D7C",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.77,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Krīzes vadības centrs"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Krīzes vadības centrs",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "typeface": "Helvetica Neue",
+            "color": "#315D7C",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Krīzes vadības centrs",
+              "fontSize": 22,
+              "typeface": "Helvetica Neue",
+              "color": "#315D7C",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yh4vipo7",
+      "id": "10",
+      "bbox": [
+        48,
+        338,
+        520,
+        70
+      ],
+      "geometry": "rect",
+      "text": "Starpinstitucionāla koordinācija, krīzes komunikācija un situācijas monitorings.",
+      "textPreview": "Starpinstitucionāla koordinācija, krīzes komunikācija un situācijas monitorings.",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 18,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Starpinstitucionāla koordinācija, krīzes komunikācija un"
+          },
+          {
+            "index": 2,
+            "text": "situācijas monitorings."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Starpinstitucionāla koordinācija, krīzes komunikācija un situācijas monitorings.",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Starpinstitucionāla koordinācija, krīzes komunikācija un situācijas monitorings.",
+              "fontSize": 18,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/jidwrups",
+      "id": "11",
+      "bbox": [
+        48,
+        438,
+        520,
+        30
+      ],
+      "geometry": "rect",
+      "text": "VUGD un pašvaldības",
+      "textPreview": "VUGD un pašvaldības",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 22,
+        "typeface": "Helvetica Neue",
+        "color": "#315D7C",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.77,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "VUGD un pašvaldības"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "VUGD un pašvaldības",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "typeface": "Helvetica Neue",
+            "color": "#315D7C",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "VUGD un pašvaldības",
+              "fontSize": 22,
+              "typeface": "Helvetica Neue",
+              "color": "#315D7C",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kjmdkz6d",
+      "id": "12",
+      "bbox": [
+        48,
+        476,
+        520,
+        82
+      ],
+      "geometry": "rect",
+      "text": "Likumā noteikta glābšanas darbu vadība un tiesības iesaistīt personas un resursus definētā kārtībā.",
+      "textPreview": "Likumā noteikta glābšanas darbu vadība un tiesības iesaistīt personas un resursus definētā kārtībā.",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 18,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Likumā noteikta glābšanas darbu vadība un tiesības iesaistīt"
+          },
+          {
+            "index": 2,
+            "text": "personas un resursus definētā kārtībā."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Likumā noteikta glābšanas darbu vadība un tiesības iesaistīt personas un resursus definētā kārtībā.",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Likumā noteikta glābšanas darbu vadība un tiesības iesaistīt personas un resursus definētā kārtībā.",
+              "fontSize": 18,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lkvet47y",
+      "id": "13",
+      "bbox": [
+        688,
+        224,
+        520,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Atbalsts risināmais uzdevums",
+      "textPreview": "Atbalsts risināmais uzdevums",
+      "resolvedFontSize": 27,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 28,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.96,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Atbalsts risināmais uzdevums"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Atbalsts risināmais uzdevums",
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Atbalsts risināmais uzdevums",
+              "fontSize": 28,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/atkvepob",
+      "id": "14",
+      "bbox": [
+        688,
+        304,
+        500,
+        150
+      ],
+      "geometry": "rect",
+      "text": "Padarīt kopienas kapacitāti atrodamu un iesaistāmu, neatklājot publisku cilvēku vai resursu sarakstu.",
+      "textPreview": "Padarīt kopienas kapacitāti atrodamu un iesaistāmu, neatklājot publisku cilvēku vai resursu sarakstu.",
+      "resolvedFontSize": 27,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 27,
+        "typeface": "Helvetica Neue",
+        "color": "#174B46",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Padarīt kopienas kapacitāti"
+          },
+          {
+            "index": 2,
+            "text": "atrodamu un iesaistāmu, neatklājot"
+          },
+          {
+            "index": 3,
+            "text": "publisku cilvēku vai resursu"
+          },
+          {
+            "index": 4,
+            "text": "sarakstu."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Padarīt kopienas kapacitāti atrodamu un iesaistāmu, neatklājot publisku cilvēku vai resursu sarakstu.",
+          "resolvedTextStyle": {
+            "fontSize": 27,
+            "typeface": "Helvetica Neue",
+            "color": "#174B46",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Padarīt kopienas kapacitāti atrodamu un iesaistāmu, neatklājot publisku cilvēku vai resursu sarakstu.",
+              "fontSize": 27,
+              "typeface": "Helvetica Neue",
+              "color": "#174B46",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/butwnupg",
+      "id": "15",
+      "bbox": [
+        688,
+        500,
+        500,
+        62
+      ],
+      "geometry": "rect",
+      "text": "Programmatūra palīdz īstenot pilnvaras; tā pati pilnvaras nerada.",
+      "textPreview": "Programmatūra palīdz īstenot pilnvaras; tā pati pilnvaras nerada.",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 18,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Programmatūra palīdz īstenot pilnvaras; tā pati pilnvaras"
+          },
+          {
+            "index": 2,
+            "text": "nerada."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Programmatūra palīdz īstenot pilnvaras; tā pati pilnvaras nerada.",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Programmatūra palīdz īstenot pilnvaras; tā pati pilnvaras nerada.",
+              "fontSize": 18,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

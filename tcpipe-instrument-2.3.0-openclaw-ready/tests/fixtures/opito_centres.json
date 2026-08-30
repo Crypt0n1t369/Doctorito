@@ -1,0 +1,44 @@
+{
+  "pagination": {
+    "total_results": 2,
+    "page": 1
+  },
+  "results": [
+    {
+      "opito_centre_code": "OPITO-3311",
+      "centre_name": "Aberdeen Offshore Training Ltd",
+      "approval_status": "Approved centre",
+      "address": {
+        "line1": "Wellhead Way 3",
+        "city": "Aberdeen",
+        "country_code": "GB"
+      },
+      "contact": {
+        "telephone": "+44 1224 777 300",
+        "website": "https://aotl.example.co.uk"
+      },
+      "approved_standards": [
+        "BOSIET",
+        "FOET",
+        "HUET"
+      ]
+    },
+    {
+      "opito_centre_code": "OPITO-5120",
+      "centre_name": "Esbjerg Energy Safety A/S",
+      "approval_status": "Approved centre",
+      "address": {
+        "line1": "Havnegade 44",
+        "city": "Esbjerg",
+        "country_code": "DK"
+      },
+      "contact": {
+        "telephone": "+45 7512 4400",
+        "website": "https://esbjergsafety.example.dk"
+      },
+      "approved_standards": [
+        "BOSIET"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,568 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/dabcwx",
+    "id": "dabcwx",
+    "slide": 1,
+    "layoutId": "253fce28-729f-4f22-be33-7293570d0fb6",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#F3F4EF",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Helvetica Neue"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "253fce28-729f-4f22-be33-7293570d0fb6",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "b04770b1-3c83-4b2b-9fd0-4c5fab0bacfc",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vidkri1k",
+      "id": "1",
+      "bbox": [
+        48,
+        35,
+        24,
+        24
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#23675F",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wjml0n2p",
+      "id": "2",
+      "bbox": [
+        54,
+        45,
+        12,
+        4
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xkv2tsja",
+      "id": "3",
+      "bbox": [
+        58,
+        41,
+        4,
+        12
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mtkjudkn",
+      "id": "4",
+      "bbox": [
+        82,
+        35,
+        150,
+        28
+      ],
+      "geometry": "rect",
+      "text": "ATBALSTS",
+      "textPreview": "ATBALSTS",
+      "resolvedFontSize": 15.33,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 17,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.9,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "ATBALSTS"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "ATBALSTS",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "ATBALSTS",
+              "fontSize": 17,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nutkni18",
+      "id": "5",
+      "bbox": [
+        48,
+        92,
+        780,
+        28
+      ],
+      "geometry": "rect",
+      "text": "PRIEKŠLIKUMS KONTROLĒTAM RĪGAS MĀCĪBU PILOTPROJEKTAM",
+      "textPreview": "PRIEKŠLIKUMS KONTROLĒTAM RĪGAS MĀCĪBU PILOTPROJEKTAM",
+      "resolvedFontSize": 15.33,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 16,
+        "typeface": "Helvetica Neue",
+        "color": "#23675F",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.96,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "PRIEKŠLIKUMS KONTROLĒTAM RĪGAS MĀCĪBU PILOTPROJEKTAM"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "PRIEKŠLIKUMS KONTROLĒTAM RĪGAS MĀCĪBU PILOTPROJEKTAM",
+          "resolvedTextStyle": {
+            "fontSize": 16,
+            "typeface": "Helvetica Neue",
+            "color": "#23675F",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "PRIEKŠLIKUMS KONTROLĒTAM RĪGAS MĀCĪBU PILOTPROJEKTAM",
+              "fontSize": 16,
+              "typeface": "Helvetica Neue",
+              "color": "#23675F",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8v2lwn2t",
+      "id": "6",
+      "bbox": [
+        48,
+        190,
+        1010,
+        230
+      ],
+      "geometry": "rect",
+      "text": "Iedzīvotāju kapacitāte,\nko var droši koordinēt",
+      "textPreview": "Iedzīvotāju kapacitāte, | ko var droši koordinēt",
+      "resolvedFontSize": 72,
+      "resolvedTextStyle": {
+        "anchor": 3,
+        "fontSize": 72,
+        "typeface": "Helvetica Neue",
+        "color": "#102D38",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "bottom",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Iedzīvotāju kapacitāte,"
+          },
+          {
+            "index": 2,
+            "text": "ko var droši koordinēt"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Iedzīvotāju kapacitāte,",
+          "resolvedTextStyle": {
+            "fontSize": 72,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Iedzīvotāju kapacitāte,",
+              "fontSize": 72,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "ko var droši koordinēt",
+          "resolvedTextStyle": {
+            "fontSize": 72,
+            "typeface": "Helvetica Neue",
+            "color": "#102D38",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "ko var droši koordinēt",
+              "fontSize": 72,
+              "typeface": "Helvetica Neue",
+              "color": "#102D38",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9gb2p8je",
+      "id": "7",
+      "bbox": [
+        48,
+        484,
+        820,
+        92
+      ],
+      "geometry": "rect",
+      "text": "Atbalsts papildina esošo krīžu vadības struktūru ar izsekojamu, piekrišanā balstītu kopienas koordinācijas slāni.",
+      "textPreview": "Atbalsts papildina esošo krīžu vadības struktūru ar izsekojamu, piekrišanā balstītu kopienas koordinācijas slāni.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 24,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 1,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Atbalsts papildina esošo krīžu vadības struktūru ar izsekojamu, piekrišanā"
+          },
+          {
+            "index": 2,
+            "text": "balstītu kopienas koordinācijas slāni."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Atbalsts papildina esošo krīžu vadības struktūru ar izsekojamu, piekrišanā balstītu kopienas koordinācijas slāni.",
+          "resolvedTextStyle": {
+            "fontSize": 24,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Atbalsts papildina esošo krīžu vadības struktūru ar izsekojamu, piekrišanā balstītu kopienas koordinācijas slāni.",
+              "fontSize": 24,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ep0jqtkr",
+      "id": "8",
+      "bbox": [
+        48,
+        642,
+        1184,
+        0
+      ],
+      "geometry": "line",
+      "lineColor": "#C9D1CE",
+      "lineWidth": 1
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zqtkjy1c",
+      "id": "9",
+      "bbox": [
+        48,
+        658,
+        420,
+        24
+      ],
+      "geometry": "rect",
+      "text": "Koncepcija apspriešanai · 2026",
+      "textPreview": "Koncepcija apspriešanai · 2026",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#64757C",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.86,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Koncepcija apspriešanai · 2026"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Koncepcija apspriešanai · 2026",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#64757C",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Koncepcija apspriešanai · 2026",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#64757C",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/j2x8r2ho",
+      "id": "10",
+      "bbox": [
+        1120,
+        658,
+        112,
+        24
+      ],
+      "geometry": "rect",
+      "text": "LATVIJA",
+      "textPreview": "LATVIJA",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Helvetica Neue",
+        "color": "#23675F",
+        "bold": true,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "autoFit": "shrinkText",
+        "autoFitScale": 0.86,
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "LATVIJA"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "LATVIJA",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Helvetica Neue",
+            "color": "#23675F",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "LATVIJA",
+              "fontSize": 14,
+              "typeface": "Helvetica Neue",
+              "color": "#23675F",
+              "bold": true,
+              "alignment": "right"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

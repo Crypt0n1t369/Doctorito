@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tcpipe-foundation"
+version = "2.2.1"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "jsonschema>=4.17",
+  "lxml>=4.9",       # HTML/XML parsing and xpath
+  "cssselect>=1.2",  # css selector strategies compile to xpath via lxml
+]
+
+[project.optional-dependencies]
+# PDF routes only. Kept optional so a deployment that excludes pdf routes from its
+# universe does not carry the dependency; adapter.extract_pdf_text says so if it is missing.
+pdf = ["pypdf>=4.0"]
+
+[project.scripts]
+tcpipe = "tcpipe.operator_cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# The schema, contracts, seeds and adapter rules are not optional extras — the instrument
+# cannot create a database or parse a route without them. They ship inside the package so
+# that an installed `tcpipe` behaves identically to one run from a checkout.
+[tool.setuptools.package-data]
+"tcpipe.data" = ["*.sql", "*.json"]
+"tcpipe.data.adapters" = ["*.json"]

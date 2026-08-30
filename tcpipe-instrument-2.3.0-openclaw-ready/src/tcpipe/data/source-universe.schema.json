@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gpsolution.app/tcpipe/source-universe.schema.json",
+  "type": "object",
+  "required": ["universe", "sources", "routes"],
+  "additionalProperties": false,
+  "properties": {
+    "universe": {
+      "type": "object",
+      "required": ["universe_id", "version", "scope_statement", "status", "created_at_utc"],
+      "additionalProperties": false,
+      "properties": {
+        "universe_id": {"type": "string", "pattern": "^[A-Z0-9_-]+$"},
+        "version": {"type": "integer", "minimum": 1},
+        "scope_statement": {"type": "string", "minLength": 20},
+        "status": {"enum": ["draft", "frozen", "retired"]},
+        "created_at_utc": {"type": "string", "format": "date-time"},
+        "frozen_at_utc": {"type": ["string", "null"], "format": "date-time"}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "draft"}}},
+         "then": {"properties": {"frozen_at_utc": {"type": "null"}}}},
+        {"if": {"properties": {"status": {"enum": ["frozen", "retired"]}}},
+         "then": {"required": ["frozen_at_utc"], "properties": {"frozen_at_utc": {"type": "string", "format": "date-time"}}}}
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/source"}
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/route"}
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["source_id", "legal_name", "source_kind", "official_website",
+        "discovered_via", "intake_state", "eligibility", "legal_review_state", "created_at_utc"],
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^SRC-[0-9]{4}$"},
+        "legal_name": {"type": "string", "minLength": 2},
+        "acronym": {"type": ["string", "null"]},
+        "source_kind": {"enum": ["association", "scheme_owner", "national_authority", "registry", "federation"]},
+        "country_iso2": {"type": ["string", "null"], "pattern": "^[A-Z]{2}$"},
+        "official_website": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "discovered_via": {"enum": ["seed", "reverse_discovery", "manual"]},
+        "intake_state": {"enum": ["candidate", "confirmed", "rejected_not_accreditor", "duplicate"]},
+        "eligibility": {"enum": ["candidate", "eligible", "excluded"]},
+        "exclusion_reason": {"type": ["string", "null"]},
+        "terms_url": {"type": ["string", "null"], "format": "uri"},
+        "license_basis": {"type": ["string", "null"]},
+        "allowed_purpose": {"type": ["string", "null"]},
+        "retention_period": {"type": ["string", "null"]},
+        "legal_review_state": {"enum": ["pending", "approved", "rejected", "review_due"]},
+        "last_legal_review_utc": {"type": ["string", "null"], "format": "date-time"},
+        "created_at_utc": {"type": "string", "format": "date-time"}
+      },
+      "allOf": [
+        {"if": {"properties": {"eligibility": {"const": "excluded"}}},
+         "then": {"required": ["exclusion_reason"], "properties": {"exclusion_reason": {"type": "string", "minLength": 1}}}},
+        {"if": {"properties": {"legal_review_state": {"const": "approved"}}},
+         "then": {"required": ["allowed_purpose", "retention_period", "last_legal_review_utc"],
+          "properties": {"allowed_purpose": {"type": "string", "minLength": 1},
+            "retention_period": {"type": "string", "minLength": 1},
+            "last_legal_review_utc": {"type": "string", "format": "date-time"}}}}
+        ,
+        {"if": {"properties": {"eligibility": {"const": "eligible"}}},
+         "then": {"properties": {"legal_review_state": {"const": "approved"}}}}
+      ]
+    },
+    "route": {
+      "type": "object",
+      "required": ["route_id", "source_id", "route_url", "route_kind", "acquisition_method",
+        "access_class", "eligibility", "policy_state", "robots_state", "crawl_delay_s", "volatility_class", "created_at_utc"],
+      "additionalProperties": false,
+      "properties": {
+        "route_id": {"type": "string", "pattern": "^RT-[0-9]{4}$"},
+        "source_id": {"type": "string", "pattern": "^SRC-[0-9]{4}$"},
+        "route_url": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "scheme_scope": {"type": "string", "default": ""},
+        "route_kind": {"enum": ["download", "html_list", "html_paginated", "json_api", "powerbi", "pdf", "js_app", "search_form"]},
+        "acquisition_method": {"enum": ["official_download", "http", "api", "headless", "human_capture"]},
+        "access_class": {"enum": ["public", "authenticated", "private", "sensitive", "human_required"]},
+        "eligibility": {"enum": ["candidate", "eligible", "excluded"]},
+        "exclusion_reason": {"type": ["string", "null"]},
+        "policy_state": {"enum": ["pending", "approved", "rejected"]},
+        "robots_state": {"enum": ["unknown", "allowed", "disallowed"]},
+        "robots_snapshot_sha": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "crawl_delay_s": {"type": "number", "minimum": 1},
+        "volatility_class": {"enum": ["daily", "weekly", "monthly", "quarterly", "static"]},
+        "refetch_days": {"type": ["integer", "null"], "minimum": 1},
+        "expected_records": {"type": ["integer", "null"], "minimum": 0},
+        "expected_basis": {"type": ["string", "null"]},
+        "expected_as_of_utc": {"type": ["string", "null"], "format": "date-time"},
+        "created_at_utc": {"type": "string", "format": "date-time"}
+      },
+      "allOf": [
+        {"if": {"required": ["expected_records"], "properties": {"expected_records": {"type": "integer"}}},
+         "then": {"required": ["expected_basis"]}},
+        {"if": {"properties": {"robots_state": {"const": "allowed"}}},
+         "then": {"required": ["robots_snapshot_sha"], "properties": {"robots_snapshot_sha": {"type": "string"}}}},
+        {"if": {"properties": {"eligibility": {"const": "excluded"}}},
+         "then": {"required": ["exclusion_reason"], "properties": {"exclusion_reason": {"type": "string", "minLength": 1}}}},
+        {"if": {"properties": {"eligibility": {"const": "eligible"}}},
+         "then": {
+           "required": ["refetch_days", "expected_records", "expected_basis", "expected_as_of_utc", "robots_snapshot_sha"],
+           "properties": {"policy_state": {"const": "approved"}},
+           "anyOf": [
+             {"properties": {"robots_state": {"const": "allowed"}}},
+             {"properties": {"acquisition_method": {"const": "human_capture"}, "robots_state": {"const": "disallowed"}}}
+           ]
+         }}
+      ]
+    }
+  }
+}
