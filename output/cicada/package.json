@@ -1,0 +1,23 @@
+{
+  "name": "cicada",
+  "version": "1.0.0",
+  "description": "Data over sound as a service: an OFDM audio modem, a render/decode API, and a browser SDK.",
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": { "node": ">=22.5.0" },
+  "main": "src/modem/index.js",
+  "exports": {
+    ".": "./src/modem/index.js",
+    "./modem": "./src/modem/index.js",
+    "./server": "./src/server/server.js"
+  },
+  "bin": { "cicada": "./src/cli.js" },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server/server.js",
+    "test": "node --test --test-concurrency=1 \"test/**/*.test.js\"",
+    "bench": "node test/bench.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

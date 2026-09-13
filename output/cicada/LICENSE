@@ -1,0 +1,19 @@
+Cicada — evaluation licence
+
+Copyright (c) 2026
+
+Permission is granted to use, copy, modify and evaluate this software for
+internal, non-production purposes.
+
+Production deployment, redistribution, and offering this software as a hosted
+service to third parties require a separate commercial or self-hosted licence.
+
+The receiver SDK (public/cicada.js and src/modem/) is additionally licensed for
+unrestricted use in receiving applications, including production and
+redistribution. Receiving is free by design: it runs on the listener's own
+device and is never metered.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. This software has not been security audited and its performance has
+been characterised only in simulation. It is not certified for emergency,
+safety-of-life, medical, or other critical applications.

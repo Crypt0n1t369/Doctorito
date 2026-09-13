@@ -1,0 +1,647 @@
+<title>Cicada Business Case</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+
+<style>
+:root {
+  /* Light: graph-paper neutral, biased barely green so the amber reads as chosen. */
+  --paper:      #F3F4F1;
+  --surface:    #FBFBF9;
+  --surface-2:  #EAEBE6;
+  --ink:        #15181A;
+  --ink-2:      #4A504F;
+  --ink-3:      #7B817E;
+  --rule:       #D8DAD3;
+  --rule-soft:  #E4E6E0;
+  /* Signal amber — the hot band of a spectrogram. Spent sparingly. */
+  --signal:     #B4531B;
+  --signal-dim: #D9895A;
+  --signal-wash:#F0E2D8;
+  /* Instrument teal, for measurement and chart marks. Never competes with amber. */
+  --gauge:      #2C5F6B;
+  --gauge-wash: #DCE6E7;
+  --good:       #3E7A52;
+  --caution:    #9A6B12;
+  --risk:       #A33B32;
+
+  --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:  "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --measure: 68ch;
+  --gutter: clamp(1.1rem, 4vw, 2.5rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:      #121414;
+    --surface:    #1A1D1D;
+    --surface-2:  #232726;
+    --ink:        #ECEEEA;
+    --ink-2:      #AAB0AD;
+    --ink-3:      #767C79;
+    --rule:       #303533;
+    --rule-soft:  #262A29;
+    --signal:     #E08B4C;
+    --signal-dim: #A86237;
+    --signal-wash:#2E2117;
+    --gauge:      #78B4BF;
+    --gauge-wash: #1B2729;
+    --good:       #6FB287;
+    --caution:    #D2A54A;
+    --risk:       #D97A70;
+  }
+}
+:root[data-theme="dark"] {
+  --paper:      #121414;
+  --surface:    #1A1D1D;
+  --surface-2:  #232726;
+  --ink:        #ECEEEA;
+  --ink-2:      #AAB0AD;
+  --ink-3:      #767C79;
+  --rule:       #303533;
+  --rule-soft:  #262A29;
+  --signal:     #E08B4C;
+  --signal-dim: #A86237;
+  --signal-wash:#2E2117;
+  --gauge:      #78B4BF;
+  --gauge-wash: #1B2729;
+  --good:       #6FB287;
+  --caution:    #D2A54A;
+  --risk:       #D97A70;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.62;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--gutter) 6rem; }
+.col { max-width: var(--measure); }
+
+h1, h2, h3, .label, .tag, th, .fig-title { font-family: var(--sans); }
+h1 { font-size: clamp(2rem, 5.2vw, 3rem); line-height: 1.06; font-weight: 700;
+     letter-spacing: -.028em; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.32rem, 3vw, 1.6rem); font-weight: 600; letter-spacing: -.018em;
+     text-wrap: balance; margin: 0 0 .2rem; }
+h3 { font-size: 1.02rem; font-weight: 600; letter-spacing: -.008em; margin: 2rem 0 .35rem; }
+p { margin: 0 0 1.05em; }
+a { color: var(--signal); }
+strong { font-weight: 600; }
+em { font-style: italic; }
+
+.label {
+  font-size: .7rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .11em; color: var(--ink-3);
+}
+
+/* ---- masthead -------------------------------------------------------- */
+header.masthead { border-bottom: 1px solid var(--rule); margin-bottom: 3rem; }
+.masthead-inner {
+  max-width: 1080px; margin: 0 auto; padding: 2.6rem var(--gutter) 2.2rem;
+  display: grid; gap: 1.4rem;
+}
+.eyebrow { display: flex; gap: .8rem; align-items: baseline; flex-wrap: wrap; }
+.standfirst {
+  font-size: clamp(1.02rem, 2.2vw, 1.16rem); color: var(--ink-2);
+  max-width: 58ch; margin: 0;
+}
+.byline {
+  font-family: var(--mono); font-size: .76rem; color: var(--ink-3);
+  display: flex; gap: 1.1rem; flex-wrap: wrap; padding-top: .4rem;
+  border-top: 1px solid var(--rule-soft);
+}
+
+/* The band the modem actually occupies, drawn to scale across the audible
+   spectrum. It is the one picture that explains the whole product. */
+.band { display: grid; gap: .4rem; margin-top: .3rem; }
+.band-bar {
+  position: relative; height: 30px; border-radius: 3px;
+  background: var(--surface-2); border: 1px solid var(--rule);
+  overflow: hidden;
+}
+.band-fill {
+  position: absolute; top: 0; bottom: 0;
+  left: 3.36%; width: 8.2%;
+  background: linear-gradient(90deg, var(--signal-dim), var(--signal));
+}
+.band-ticks {
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: .66rem; color: var(--ink-3);
+}
+
+/* ---- sections -------------------------------------------------------- */
+section { padding-top: 2.6rem; }
+section + section { border-top: 1px solid var(--rule-soft); }
+.sec-head { display: grid; gap: .1rem; margin-bottom: 1.1rem; }
+
+/* ---- data blocks: wider than the measure, on their own ground --------- */
+.figure {
+  background: var(--surface); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 1.25rem 1.35rem; margin: 1.6rem 0 1.9rem;
+}
+.fig-title { font-size: .84rem; font-weight: 600; margin: 0 0 .15rem; }
+.fig-note {
+  font-family: var(--sans); font-size: .78rem; color: var(--ink-3);
+  margin: .7rem 0 0; line-height: 1.5; max-width: 74ch;
+}
+.scroll { overflow-x: auto; }
+
+table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .87rem; }
+th, td { text-align: left; padding: .5rem .7rem .5rem 0; border-bottom: 1px solid var(--rule-soft); }
+th {
+  font-size: .68rem; text-transform: uppercase; letter-spacing: .09em;
+  color: var(--ink-3); font-weight: 600; border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums;
+             white-space: nowrap; padding-right: 0; }
+tbody tr:last-child td { border-bottom: 0; }
+tr.emphasis td { background: var(--signal-wash); }
+tr.emphasis td:first-child { font-weight: 600; }
+
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.pill {
+  display: inline-block; font-family: var(--sans); font-size: .68rem; font-weight: 600;
+  letter-spacing: .04em; padding: .1rem .42rem; border-radius: 3px;
+  background: var(--surface-2); color: var(--ink-2);
+}
+.pill.free { background: var(--gauge-wash); color: var(--gauge); }
+.pill.hero { background: var(--signal-wash); color: var(--signal); }
+
+/* ---- the three segments: a table would flatten the argument ---------- */
+.segments { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+            border-radius: 4px; overflow: hidden; margin: 1.5rem 0 1.8rem; }
+@media (min-width: 760px) { .segments { grid-template-columns: repeat(3, 1fr); } }
+.segment { background: var(--surface); padding: 1.1rem 1.15rem; display: grid;
+           gap: .4rem; align-content: start; }
+.segment .letter {
+  font-family: var(--mono); font-size: .72rem; font-weight: 600;
+  color: var(--ink-3); letter-spacing: .06em;
+}
+.segment h3 { margin: 0; font-size: 1rem; }
+.segment p { font-size: .89rem; line-height: 1.55; margin: 0; color: var(--ink-2); }
+.segment .acv {
+  font-family: var(--mono); font-size: .82rem; font-weight: 500;
+  color: var(--ink); padding-top: .5rem; margin-top: .2rem;
+  border-top: 1px solid var(--rule-soft);
+}
+.segment.pivotal { background: var(--signal-wash); }
+.segment.pivotal .letter, .segment.pivotal .acv { color: var(--signal); }
+
+/* ---- risk list: each risk states its own test ------------------------ */
+.risks { display: grid; gap: 0; margin: 1.4rem 0 1rem; }
+.risk {
+  display: grid; gap: .3rem; padding: .95rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.risk:first-child { border-top: 1px solid var(--rule); }
+.risk h3 { margin: 0; font-size: .94rem; }
+.risk p { margin: 0; font-size: .92rem; color: var(--ink-2); max-width: 72ch; }
+.risk .test {
+  font-family: var(--mono); font-size: .76rem; color: var(--gauge);
+  padding-left: .7rem; border-left: 2px solid var(--gauge); margin-top: .2rem;
+}
+
+ul.plain { margin: 0 0 1.1em; padding-left: 1.15em; }
+ul.plain li { margin-bottom: .45em; }
+
+.callout {
+  border-left: 2px solid var(--signal); padding: .1rem 0 .1rem 1rem;
+  margin: 1.5rem 0; color: var(--ink-2); font-size: .96rem; max-width: 66ch;
+}
+.callout strong { color: var(--ink); }
+
+footer {
+  margin-top: 3.2rem; padding-top: 1.4rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: .8rem; color: var(--ink-3);
+  max-width: 74ch;
+}
+svg text { font-family: var(--mono); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow">
+      <span class="label">Business case</span>
+      <span class="label" style="color:var(--signal)">Cicada</span>
+    </div>
+    <h1>A data channel made of sound</h1>
+    <p class="standfirst">
+      Bytes go into a speaker; every device in earshot gets them back. No pairing, no network,
+      no camera. The technology works. The question this answers is who pays for it, and why the
+      obvious way to sell it fails the buyer who needs it most.
+    </p>
+
+    <div class="band" aria-label="Occupied band: 672 to 2313 hertz within the 0 to 4000 hertz range">
+      <div class="band-bar"><div class="band-fill"></div></div>
+      <div class="band-ticks">
+        <span>0 Hz</span><span style="color:var(--signal)">672 – 2313 Hz occupied</span><span>20 kHz</span>
+      </div>
+    </div>
+
+    <div class="byline">
+      <span>13 September 2026</span>
+      <span>Written alongside a working implementation</span>
+      <span>92 tests passing</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ================================================== 1 -->
+  <section>
+    <div class="sec-head">
+      <span class="label">What is being sold</span>
+      <h2>Ten times faster than the open-source option, and it works below the noise floor</h2>
+    </div>
+
+    <div class="col">
+      <p>
+        Cicada modulates arbitrary bytes into audio between 671.9 and 2312.5 Hz — FFT bins 43 to 148
+        at an 8 kHz sample rate — and demodulates them back on anything with a microphone. OFDM across
+        106 carriers, differential QPSK, a rate-½ K=7 convolutional code, soft-decision Viterbi, and a
+        128 ms chirp preamble found by matched filter.
+      </p>
+    </div>
+
+    <div class="figure">
+      <p class="fig-title">Delivery rate against channel signal-to-noise</p>
+      <div class="scroll">
+        <svg viewBox="0 0 680 250" width="100%" height="250" role="img"
+             aria-label="Delivery rate falls off a cliff below minus four decibels: 128-byte frames hold 97 percent at minus 4 dB, drop to 27 percent at minus 5.5 dB and 10 percent at minus 6 dB. 512-byte frames hold 98 percent at minus 3 dB but collapse to 8 percent by minus 4 dB.">
+          <!-- grid -->
+          <g stroke="var(--rule-soft)" stroke-width="1">
+            <line x1="58" y1="30"  x2="620" y2="30"/>
+            <line x1="58" y1="72"  x2="620" y2="72"/>
+            <line x1="58" y1="114" x2="620" y2="114"/>
+            <line x1="58" y1="156" x2="620" y2="156"/>
+          </g>
+          <line x1="58" y1="198" x2="620" y2="198" stroke="var(--rule)" stroke-width="1"/>
+          <line x1="58" y1="24" x2="58" y2="198" stroke="var(--rule)" stroke-width="1"/>
+
+          <!-- y labels: 0 at y=198, 100 at y=30 -->
+          <g fill="var(--ink-3)" font-size="10" text-anchor="end">
+            <text x="50" y="34">100%</text>
+            <text x="50" y="76">75%</text>
+            <text x="50" y="118">50%</text>
+            <text x="50" y="160">25%</text>
+            <text x="50" y="202">0%</text>
+          </g>
+          <!-- x labels: +20 dB at x=76, -6 dB at x=602 -->
+          <g fill="var(--ink-3)" font-size="10" text-anchor="middle">
+            <text x="76"  y="216">+20</text>
+            <text x="178" y="216">+10</text>
+            <text x="280" y="216">0</text>
+            <text x="382" y="216">−3</text>
+            <text x="450" y="216">−4</text>
+            <text x="518" y="216">−5</text>
+            <text x="602" y="216">−6</text>
+          </g>
+          <text x="339" y="236" fill="var(--ink-3)" font-size="10" text-anchor="middle">channel SNR, dB</text>
+
+          <!-- 128-byte frames -->
+          <polyline fill="none" stroke="var(--signal)" stroke-width="2.5" stroke-linejoin="round"
+            points="76,30 178,30 280,30 382,30 450,35 484,43 518,68 552,153 602,181"/>
+          <g fill="var(--signal)">
+            <circle cx="382" cy="30" r="3.2"/><circle cx="450" cy="35" r="3.2"/>
+            <circle cx="518" cy="68" r="3.2"/><circle cx="552" cy="153" r="4"/>
+            <circle cx="602" cy="181" r="3.2"/>
+          </g>
+          <text x="360" y="22" fill="var(--signal)" font-size="10.5" font-weight="600">128-byte frames</text>
+
+          <!-- 512-byte frames -->
+          <polyline fill="none" stroke="var(--gauge)" stroke-width="2.5" stroke-linejoin="round"
+            stroke-dasharray="5 3" points="280,30 382,33 450,185 518,198"/>
+          <g fill="var(--gauge)">
+            <circle cx="382" cy="33" r="3.2"/><circle cx="450" cy="185" r="4"/>
+          </g>
+          <text x="214" y="48" fill="var(--gauge)" font-size="10.5" font-weight="600">512-byte frames</text>
+
+          <!-- the cliff -->
+          <line x1="450" y1="24" x2="450" y2="198" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="2 4"/>
+          <text x="458" y="122" fill="var(--ink-2)" font-size="10">noise louder</text>
+          <text x="458" y="135" fill="var(--ink-2)" font-size="10">than signal →</text>
+        </svg>
+      </div>
+      <p class="fig-note">
+        128-byte frames decode 97 times in 100 at −4 dB — with the noise carrying more power than the
+        signal — then fall off a cliff by −5.5 dB. That margin is what makes an audible band usable at
+        a polite volume. Additive white noise, 60 trials per point; reproduce with
+        <span class="mono">npm run bench</span>.
+      </p>
+    </div>
+
+    <div class="figure">
+      <p class="fig-title">Measured envelope</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Profile</th><th class="n">Frame</th><th class="n">Throughput</th><th class="n">Holds to</th><th>Use it when</th></tr></thead>
+          <tbody>
+            <tr><td>Micro</td><td class="n">16 B</td><td class="n">16 B/s</td><td class="n">−4 dB</td><td>Card references and short tokens</td></tr>
+            <tr><td>Robust</td><td class="n">64 B</td><td class="n">53 B/s</td><td class="n">−4 dB</td><td>Noisy rooms, moving listeners</td></tr>
+            <tr class="emphasis"><td>Standard</td><td class="n">128 B</td><td class="n">86 B/s</td><td class="n">−4 dB</td><td>The default</td></tr>
+            <tr><td>Fast</td><td class="n">512 B</td><td class="n">146 B/s</td><td class="n">−3 dB</td><td>Quiet, close, controlled paths</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fig-note">
+        Payload bytes per second of airtime including the inter-burst gap; raw burst throughput is
+        122 B/s at 128-byte frames and 163 B/s at 512. <span class="mono">ggwave</span>, the
+        best-known open-source equivalent, runs at 8–16 B/s.
+      </p>
+    </div>
+
+    <div class="col">
+      <p>
+        Three properties fall out of the physics, and each is awkward to buy elsewhere.
+        <strong>No pairing</strong> — Bluetooth needs discovery and a session, NFC needs a tap, QR needs
+        a camera and a person who knows to point it; sound needs a device that is already listening.
+        <strong>One-to-many at zero marginal cost</strong> — a push notification to 500 phones is 500
+        messages, a Cicada broadcast is one transmission. <strong>Range is the room</strong> — sound
+        stops at the walls, so proximity is a property of the medium rather than something you attest
+        to with GPS that can be spoofed.
+      </p>
+      <p>
+        And it travels wherever audio already travels: a PA system, a phone call, a radio broadcast, a
+        video file, a voicemail. That is a distribution network nobody has to build.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================== 2 -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Who buys</span>
+      <h2>The buyer with the sharpest need cannot use your cloud</h2>
+    </div>
+
+    <div class="segments">
+      <div class="segment">
+        <span class="letter">A · Developers</span>
+        <h3>Self-serve</h3>
+        <p>
+          Small teams adding an offline handoff, a proximity check, a device-provisioning path. They
+          arrive through documentation and leave through documentation. This is not where the revenue
+          is — it is where the evidence is.
+        </p>
+        <div class="acv">$0 – $49 / month</div>
+      </div>
+      <div class="segment">
+        <span class="letter">B · Operators</span>
+        <h3>Mid-market</h3>
+        <p>
+          Venues, transit, museums, retail, broadcasters. They already have speakers everywhere and a
+          content system driving them. They buy because the alternative — an app install, a network
+          join, a QR sticker somebody maintains — has a conversion rate they can measure and hate.
+        </p>
+        <div class="acv">$300 – $2,000 / month</div>
+      </div>
+      <div class="segment pivotal">
+        <span class="letter">C · Regulated</span>
+        <h3>Air-gapped</h3>
+        <p>
+          Emergency management, defence, industrial control, healthcare. The sharpest need and the most
+          money — and it <em>cannot call your HTTPS endpoint</em>. An organisation choosing a medium
+          because it works without a network will not render its audio over one.
+        </p>
+        <div class="acv">$25,000 – $150,000 / year</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="callout">
+        <strong>This is the trap the obvious business model walks into.</strong> If SaaS is the only way
+        to buy, the buyer with the strongest need is the one who cannot. The correct response is not to
+        talk them into the cloud — it is to sell them an annual, per-site, self-hosted licence with
+        source escrow and support.
+      </div>
+      <p>
+        So the model is deliberately dual. The SaaS is the funnel, the documentation and the proof. The
+        on-premises licence is the revenue. Each makes the other credible: a self-hosted buyer will not
+        take a black box seriously, and a developer will not adopt something with no visible production
+        users.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================== 3 -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Pricing</span>
+      <h2>Two meters, because one of them fails for half the customers</h2>
+    </div>
+
+    <div class="figure">
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr><th></th><th class="n">Free</th><th class="n">Pro</th><th class="n">Scale</th><th class="n">Self-hosted</th></tr>
+          </thead>
+          <tbody>
+            <tr class="emphasis">
+              <td>Price</td><td class="n">$0</td><td class="n">$49/mo</td><td class="n">$299/mo</td><td class="n">$25k+/yr</td>
+            </tr>
+            <tr><td>Renders / month</td><td class="n">1,000</td><td class="n">50,000</td><td class="n">1,000,000</td><td class="n">∞</td></tr>
+            <tr><td>Server decodes</td><td class="n">500</td><td class="n">25,000</td><td class="n">500,000</td><td class="n">∞</td></tr>
+            <tr><td>Channels</td><td class="n">1</td><td class="n">10</td><td class="n">∞</td><td class="n">∞</td></tr>
+            <tr><td>Cards</td><td class="n">100</td><td class="n">10,000</td><td class="n">∞</td><td class="n">∞</td></tr>
+            <tr><td>Signed channels</td><td class="n">—</td><td class="n">✓</td><td class="n">✓</td><td class="n">✓</td></tr>
+            <tr><td>Receipt retention</td><td class="n">24 h</td><td class="n">30 d</td><td class="n">1 yr</td><td class="n">your disk</td></tr>
+            <tr><td>Overage</td><td class="n">blocked</td><td class="n">$2/1k</td><td class="n">$1/1k</td><td class="n">—</td></tr>
+            <tr><td><strong>Receiving</strong></td>
+                <td class="n"><span class="pill free">free</span></td>
+                <td class="n"><span class="pill free">free</span></td>
+                <td class="n"><span class="pill free">free</span></td>
+                <td class="n"><span class="pill free">free</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fig-note">
+        Pro's ceiling is calibrated: 50,000 renders is one venue broadcasting a fresh message every
+        30 seconds, twelve hours a day. A single busy site fits; a second one does not.
+      </p>
+    </div>
+
+    <div class="col">
+      <h3>Receiving is free permanently, and not out of generosity</h3>
+      <p>
+        Decoding happens on the listener's own device. It costs nothing, cannot be observed, and any
+        attempt to meter it would be a lie enforced by a licence agreement. Making it free is the
+        honest description of what is happening — and it is the entire adoption mechanism. Once an
+        estate of devices is listening, somebody has to pay for something to say.
+      </p>
+
+      <h3>Renders are the wrong meter for half the market</h3>
+      <p>
+        A museum with twenty exhibits renders twenty transmissions and plays them for a year. Metering
+        renders would leave that customer in the free tier forever while running a real deployment.
+        So the plans meter two different things on purpose:
+        <strong>channels and cards price deployment scale</strong>, and
+        <strong>renders and decodes price dynamic content</strong>. A customer pays on whichever axis
+        they actually consume.
+      </p>
+      <p>
+        That is why the Free tier's binding constraint is <em>one channel</em>, not a thousand renders.
+        One channel is a demo. The second channel is a deployment.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================================================== 4 -->
+  <section>
+    <div class="sec-head">
+      <span class="label">The defensible part</span>
+      <h2>Airtime that stops depending on payload size</h2>
+    </div>
+
+    <div class="col">
+      <p>
+        Airtime is the scarce resource. Storage is not. Publish a payload once through the API,
+        broadcast its four-byte code, and receivers resolve it from a bundle cached over their normal
+        network connection — so resolution works offline too.
+      </p>
+    </div>
+
+    <div class="figure">
+      <p class="fig-title">Airtime per pass, direct versus card reference</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Payload</th><th class="n">Sent directly</th><th class="n">As a card reference</th><th class="n">Ratio</th></tr></thead>
+          <tbody>
+            <tr><td>65 B of JSON</td><td class="n">1.20 s</td><td class="n">0.55 s</td><td class="n" style="color:var(--ink-3)">2.2×</td></tr>
+            <tr><td>1 KB</td><td class="n">6.72 s</td><td class="n">0.55 s</td><td class="n">12×</td></tr>
+            <tr><td>10 KB</td><td class="n">68.6 s</td><td class="n">0.55 s</td><td class="n">125×</td></tr>
+            <tr class="emphasis"><td>60 KB</td><td class="n">6.9 min</td><td class="n">0.55 s</td><td class="n">750×</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fig-note">
+        On a small payload the saving is unremarkable, and saying so is cheaper than being caught
+        overselling it. The argument is the last three rows: beyond a kilobyte, sending directly stops
+        being a product at all.
+      </p>
+    </div>
+
+    <div class="col">
+      <p>
+        The defensible position is not the modem — it is standard OFDM and anyone competent can write
+        one. It is the <strong>card registry, key custody and profile tooling</strong>: the parts that
+        turn a modem into something you can operate, and the parts that take a year of arguing with
+        real rooms to get right.
+      </p>
+
+      <h3>Competition, honestly</h3>
+      <div class="scroll">
+        <table>
+          <tbody>
+            <tr><td style="width:9rem"><strong>ggwave</strong></td>
+              <td>Open source, free, 8–16 B/s. If someone's payload is ten bytes once a minute they should use it, and saying so is cheaper than losing the argument later.</td></tr>
+            <tr><td><strong>LISNR</strong></td>
+              <td>Ultrasonic, enterprise-only, closed. Inaudible carriers are a covert side channel; Cicada is audible on purpose. An easier compliance conversation.</td></tr>
+            <tr><td><strong>Chirp</strong></td>
+              <td>Acquired by Sonos in 2020 and withdrawn. Their customers had to migrate. A live, addressable list.</td></tr>
+            <tr><td><strong>QR codes</strong></td>
+              <td>Free and universal, and genuinely better when a person will point a camera. Worse for hands-free, one-to-many, headless devices, anything moving.</td></tr>
+            <tr><td><strong>BLE beacons</strong></td>
+              <td>Better range and battery. Needs hardware in the room and OS permissions that keep tightening. Cicada needs a speaker that is already there.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== 5 -->
+  <section>
+    <div class="sec-head">
+      <span class="label">What would have to be true</span>
+      <h2>Five risks, each with the test that settles it</h2>
+    </div>
+
+    <div class="risks">
+      <div class="risk">
+        <h3>The simulations must survive real rooms</h3>
+        <p>
+          Every number in this document comes from software. No physical speaker, room or microphone
+          appears anywhere in the measurement.
+        </p>
+        <div class="test">Test · a measured matrix across 3 phones, 2 speakers, 4 real spaces — published with the failures included</div>
+      </div>
+      <div class="risk">
+        <h3>The reverberation limit is real and unfixed</h3>
+        <p>
+          The cyclic prefix is 8 ms. Rooms whose echoes run much longer smear one symbol into the next,
+          and volume does not help. An atrium is a harder problem than distance ever was.
+        </p>
+        <div class="test">Test · if reverberant halls prove unusable rather than merely hard, segment B shrinks to small rooms</div>
+      </div>
+      <div class="risk">
+        <h3>Somebody's audio pipeline will eat it</h3>
+        <p>
+          OFDM has a high peak-to-average ratio, so a broadcast limiter pushed hard flattens exactly the
+          peaks carrying the information. Voice-tuned noise suppression is built to remove things that
+          are not speech, and a modem in the speech band looks like something to remove.
+        </p>
+        <div class="test">Test · already visible in simulation — micro frames drop to 35% through a modelled broadcast chain</div>
+      </div>
+      <div class="risk">
+        <h3>Audibility is a product constraint, not only a virtue</h3>
+        <p>
+          You cannot transmit continuously in a quiet space without annoying people. Every deployment
+          is bursts, and that shapes what can be sold.
+        </p>
+        <div class="test">Test · sound-level and duty-cycle limits agreed with a pilot venue before the contract, not after</div>
+      </div>
+      <div class="risk">
+        <h3>The on-prem segment has a long sales cycle</h3>
+        <p>
+          Twelve to eighteen months, security review, procurement. The SaaS has to fund the wait.
+        </p>
+        <div class="test">Test · first security questionnaire returned inside 90 days of first contact</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== 6 -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Where to start</span>
+      <h2>In this order, because each step is what makes the next one sayable</h2>
+    </div>
+    <div class="col">
+      <ul class="plain">
+        <li><strong>Measure real rooms and publish it, failures included.</strong> Nothing else can be
+          claimed honestly until this exists, and it is the asset competitors will not bother to make.</li>
+        <li><strong>Ship the receiver SDK free and open.</strong> It is the wedge, and it cannot be
+          metered anyway.</li>
+        <li><strong>Win one lighthouse in each of B and C.</strong> A transit operator or museum, and one
+          emergency-management or industrial buyer. The second one pays for the year.</li>
+        <li><strong>Sell the card registry, not the modem.</strong> The modem is table stakes. Airtime
+          that does not depend on payload size is the thing nobody else has bothered to build.</li>
+      </ul>
+    </div>
+
+    <footer>
+      <p style="margin:0 0 .6em">
+        <strong style="color:var(--ink)">Measured</strong> — throughput per profile; SNR cliffs in
+        additive white noise; delivery through eight modelled acoustic conditions; bit-exact round trips
+        at 8, 16, 22.05, 44.1 and 48 kHz; signature verification, tamper and forgery rejection;
+        duplicate suppression; reassembly under frame loss and reordering. 92 tests.
+      </p>
+      <p style="margin:0">
+        <strong style="color:var(--ink)">Not measured</strong> — any physical speaker, room or
+        microphone. No RF, no phone hardware, no real broadcast chain, no load testing, no security
+        audit. The DSP core derives from the Atbalsts radio-validation work, where it was verified
+        bit-exact against an independent Python implementation; that provenance is why it is
+        trustworthy enough to build on, and it is not a substitute for the field measurement above.
+      </p>
+    </footer>
+  </section>
+</div>

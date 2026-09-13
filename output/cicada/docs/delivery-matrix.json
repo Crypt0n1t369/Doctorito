@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2026-09-13T12:35:02.696Z",
+  "trials": 20,
+  "repeats": 1,
+  "sampleRate": 8000,
+  "rows": [
+    {
+      "profile": "micro",
+      "frameBytes": 16,
+      "payloadBytes": 11,
+      "airtimeSeconds": 0.55,
+      "conditions": {
+        "clean": 100,
+        "office": 100,
+        "cafe": 90,
+        "street": 100,
+        "car": 100,
+        "phoneSpeaker": 100,
+        "broadcastFm": 35,
+        "telephone": 100
+      }
+    },
+    {
+      "profile": "robust",
+      "frameBytes": 64,
+      "payloadBytes": 59,
+      "airtimeSeconds": 0.838,
+      "conditions": {
+        "clean": 100,
+        "office": 100,
+        "cafe": 100,
+        "street": 100,
+        "car": 100,
+        "phoneSpeaker": 100,
+        "broadcastFm": 100,
+        "telephone": 100
+      }
+    },
+    {
+      "profile": "standard",
+      "frameBytes": 128,
+      "payloadBytes": 120,
+      "airtimeSeconds": 1.198,
+      "conditions": {
+        "clean": 100,
+        "office": 100,
+        "cafe": 100,
+        "street": 100,
+        "car": 100,
+        "phoneSpeaker": 100,
+        "broadcastFm": 100,
+        "telephone": 100
+      }
+    },
+    {
+      "profile": "fast",
+      "frameBytes": 512,
+      "payloadBytes": 120,
+      "airtimeSeconds": 3.286,
+      "conditions": {
+        "clean": 100,
+        "office": 100,
+        "cafe": 95,
+        "street": 100,
+        "car": 100,
+        "phoneSpeaker": 100,
+        "broadcastFm": 100,
+        "telephone": 100
+      }
+    }
+  ]
+}

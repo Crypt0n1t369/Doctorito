@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Station announcements</title>
+<link rel="manifest" href="/listen.webmanifest">
+<meta name="theme-color" content="#15181a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>📣</text></svg>">
+<style>
+/* A public-information display, not a developer tool. Large type by default,
+   because the people this exists for are reading it across a concourse. */
+:root {
+  --bg: #14161a;
+  --panel: #1e2126;
+  --panel-2: #272b31;
+  --ink: #f4f5f7;
+  --ink-2: #b6bcc4;
+  --ink-3: #838b95;
+  --line: #333941;
+  --info: #6fa8dc;
+  --change: #e0a44c;
+  --disruption: #e08050;
+  --emergency: #e4564a;
+  --ok: #6cc08a;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --scale: 1;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f7f8f9; --panel: #ffffff; --panel-2: #eef0f2;
+    --ink: #14161a; --ink-2: #4b525a; --ink-3: #78818b; --line: #dde1e5;
+    --info: #2a6ba8; --change: #9a6412; --disruption: #a8501f; --emergency: #b3281c; --ok: #2d7a4c;
+  }
+}
+:root[data-contrast="high"] {
+  --bg: #000; --panel: #000; --panel-2: #111; --ink: #fff; --ink-2: #fff; --ink-3: #ccc;
+  --line: #fff; --info: #7fd4ff; --change: #ffd24a; --disruption: #ffa05a; --emergency: #ff6b5e;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--sans); font-size: calc(17px * var(--scale)); line-height: 1.45;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 1rem 4rem; }
+
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  padding: .65rem 1rem calc(.65rem + env(safe-area-inset-top)) 1rem;
+  padding-top: max(.65rem, env(safe-area-inset-top));
+}
+.bar { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.venue { font-weight: 650; letter-spacing: -.01em; font-size: 1.02em; }
+.status {
+  display: inline-flex; align-items: center; gap: .38rem;
+  font-size: .78em; color: var(--ink-2); margin-left: auto;
+}
+.dot { width: .55em; height: .55em; border-radius: 50%; background: var(--ink-3); flex: none; }
+.dot.live { background: var(--ok); animation: pulse 2.2s ease-in-out infinite; }
+.dot.off { background: var(--ink-3); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .dot.live { animation: none; } }
+
+button, select {
+  font: inherit; color: inherit; background: var(--panel-2);
+  border: 1px solid var(--line); border-radius: 9px; padding: .45rem .7rem;
+  cursor: pointer; font-size: .88em;
+}
+button:focus-visible, select:focus-visible, a:focus-visible {
+  outline: 3px solid var(--info); outline-offset: 2px;
+}
+button.primary { background: var(--ok); color: #06210f; border-color: var(--ok); font-weight: 650; }
+:root[data-contrast="high"] button.primary { background: #fff; color: #000; }
+button.big { padding: .8rem 1.3rem; font-size: 1.05em; border-radius: 12px; }
+.controls { display: flex; gap: .45rem; flex-wrap: wrap; align-items: center; }
+
+/* ------------------------------------------------------------ announcement */
+#feed { display: grid; gap: .8rem; margin-top: 1.1rem; }
+.ann {
+  background: var(--panel); border: 1px solid var(--line);
+  border-left: 6px solid var(--info); border-radius: 12px;
+  padding: 1rem 1.1rem; display: grid; gap: .5rem;
+}
+.ann.change { border-left-color: var(--change); }
+.ann.disruption { border-left-color: var(--disruption); }
+.ann.emergency { border-left-color: var(--emergency); background: color-mix(in srgb, var(--emergency) 12%, var(--panel)); }
+.ann .meta { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+             font-size: .76em; color: var(--ink-2); }
+.badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .95em; font-weight: 700; letter-spacing: .02em;
+  padding: .12rem .5rem; border-radius: 5px;
+  background: var(--panel-2); color: var(--info);
+  border: 1px solid currentColor;
+}
+.ann.change .badge { color: var(--change); }
+.ann.disruption .badge { color: var(--disruption); }
+.ann.emergency .badge { color: var(--emergency); }
+.ann .text {
+  font-size: 1.5em; line-height: 1.32; font-weight: 500; letter-spacing: -.012em;
+  text-wrap: pretty;
+}
+.ann.emergency .text { font-weight: 700; }
+.ann .verified { display: inline-flex; align-items: center; gap: .25rem; color: var(--ok); }
+.ann .unverified { color: var(--emergency); font-weight: 600; }
+.ann time { font-variant-numeric: tabular-nums; }
+.fresh { animation: arrive .5s ease-out; }
+@keyframes arrive { from { transform: translateY(-6px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .fresh { animation: none; } }
+
+.empty {
+  text-align: center; padding: 2.6rem 1rem; color: var(--ink-2);
+  border: 1px dashed var(--line); border-radius: 12px; display: grid; gap: .6rem;
+}
+.empty .glyph { font-size: 2.4rem; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+         padding: 1rem 1.1rem; margin-top: 1.1rem; }
+.panel h2 { margin: 0 0 .5rem; font-size: .95em; font-weight: 650; }
+label { display: block; font-size: .82em; color: var(--ink-2); margin-bottom: .25rem; }
+.field + .field { margin-top: .7rem; }
+input[type=text] { width: 100%; font: inherit; padding: .45rem .6rem; border-radius: 9px;
+                   border: 1px solid var(--line); background: var(--panel-2); color: inherit; }
+.note { font-size: .82em; color: var(--ink-2); margin: .55rem 0 0; line-height: 1.5; }
+.err { color: var(--emergency); font-size: .86em; margin-top: .5rem; }
+.row { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+footer { margin-top: 2rem; font-size: .78em; color: var(--ink-3); line-height: 1.55; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <span class="venue" id="venue">Station announcements</span>
+    <span class="status">
+      <span class="dot off" id="dot" aria-hidden="true"></span>
+      <span id="status-text">Not listening</span>
+    </span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="controls" style="margin-top:1rem">
+    <button id="listen" class="primary big">Start listening</button>
+    <select id="language" aria-label="Language"></select>
+    <button id="bigger" aria-label="Larger text" title="Larger text">A⁺</button>
+    <button id="smaller" aria-label="Smaller text" title="Smaller text">A⁻</button>
+    <button id="contrast" aria-pressed="false">High contrast</button>
+    <button id="check" title="Check this page against a recording of the announcement">Check a recording</button>
+    <input id="check-file" type="file" accept="audio/wav,audio/x-wav,.wav" hidden>
+  </div>
+  <p class="err" id="error" role="alert"></p>
+
+  <!-- Screen readers get every announcement through here; sighted readers get the cards. -->
+  <p class="sr-only" id="live" aria-live="assertive" aria-atomic="true"></p>
+
+  <main id="feed">
+    <div class="empty" id="empty">
+      <div class="glyph" aria-hidden="true">📣</div>
+      <div><strong>Nothing yet.</strong></div>
+      <div>Press <em>Start listening</em>. Announcements from the station's public-address system
+        will appear here as text, in your language.</div>
+    </div>
+  </main>
+
+  <section class="panel" id="setup" hidden>
+    <h2>Connect to a venue</h2>
+    <div class="field">
+      <label for="channel">Channel</label>
+      <input id="channel" type="text" placeholder="ch_…" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="field">
+      <label for="token">Receive token</label>
+      <input id="token" type="text" placeholder="rk_…" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="row" style="margin-top:.7rem">
+      <button id="sync" class="primary">Sync</button>
+      <span class="note" id="sync-status" style="margin:0"></span>
+    </div>
+    <p class="note">
+      Syncing downloads this venue's announcement templates in every language it publishes.
+      After that the page works with no network at all — the announcements themselves arrive
+      through the microphone.
+    </p>
+  </section>
+
+  <footer>
+    <p id="bundle-note"></p>
+    <p>
+      Announcements are received through this device's microphone and never leave it.
+      Nothing is uploaded and no account is needed.
+      <button id="forget" style="padding:.2rem .45rem;font-size:.9em">Forget this venue</button>
+    </p>
+  </footer>
+</div>
+
+<script type="module">
+import { listen, decode, micAvailability, CicadaClient } from "/cicada.js";
+import { decodeAnnouncement, renderAnnouncement, SEVERITIES } from "/announce/template.js";
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const client = new CicadaClient({});
+
+const LANGUAGE_NAMES = {
+  lv: "Latviešu", en: "English", ru: "Русский", uk: "Українська",
+  et: "Eesti", lt: "Lietuvių", de: "Deutsch", fr: "Français", pl: "Polski", fi: "Suomi",
+};
+const SEVERITY_GLYPH = { info: "ℹ", change: "⇄", disruption: "⚠", emergency: "⛔" };
+
+const store = {
+  get channel() { return localStorage.getItem("cicada.listen.channel") ?? ""; },
+  get token() { return localStorage.getItem("cicada.listen.token") ?? ""; },
+  get bundle() { try { return JSON.parse(localStorage.getItem("cicada.listen.bundle")); } catch { return null; } },
+  get language() { return localStorage.getItem("cicada.listen.language") ?? ""; },
+  get scale() { return Number(localStorage.getItem("cicada.listen.scale")) || 1; },
+  get contrast() { return localStorage.getItem("cicada.listen.contrast") === "high"; },
+  save(k, v) { localStorage.setItem(`cicada.listen.${k}`, typeof v === "string" ? v : JSON.stringify(v)); },
+  clear() { for (const k of Object.keys(localStorage)) if (k.startsWith("cicada.listen.")) localStorage.removeItem(k); },
+};
+
+let bundle = null;          // { templates: {id: tpl}, lists, languages, trust, name, channelNumber }
+let session = null;
+let language = "en";
+
+// ------------------------------------------------------------ presentation
+applyScale(store.scale);
+if (store.contrast) setContrast(true);
+
+function applyScale(v) {
+  const s = Math.max(0.85, Math.min(2.2, v));
+  document.documentElement.style.setProperty("--scale", s);
+  store.save("scale", String(s));
+}
+$("bigger").onclick = () => applyScale(store.scale + 0.15);
+$("smaller").onclick = () => applyScale(store.scale - 0.15);
+
+function setContrast(on) {
+  document.documentElement.dataset.contrast = on ? "high" : "";
+  $("contrast").setAttribute("aria-pressed", String(on));
+  store.save("contrast", on ? "high" : "normal");
+}
+$("contrast").onclick = () => setContrast(document.documentElement.dataset.contrast !== "high");
+
+// ---------------------------------------------------------------- the bundle
+const params = new URLSearchParams(location.search);
+const channelParam = params.get("channel") ?? store.channel;
+const tokenParam = params.get("token") ?? store.token;
+$("channel").value = channelParam;
+$("token").value = tokenParam;
+
+if (store.bundle) {
+  applyBundle(store.bundle, true);
+} else {
+  $("setup").hidden = false;
+}
+if (channelParam && tokenParam && !store.bundle) sync();
+
+$("sync").onclick = sync;
+
+async function sync() {
+  const channel = $("channel").value.trim();
+  const token = $("token").value.trim();
+  if (!channel || !token) { fail("Both a channel and a receive token are needed."); return; }
+  $("sync").disabled = true;
+  $("sync-status").textContent = "Syncing…";
+  try {
+    const [announce, trust] = await Promise.all([
+      client.request(`/v1/channels/${channel}/announce/bundle`, { token }),
+      client.request(`/v1/channels/${channel}/trust`, { token }).catch(() => null),
+    ]);
+    const saved = { ...announce, trust, syncedAt: new Date().toISOString() };
+    store.save("channel", channel);
+    store.save("token", token);
+    store.save("bundle", saved);
+    applyBundle(saved, false);
+    fail("");
+    $("setup").hidden = true;
+  } catch (e) {
+    fail(`Could not sync: ${e.message}`);
+    $("sync-status").textContent = "";
+  } finally {
+    $("sync").disabled = false;
+  }
+}
+
+function applyBundle(b, fromCache) {
+  bundle = {
+    name: b.name,
+    channelNumber: b.channel,
+    templates: Object.fromEntries((b.templates ?? []).map(t => [t.id, t])),
+    lists: b.lists ?? {},
+    languages: b.languages ?? [],
+    trust: {},
+  };
+  for (const k of b.trust?.keys ?? []) bundle.trust[`${b.channel}/${k.key_id}`] = k.public_key;
+
+  $("venue").textContent = b.name || "Station announcements";
+  document.title = b.name ? `${b.name} — announcements` : "Station announcements";
+
+  const langs = bundle.languages.length ? bundle.languages : ["en"];
+  language = pickLanguage(langs);
+  $("language").innerHTML = langs
+    .map(l => `<option value="${esc(l)}"${l === language ? " selected" : ""}>${esc(LANGUAGE_NAMES[l] ?? l)}</option>`)
+    .join("");
+  document.documentElement.lang = language;
+
+  const count = Object.keys(bundle.templates).length;
+  $("sync-status").textContent = `${count} templates, ${langs.length} languages`;
+  $("bundle-note").textContent =
+    `${count} announcement templates in ${langs.length} languages, synced ${fromCache ? "earlier" : "just now"}`
+    + `${b.trust?.keys?.length ? `, ${b.trust.keys.length} signing key${b.trust.keys.length === 1 ? "" : "s"} pinned` : ""}.`
+    + " This page needs no network from here on.";
+}
+
+function pickLanguage(langs) {
+  if (store.language && langs.includes(store.language)) return store.language;
+  for (const pref of navigator.languages ?? [navigator.language ?? "en"]) {
+    const short = pref.slice(0, 2).toLowerCase();
+    if (langs.includes(short)) return short;
+  }
+  return langs.includes("en") ? "en" : langs[0];
+}
+
+$("language").onchange = e => {
+  language = e.target.value;
+  store.save("language", language);
+  document.documentElement.lang = language;
+  rerender();
+};
+
+$("forget").onclick = () => {
+  if (!confirm("Forget this venue's templates and settings on this device?")) return;
+  store.clear();
+  location.href = location.pathname;
+};
+
+const fail = msg => { $("error").textContent = msg; };
+
+// ------------------------------------------------------------------ listening
+$("listen").onclick = async () => {
+  if (session) {
+    await session.stop();
+    session = null;
+    setLive(false);
+    $("listen").textContent = "Start listening";
+    $("listen").classList.add("primary");
+    return;
+  }
+  if (!bundle) { $("setup").hidden = false; fail("Sync with a venue first."); return; }
+  const avail = micAvailability();
+  if (!avail.ok) { fail(avail.message || avail.reason); return; }
+  try {
+    session = await listen({
+      trust: Object.keys(bundle.trust).length ? bundle.trust : null,
+      resolveAnnouncement: body => {
+        try { return decodeAnnouncement(body, bundle.templates); }
+        catch { return null; }
+      },
+      onMessage: show,
+    });
+    fail("");
+    setLive(true);
+    $("listen").textContent = "Stop listening";
+    $("listen").classList.remove("primary");
+  } catch (e) {
+    fail(e.message);
+  }
+};
+
+/**
+ * Commissioning aid: point the page at a recording of the venue's PA and see
+ * whether it decodes. Someone installing this needs to answer "does it work in
+ * this concourse" before the first passenger depends on it.
+ */
+$("check").onclick = () => {
+  if (!bundle) { $("setup").hidden = false; fail("Sync with a venue first."); return; }
+  $("check-file").click();
+};
+$("check-file").onchange = async e => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  $("check").disabled = true;
+  $("check").textContent = "Checking…";
+  try {
+    const { messages, stats } = await decode(await file.arrayBuffer(), {
+      trust: Object.keys(bundle.trust).length ? bundle.trust : null,
+      resolveAnnouncement: body => {
+        try { return decodeAnnouncement(body, bundle.templates); } catch { return null; }
+      },
+    });
+    const found = messages.filter(m => m.announce && m.announcement);
+    for (const m of found) show(m);
+    fail(found.length
+      ? ""
+      : `No announcement found in ${file.name}. ${stats.detected} burst(s) were detected and `
+        + `${stats.undecodable} could not be read — which usually means the recording is too quiet, `
+        + "or the PA is filtering the band.");
+  } catch (err) {
+    fail(err.message);
+  } finally {
+    $("check").disabled = false;
+    $("check").textContent = "Check a recording";
+    e.target.value = "";
+  }
+};
+
+function setLive(on) {
+  $("dot").className = `dot ${on ? "live" : "off"}`;
+  $("status-text").textContent = on ? "Listening" : "Not listening";
+}
+
+// ------------------------------------------------------------------ display
+const received = [];
+
+function show(msg) {
+  if (!msg.announce || !msg.announcement) return;
+  $("empty")?.remove();
+  const decoded = msg.announcement;
+  received.unshift({ decoded, at: new Date(), signed: msg.signed, verified: msg.verified });
+  if (received.length > 40) received.pop();
+  rerender(true);
+
+  const rendered = renderAnnouncement(decoded, { language, lists: bundle.lists });
+  if (rendered) {
+    // Screen readers hear it; deaf users feel it. The PA itself reaches neither.
+    $("live").textContent = `${SEVERITIES[rendered.severity]?.label ?? ""}. ${rendered.text}`;
+    const pattern = SEVERITIES[rendered.severity]?.vibrate;
+    if (pattern && navigator.vibrate) { try { navigator.vibrate(pattern); } catch { /* unsupported */ } }
+  }
+}
+
+function rerender(fresh = false) {
+  const feed = $("feed");
+  if (!received.length) return;
+  feed.replaceChildren(...received.map((r, i) => card(r, fresh && i === 0)));
+}
+
+function card(r, isFresh) {
+  const rendered = renderAnnouncement(r.decoded, { language, lists: bundle.lists });
+  const el = document.createElement("article");
+  const severity = rendered?.severity ?? "info";
+  el.className = `ann ${severity}${isFresh ? " fresh" : ""}`;
+  el.setAttribute("role", severity === "emergency" ? "alert" : "status");
+
+  const sev = SEVERITIES[severity] ?? SEVERITIES.info;
+  const time = r.at.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+
+  const trust = r.signed
+    ? (r.verified
+        ? `<span class="verified">✓ Verified</span>`
+        : `<span class="unverified">⚠ Not verified</span>`)
+    : `<span>Unsigned</span>`;
+
+  if (!rendered) {
+    el.innerHTML = `<div class="meta"><span class="badge">?</span><time>${time}</time></div>
+      <div class="text">An announcement was received that this device has no template for.
+      Reconnect to the venue to update.</div>`;
+    return el;
+  }
+
+  // Severity is carried by the badge's word, its glyph and its colour — never
+  // colour alone, which is invisible to a large share of the people reading this.
+  el.innerHTML =
+    `<div class="meta">
+       <span class="badge"><span aria-hidden="true">${SEVERITY_GLYPH[severity]}</span> ${esc(sev.label)}</span>
+       <time datetime="${r.at.toISOString()}">${time}</time>
+       ${trust}
+       ${rendered.language !== language ? `<span>shown in ${esc(LANGUAGE_NAMES[rendered.language] ?? rendered.language)}</span>` : ""}
+     </div>
+     <div class="text" lang="${esc(rendered.language)}">${esc(rendered.text)}</div>`;
+  return el;
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/listen-sw.js").catch(() => { /* offline shell is a bonus */ });
+}
+</script>
+</body>
+</html>

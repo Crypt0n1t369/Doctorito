@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cicada Receiver</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>🦗</text></svg>">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark">🦗</span> <span class="name">Cicada</span> <span class="tag">data over sound</span></div>
+  <nav class="top">
+    <a href="/">Studio</a>
+    <a href="/console">Console</a>
+    <a href="/receive" aria-current="page">Receiver</a>
+    <a href="/docs">Docs</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Receiver</h1>
+  <p class="lede">
+    A standalone listener. Point it at a channel's receive token and it pins that channel's keys,
+    caches its cards, and reports what it hears. Everything after the initial sync works offline.
+  </p>
+
+  <div class="grid cols-2" style="margin-top:1.2rem">
+    <section class="panel">
+      <h2>Listen</h2>
+      <div class="row" style="margin-bottom:.8rem">
+        <button id="start" class="primary">🎤 Start</button>
+        <button id="file">Decode a file…</button>
+        <input id="file-input" type="file" accept="audio/wav,audio/x-wav,.wav" hidden>
+      </div>
+      <div id="error"></div>
+
+      <div class="field">
+        <div class="spread"><label style="margin:0">Level</label><span class="tiny muted" id="info"></span></div>
+        <div class="meter"><i id="level"></i></div>
+      </div>
+
+      <div class="stats" style="margin-top:.9rem">
+        <div class="stat"><div class="k">Listening</div><div class="v" id="s-time">0s</div></div>
+        <div class="stat"><div class="k">Bursts</div><div class="v" id="s-detected">0</div></div>
+        <div class="stat"><div class="k">Frames</div><div class="v" id="s-frames">0</div></div>
+        <div class="stat"><div class="k">Messages</div><div class="v" id="s-messages">0</div></div>
+        <div class="stat"><div class="k">Repeats</div><div class="v" id="s-dupes">0</div></div>
+        <div class="stat"><div class="k">Unreadable</div><div class="v" id="s-bad">0</div></div>
+      </div>
+      <p class="tiny muted" style="margin:.7rem 0 0">
+        <strong>Unreadable</strong> counts bursts whose preamble was found but whose data failed its
+        checksum — the honest denominator for how a room is treating you.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Channel</h2>
+      <p class="small muted" style="margin-top:0">
+        A receive token is safe to ship in a client: it reads the trust bundle and posts receipts,
+        and can do nothing else.
+      </p>
+      <div class="row" style="margin-bottom:.6rem">
+        <input id="token" placeholder="rk_…" style="flex:1;min-width:180px" autocomplete="off">
+        <input id="channel-id" placeholder="ch_…" style="flex:1;min-width:150px" autocomplete="off">
+        <button id="sync" class="sm">Sync</button>
+      </div>
+      <div id="sync-status" class="small muted">Not synced. Unsigned messages still decode; signed ones will be rejected until a key is pinned.</div>
+
+      <label class="row tiny" style="margin-top:.8rem;gap:.4rem">
+        <input id="send-receipts" type="checkbox" style="width:auto"> Report receipts back to the channel
+      </label>
+
+      <div id="trust" style="margin-top:.8rem"></div>
+      <div id="cards-summary" style="margin-top:.6rem"></div>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top:1rem">
+    <div class="spread"><h2 style="margin:0">Received</h2><button id="clear" class="sm">Clear</button></div>
+    <div id="messages" style="margin-top:.6rem">
+      <p class="muted small">Nothing yet.</p>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top:1rem">
+    <div class="spread"><h2 style="margin:0">Event log</h2><span class="tiny muted">every decoder event, in order</span></div>
+    <div id="log" class="log" style="margin-top:.5rem"></div>
+  </section>
+</main>
+
+<script type="module">
+import { listen, decode, micAvailability, CicadaClient } from "/cicada.js";
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const note = (el, msg) => el.innerHTML = msg ? `<div class="note" style="margin:.5rem 0">${esc(msg)}</div>` : "";
+
+const client = new CicadaClient({});
+let session = null;
+let trust = null;               // {"channel/keyId": hex}
+let cards = null;               // {code: text}
+let channelNumber = null;
+let ticker = null;
+let firstHeardAt = null;
+
+// ------------------------------------------------------------- persistence
+const store = {
+  get token() { return localStorage.getItem("cicada.rx.token") ?? ""; },
+  get channelId() { return localStorage.getItem("cicada.rx.channel") ?? ""; },
+  save(token, channelId) {
+    localStorage.setItem("cicada.rx.token", token);
+    localStorage.setItem("cicada.rx.channel", channelId);
+  },
+  get bundle() { try { return JSON.parse(localStorage.getItem("cicada.rx.bundle")); } catch { return null; } },
+  set bundle(v) { localStorage.setItem("cicada.rx.bundle", JSON.stringify(v)); },
+};
+
+$("token").value = store.token;
+$("channel-id").value = store.channelId;
+if (store.bundle) applyBundle(store.bundle, true);
+
+// ---------------------------------------------------------------- syncing
+$("sync").onclick = sync;
+
+async function sync() {
+  const token = $("token").value.trim();
+  const channelId = $("channel-id").value.trim();
+  if (!token || !channelId) { note($("error"), "Both a receive token and a channel id are needed."); return; }
+  $("sync").disabled = true;
+  try {
+    const [trustDoc, bundleDoc] = await Promise.all([
+      client.trust(channelId, token),
+      client.cardBundle(channelId, token),
+    ]);
+    const bundle = { trust: trustDoc, cards: bundleDoc, syncedAt: new Date().toISOString() };
+    store.save(token, channelId);
+    store.bundle = bundle;
+    applyBundle(bundle, false);
+    note($("error"), "");
+  } catch (e) {
+    note($("error"), `Sync failed: ${e.message}`);
+  } finally {
+    $("sync").disabled = false;
+  }
+}
+
+function applyBundle(bundle, fromCache) {
+  const { trust: t, cards: c } = bundle;
+  channelNumber = t.channel;
+  trust = {};
+  for (const k of t.keys) trust[`${t.channel}/${k.key_id}`] = k.public_key;
+  cards = {};
+  for (const card of c.cards) {
+    cards[card.code] = new TextDecoder().decode(Uint8Array.from(atob(card.data), ch => ch.charCodeAt(0)));
+  }
+  $("sync-status").innerHTML =
+    `<span class="pill good">${esc(t.name)}</span> channel ${t.channel} · `
+    + `${t.keys.length} key${t.keys.length === 1 ? "" : "s"} pinned · ${c.cards.length} card${c.cards.length === 1 ? "" : "s"} cached`
+    + (fromCache ? ` <span class="muted">(from this device's cache)</span>` : "");
+  $("trust").innerHTML = t.keys.length
+    ? `<table><thead><tr><th class="num">Key</th><th>Public key</th><th></th></tr></thead><tbody>`
+      + t.keys.map(k => `<tr><td class="num">${k.key_id}</td>
+          <td class="mono tiny" style="word-break:break-all">${esc(k.public_key)}</td>
+          <td>${k.retired ? '<span class="pill warn">retired</span>' : '<span class="pill good">active</span>'}</td></tr>`).join("")
+      + `</tbody></table>`
+    : `<p class="small muted">This channel is unsigned; there is nothing to pin.</p>`;
+  $("cards-summary").innerHTML = c.cards.length
+    ? `<details><summary class="small muted" style="cursor:pointer">${c.cards.length} cached cards</summary>
+       <table style="margin-top:.4rem"><tbody>${c.cards.map(card =>
+        `<tr><td class="num">#${card.code}</td><td class="small">${esc(card.label || "—")}</td>
+             <td class="tiny mono muted" style="max-width:22rem;overflow:hidden;text-overflow:ellipsis">${esc(cards[card.code].slice(0, 80))}</td></tr>`).join("")}</tbody></table></details>`
+    : "";
+}
+
+// -------------------------------------------------------------- listening
+$("start").onclick = async () => {
+  if (session) { await stop(); return; }
+  const avail = micAvailability();
+  if (!avail.ok) { note($("error"), avail.message || avail.reason); return; }
+  try {
+    session = await listen({
+      trust,
+      cards,
+      onMessage: showMessage,
+      onEvent: logEvent,
+      onLevel: ({ peak }) => { $("level").style.width = `${Math.min(100, peak * 140)}%`; },
+    });
+    note($("error"), "");
+    $("start").textContent = "⏹ Stop";
+    $("start").classList.remove("primary");
+    $("info").textContent = `${session.inputSampleRate} Hz${session.deviceLabel ? ` · ${session.deviceLabel}` : ""}`;
+    firstHeardAt = null;
+    ticker = setInterval(updateStats, 250);
+  } catch (e) {
+    note($("error"), e.message);
+  }
+};
+
+async function stop() {
+  clearInterval(ticker);
+  await session.stop();
+  session = null;
+  $("start").textContent = "🎤 Start";
+  $("start").classList.add("primary");
+  $("level").style.width = "0";
+}
+
+function updateStats() {
+  if (!session) return;
+  const s = session.stats;
+  $("s-time").textContent = `${s.seconds.toFixed(0)}s`;
+  $("s-detected").textContent = s.detected;
+  $("s-frames").textContent = s.frames;
+  $("s-messages").textContent = s.messages;
+  $("s-dupes").textContent = s.duplicates;
+  $("s-bad").textContent = s.undecodable;
+}
+
+// ----------------------------------------------------------------- files
+$("file").onclick = () => $("file-input").click();
+$("file-input").onchange = async e => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  $("file").disabled = true;
+  $("file").textContent = "Decoding…";
+  try {
+    const { messages, stats } = await decode(await f.arrayBuffer(), { trust, cards, onEvent: logEvent });
+    for (const m of messages) showMessage(m, f.name);
+    logEvent({ type: "file", message: `${f.name}: ${messages.length} message(s), ${stats.detected} burst(s)` });
+    if (!messages.length) note($("error"), `Nothing decoded from ${f.name}. Is it a Cicada recording?`);
+    else note($("error"), "");
+  } catch (err) {
+    note($("error"), err.message);
+  } finally {
+    $("file").disabled = false;
+    $("file").textContent = "Decode a file…";
+    e.target.value = "";
+  }
+};
+
+// -------------------------------------------------------------- rendering
+function showMessage(m, source = "mic") {
+  const box = $("messages");
+  if (box.dataset.empty !== "no") { box.replaceChildren(); box.dataset.empty = "no"; }
+  firstHeardAt ??= performance.now();
+
+  const div = document.createElement("div");
+  div.className = "panel flash";
+  div.style.cssText = "background:var(--panel-2);margin-bottom:.55rem;padding:.65rem .8rem";
+
+  let content;
+  if (m.card) {
+    content = m.card.resolved
+      ? `<div class="mono small" style="white-space:pre-wrap;word-break:break-word">${esc(m.card.resolved)}</div>
+         <div class="tiny muted" style="margin-top:.3rem">resolved locally from card #${m.card.code} — four bytes on the air</div>`
+      : `<div class="muted small">Card #${m.card.code}, which is not in this device's cached bundle. Sync the channel.</div>`;
+  } else if (m.text !== null) {
+    content = `<div class="mono small" style="white-space:pre-wrap;word-break:break-word">${esc(m.text)}</div>`;
+  } else {
+    content = `<div class="mono tiny muted">${m.bytes.length} binary bytes · ${[...m.bytes.slice(0, 24)].map(b => b.toString(16).padStart(2, "0")).join(" ")}${m.bytes.length > 24 ? " …" : ""}</div>`;
+  }
+
+  const badge = m.signed
+    ? (m.verified ? `<span class="pill good">signed, key ${m.keyId}</span>` : `<span class="pill bad">unverified</span>`)
+    : `<span class="pill">unsigned</span>`;
+
+  div.innerHTML = `<div class="spread" style="margin-bottom:.35rem">
+      <span class="tiny muted">${esc(source)} · channel ${m.channel} · ${new Date().toLocaleTimeString()}</span>
+      ${badge}
+    </div>${content}`;
+  box.prepend(div);
+
+  if ($("send-receipts").checked) reportReceipt(m);
+}
+
+async function reportReceipt(m) {
+  const token = $("token").value.trim();
+  const channelId = $("channel-id").value.trim();
+  if (!token || !channelId) return;
+  try {
+    await client.postReceipt(token, {
+      device: navigator.userAgent.slice(0, 110),
+      outcome: "decoded",
+      latency_ms: firstHeardAt ? Math.round(performance.now() - firstHeardAt) : null,
+      detail: {
+        channel: m.channel,
+        signed: m.signed,
+        verified: m.verified,
+        card: m.card?.code ?? null,
+        sample_rate: session?.inputSampleRate ?? null,
+      },
+    });
+    logEvent({ type: "receipt", message: "receipt posted" });
+  } catch (e) {
+    logEvent({ type: "error", message: `receipt failed: ${e.message}` });
+  }
+}
+
+const LOG_LABEL = {
+  frame: "frame", message: "message", duplicate: "repeat", rejected: "rejected",
+  "foreign-frame": "not cicada", error: "error", receipt: "receipt", file: "file",
+};
+function logEvent(ev) {
+  const log = $("log");
+  const row = document.createElement("div");
+  const detail = ev.type === "frame"
+    ? `ch ${ev.channel}${ev.solo ? "" : ` · ${ev.offset}/${ev.total} B`}`
+    : (ev.reason || ev.message || "");
+  row.innerHTML = `<span class="t">${(ev.at ?? 0).toFixed?.(1) ?? ""}</span>`
+    + `<span style="flex:0 0 5.5rem">${LOG_LABEL[ev.type] ?? esc(ev.type)}</span>`
+    + `<span class="muted" style="flex:1">${esc(detail)}</span>`;
+  if (ev.type === "rejected" || ev.type === "error") row.style.color = "var(--bad)";
+  log.prepend(row);
+  while (log.children.length > 300) log.lastChild.remove();
+}
+
+$("clear").onclick = () => {
+  const box = $("messages");
+  box.replaceChildren();
+  box.dataset.empty = "";
+  box.innerHTML = `<p class="muted small">Nothing yet.</p>`;
+  $("log").replaceChildren();
+};
+</script>
+</body>
+</html>

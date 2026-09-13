@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Announcement Desk</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>📣</text></svg>">
+<style>
+  .desk { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 900px) { .desk { grid-template-columns: 330px minmax(0, 1fr); align-items: start; } }
+  .tpl-list { display: grid; gap: .3rem; }
+  .tpl {
+    display: grid; gap: .15rem; text-align: left; width: 100%;
+    padding: .55rem .7rem; border-radius: 9px; border: 1px solid var(--line);
+    background: var(--panel); cursor: pointer;
+  }
+  .tpl:hover { border-color: var(--ink-3); }
+  .tpl[aria-pressed="true"] { background: var(--panel-2); border-color: var(--accent); }
+  .tpl .name { font-weight: 600; font-size: .92rem; }
+  .tpl .sub { font-size: .74rem; color: var(--ink-3); font-family: var(--mono); }
+  .sev { display: inline-block; width: .55rem; height: .55rem; border-radius: 50%; flex: none; }
+  .sev.info { background: #5b8fc7; } .sev.change { background: var(--warn); }
+  .sev.disruption { background: #c77a3a; } .sev.emergency { background: var(--bad); }
+  .preview { display: grid; gap: .45rem; }
+  .pv { display: grid; gap: .15rem; padding: .55rem .7rem; background: var(--panel-2); border-radius: 8px; }
+  .pv .lang { font-family: var(--mono); font-size: .68rem; text-transform: uppercase;
+              letter-spacing: .08em; color: var(--ink-3); }
+  .pv .txt { font-size: .95rem; line-height: 1.45; }
+  .cost { display: flex; gap: .4rem; flex-wrap: wrap; align-items: baseline; }
+  .cost b { font-family: var(--mono); font-size: 1.15rem; font-weight: 600; }
+  .slotgrid { display: grid; gap: .6rem; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark">🦗</span> <span class="name">Cicada</span> <span class="tag">announcement desk</span></div>
+  <nav class="top">
+    <a href="/">Studio</a>
+    <a href="/console">Console</a>
+    <a href="/announce" aria-current="page">Desk</a>
+    <a href="/listen">Passenger</a>
+    <a href="/docs">Docs</a>
+  </nav>
+</header>
+
+<main>
+  <section class="panel" id="signin">
+    <h2>Connect</h2>
+    <p class="small muted">Paste a secret key, then choose the venue's channel.</p>
+    <div class="row">
+      <input id="key" type="password" placeholder="ck_live_…" style="flex:1;min-width:220px" autocomplete="off">
+      <button id="connect" class="primary">Connect</button>
+    </div>
+    <div id="signin-error" style="margin-top:.6rem"></div>
+  </section>
+
+  <div id="app" hidden>
+    <div class="spread" style="margin-bottom:.9rem">
+      <div>
+        <h1 style="margin:0">Announcement desk</h1>
+        <div class="small muted">Compose once. Every phone in the concourse reads it in its own language.</div>
+      </div>
+      <select id="channel" style="width:auto;min-width:200px"></select>
+    </div>
+
+    <div class="desk">
+      <!-- ------------------------------------------------ templates -->
+      <section class="panel">
+        <div class="spread"><h2 style="margin:0">Templates</h2>
+          <a href="/console" class="tiny">manage</a></div>
+        <div class="tpl-list" id="templates" style="margin-top:.6rem"></div>
+        <p class="tiny muted" style="margin:.7rem 0 0">
+          Templates and their translations live on the phone. Only the template number and its
+          values go on the air, so a fourth language costs nothing.
+        </p>
+      </section>
+
+      <!-- ------------------------------------------------ compose -->
+      <section class="panel">
+        <h2 id="compose-title">Choose a template</h2>
+        <div id="slots" class="slotgrid" style="margin:.7rem 0"></div>
+
+        <div id="cost" class="note" style="display:none;margin:.8rem 0"></div>
+
+        <h3 style="margin:1rem 0 .4rem;font-size:.9rem">As every phone will read it</h3>
+        <div class="preview" id="preview">
+          <p class="small muted" style="margin:0">Pick a template to see it rendered.</p>
+        </div>
+
+        <div class="row" style="margin-top:1rem">
+          <button id="broadcast" class="primary" disabled>Render &amp; play</button>
+          <button id="download" disabled>WAV for the PA</button>
+          <label class="row tiny" style="margin:0;gap:.35rem">
+            <input id="repeats" type="number" min="1" max="6" value="2" style="width:58px"> passes
+          </label>
+        </div>
+        <div id="send-error"></div>
+        <div id="sent"></div>
+      </section>
+    </div>
+
+    <section class="panel" style="margin-top:1rem">
+      <div class="spread"><h2 style="margin:0">Recent announcements</h2>
+        <button id="refresh" class="sm">Refresh</button></div>
+      <div class="scroll-x"><table id="history">
+        <thead><tr><th>When</th><th>Announcement</th><th>Profile</th>
+          <th class="num">On air</th><th class="num">Airtime</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+import { CicadaClient, play, downloadWav } from "/cicada.js";
+import { SLOT_TYPES, SEVERITIES } from "/announce/template.js";
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const when = iso => new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+const note = (el, msg) => el.innerHTML = msg ? `<div class="note" style="margin:.55rem 0">${esc(msg)}</div>` : "";
+
+let client = null, channels = [], templates = [], lists = {}, current = null;
+let debounce = null;
+
+const saved = localStorage.getItem("cicada.key");
+if (saved) { $("key").value = saved; connect(); }
+$("connect").onclick = connect;
+$("key").addEventListener("keydown", e => e.key === "Enter" && connect());
+
+async function connect() {
+  const key = $("key").value.trim();
+  if (!key) return;
+  client = new CicadaClient({ key });
+  try {
+    const { channels: list } = await client.listChannels();
+    localStorage.setItem("cicada.key", key);
+    channels = list;
+    if (!channels.length) { note($("signin-error"), "This account has no channels yet. Create one in the console."); return; }
+    $("signin").hidden = true;
+    $("app").hidden = false;
+    $("channel").innerHTML = channels
+      .map(c => `<option value="${c.id}">${esc(c.name)}${c.signed ? " · signed" : ""}</option>`).join("");
+    const remembered = localStorage.getItem("cicada.desk.channel");
+    if (remembered && channels.some(c => c.id === remembered)) $("channel").value = remembered;
+    await loadChannel();
+  } catch (e) {
+    client = null;
+    note($("signin-error"), e.message);
+  }
+}
+
+$("channel").onchange = loadChannel;
+
+async function loadChannel() {
+  const id = $("channel").value;
+  localStorage.setItem("cicada.desk.channel", id);
+  const [t, l] = await Promise.all([client.request(`/v1/channels/${id}/templates`),
+                                    client.request(`/v1/channels/${id}/lists`)]);
+  templates = t.templates;
+  lists = Object.fromEntries(l.lists.map(x => [x.name, x.entries]));
+  current = null;
+  renderTemplates();
+  $("compose-title").textContent = "Choose a template";
+  $("slots").replaceChildren();
+  $("preview").innerHTML = `<p class="small muted" style="margin:0">Pick a template to see it rendered.</p>`;
+  $("cost").style.display = "none";
+  $("broadcast").disabled = $("download").disabled = true;
+  await loadHistory();
+}
+
+function renderTemplates() {
+  const box = $("templates");
+  if (!templates.length) {
+    box.innerHTML = `<p class="small muted">No templates on this channel. Seed one with
+      <code>examples/seed-station.mjs</code>.</p>`;
+    return;
+  }
+  box.replaceChildren(...templates.map(t => {
+    const b = document.createElement("button");
+    b.className = "tpl";
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(current?.id === t.id));
+    b.innerHTML =
+      `<span class="name"><span class="sev ${esc(t.severity)}" aria-hidden="true"></span> ${esc(t.label || `Template ${t.id}`)}</span>
+       <span class="sub">#${t.id} · ${t.languages.length} languages · ${t.air_bytes} B</span>`;
+    b.onclick = () => choose(t);
+    return b;
+  }));
+}
+
+function choose(t) {
+  current = t;
+  renderTemplates();
+  $("compose-title").innerHTML =
+    `${esc(t.label || `Template ${t.id}`)} <span class="pill">${esc(SEVERITIES[t.severity]?.label ?? t.severity)}</span>`;
+
+  $("slots").replaceChildren(...t.slots.map(s => {
+    const wrap = document.createElement("div");
+    const id = `slot-${s.name}`;
+    if (s.type === "item") {
+      const entries = lists[s.list] ?? [];
+      wrap.innerHTML = `<label for="${id}">${esc(s.name)}</label>
+        <select id="${id}" data-slot="${esc(s.name)}">${
+          entries.map((e, i) => {
+            const label = typeof e === "string" ? e : (e.en ?? Object.values(e)[0]);
+            return `<option value="${i}">${esc(label)}</option>`;
+          }).join("")}</select>`;
+    } else if (s.type === "time") {
+      const now = new Date();
+      const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+      wrap.innerHTML = `<label for="${id}">${esc(s.name)}</label>
+        <input id="${id}" type="time" value="${hhmm}" data-slot="${esc(s.name)}" data-kind="time">`;
+    } else if (s.type === "text") {
+      wrap.innerHTML = `<label for="${id}">${esc(s.name)} <span class="muted">(costs its length on the air)</span></label>
+        <input id="${id}" type="text" data-slot="${esc(s.name)}" maxlength="120">`;
+    } else {
+      wrap.innerHTML = `<label for="${id}">${esc(s.name)} <span class="muted">${esc(SLOT_TYPES[s.type]?.label ?? "")}</span></label>
+        <input id="${id}" type="number" min="0" max="${SLOT_TYPES[s.type]?.max ?? 255}" value="1" data-slot="${esc(s.name)}">`;
+    }
+    return wrap;
+  }));
+
+  for (const el of $("slots").querySelectorAll("[data-slot]")) {
+    el.addEventListener("input", schedulePreview);
+    el.addEventListener("change", schedulePreview);
+  }
+  schedulePreview();
+}
+
+function values() {
+  const out = {};
+  for (const el of $("slots").querySelectorAll("[data-slot]")) {
+    const name = el.dataset.slot;
+    if (el.dataset.kind === "time") {
+      const [h, m] = el.value.split(":").map(Number);
+      out[name] = (h || 0) * 60 + (m || 0);
+    } else if (el.type === "text") {
+      out[name] = el.value;
+    } else {
+      out[name] = Number(el.value) || 0;
+    }
+  }
+  return out;
+}
+
+function schedulePreview() {
+  clearTimeout(debounce);
+  debounce = setTimeout(refreshPreview, 180);
+}
+
+async function refreshPreview() {
+  if (!current) return;
+  try {
+    const p = await client.request("/v1/announcements/preview", {
+      method: "POST",
+      body: {
+        channel: $("channel").value, template: current.id,
+        repeats: Number($("repeats").value) || 2, values: values(),
+      },
+    });
+    note($("send-error"), "");
+    $("preview").replaceChildren(...Object.entries(p.rendered).map(([lang, text]) => {
+      const d = document.createElement("div");
+      d.className = "pv";
+      d.innerHTML = `<span class="lang">${esc(lang)}</span><span class="txt" lang="${esc(lang)}">${esc(text)}</span>`;
+      return d;
+    }));
+    $("cost").style.display = "";
+    const spokenSeconds = (Object.values(p.rendered)[0]?.length ?? 0) / 14;
+    $("cost").innerHTML =
+      `<div class="cost">
+         <b>${p.estimate.seconds}s</b> <span class="small muted">on air ·</span>
+         <span class="small">${p.air_bytes} B announcement${p.signed ? `, ${p.body_bytes} B signed` : ""}</span>
+         <span class="small muted">· ${esc(p.estimate.profile)} profile, ${p.estimate.repeats} passes</span>
+       </div>
+       <div class="tiny muted" style="margin-top:.3rem">
+         Spoken aloud in one language this is about ${spokenSeconds.toFixed(0)}s.
+         As data it is ${p.estimate.seconds}s in ${Object.keys(p.rendered).length} languages,
+         and stays that length however many you add.
+       </div>`;
+    $("broadcast").disabled = $("download").disabled = false;
+  } catch (e) {
+    note($("send-error"), e.message);
+    $("broadcast").disabled = $("download").disabled = true;
+  }
+}
+
+$("repeats").addEventListener("input", schedulePreview);
+
+async function compose() {
+  return client.request("/v1/announcements", {
+    method: "POST",
+    body: {
+      channel: $("channel").value, template: current.id,
+      repeats: Number($("repeats").value) || 2, values: values(),
+    },
+  });
+}
+
+$("broadcast").onclick = async () => {
+  $("broadcast").disabled = true;
+  $("broadcast").textContent = "Rendering…";
+  try {
+    const tx = await compose();
+    $("broadcast").textContent = "Playing…";
+    const { samples } = await client.audio(tx.id);
+    await play(samples);
+    $("sent").innerHTML = `<div class="row" style="margin-top:.6rem">
+      <span class="pill good">played</span>
+      <span class="small mono">${tx.seconds.toFixed(2)}s · ${tx.air_bytes} B on air${tx.signed ? " · signed" : ""}</span></div>`;
+    await loadHistory();
+  } catch (e) {
+    note($("send-error"), e.message);
+  } finally {
+    $("broadcast").disabled = false;
+    $("broadcast").textContent = "Render & play";
+  }
+};
+
+$("download").onclick = async () => {
+  $("download").disabled = true;
+  try {
+    const tx = await compose();
+    const { samples } = await client.audio(tx.id);
+    downloadWav(samples, `announcement-${tx.template_id}-${tx.id}.wav`);
+    await loadHistory();
+  } catch (e) {
+    note($("send-error"), e.message);
+  } finally {
+    $("download").disabled = false;
+  }
+};
+
+$("refresh").onclick = loadHistory;
+
+async function loadHistory() {
+  const { transmissions } = await client.listTransmissions(20);
+  const id = $("channel").value;
+  const ch = channels.find(c => c.id === id);
+  const rows = transmissions.filter(t => t.channel_id === id || t.channel === ch?.number);
+  const tbody = $("history").querySelector("tbody");
+  tbody.innerHTML = rows.length ? rows.map(t => `<tr>
+    <td class="small muted">${when(t.created_at)}</td>
+    <td>${esc(t.label) || "<span class='muted'>—</span>"}</td>
+    <td class="small">${esc(t.profile)}${t.signed ? ` <span class="pill good">signed</span>` : ""}</td>
+    <td class="num">${t.body_bytes} B</td>
+    <td class="num">${t.seconds.toFixed(2)}s</td>
+    <td style="text-align:right"><button class="sm" data-play="${t.id}">▶</button></td>
+  </tr>`).join("") : `<tr><td colspan="6" class="muted">Nothing broadcast on this channel yet.</td></tr>`;
+}
+
+document.addEventListener("click", async e => {
+  const id = e.target.dataset?.play;
+  if (!id) return;
+  e.target.disabled = true;
+  try { const { samples } = await client.audio(id); await play(samples); }
+  catch (err) { alert(err.message); }
+  finally { e.target.disabled = false; }
+});
+</script>
+</body>
+</html>

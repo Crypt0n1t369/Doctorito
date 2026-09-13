@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cicada Studio</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>🦗</text></svg>">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark">🦗</span> <span class="name">Cicada</span> <span class="tag">data over sound</span></div>
+  <nav class="top">
+    <a href="/" aria-current="page">Studio</a>
+    <a href="/console">Console</a>
+    <a href="/receive">Receiver</a>
+    <a href="/docs">Docs</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Studio</h1>
+  <p class="lede">
+    Type something, press play, and watch this same page hear it back through your speakers and
+    microphone. No network between the two — only sound.
+  </p>
+
+  <div class="grid cols-2" style="margin-top:1.2rem">
+
+    <!-- ------------------------------------------------------ compose -->
+    <section class="panel">
+      <h2>1 · Compose</h2>
+
+      <div class="field">
+        <label for="payload">Payload</label>
+        <textarea id="payload" spellcheck="false">Gate 14 · boarding closes 18:40</textarea>
+      </div>
+
+      <div class="row" style="margin-bottom:.75rem">
+        <div style="flex:1;min-width:140px">
+          <label for="profile">Profile</label>
+          <select id="profile"></select>
+        </div>
+        <div style="flex:0 0 88px">
+          <label for="repeats">Passes</label>
+          <input id="repeats" type="number" min="1" max="10" value="2">
+        </div>
+        <div style="flex:0 0 96px">
+          <label for="channel">Channel</label>
+          <input id="channel" type="number" min="0" max="65535" value="0">
+        </div>
+      </div>
+
+      <div class="stats" style="margin-bottom:.8rem">
+        <div class="stat"><div class="k">Payload</div><div class="v" id="s-bytes">—</div></div>
+        <div class="stat"><div class="k">Frames</div><div class="v" id="s-frames">—</div></div>
+        <div class="stat"><div class="k">Airtime</div><div class="v" id="s-time">—</div></div>
+        <div class="stat"><div class="k">Rate</div><div class="v" id="s-rate">—</div></div>
+      </div>
+
+      <div id="fit-warning"></div>
+
+      <div class="row">
+        <button id="play" class="primary">▶ Play</button>
+        <button id="download">Download WAV</button>
+        <button id="stop-play" disabled>Stop</button>
+      </div>
+
+      <p class="tiny muted" style="margin:.7rem 0 0">
+        Playing at a normal listening volume with the phone or laptop a metre away is enough.
+        You will hear it — this band is audible on purpose, so people can tell when a device is transmitting.
+      </p>
+    </section>
+
+    <!-- ------------------------------------------------------ receive -->
+    <section class="panel">
+      <h2>2 · Listen</h2>
+
+      <div class="row" style="margin-bottom:.7rem">
+        <button id="mic" class="primary">🎤 Start microphone</button>
+        <button id="loopback">Decode without the room</button>
+      </div>
+
+      <div id="mic-error"></div>
+
+      <div class="field">
+        <div class="spread"><label style="margin:0">Input level</label><span class="tiny muted" id="mic-info"></span></div>
+        <div class="meter"><i id="level"></i></div>
+      </div>
+
+      <div class="stats" style="margin:.8rem 0">
+        <div class="stat"><div class="k">Bursts</div><div class="v" id="r-detected">0</div></div>
+        <div class="stat"><div class="k">Frames</div><div class="v" id="r-frames">0</div></div>
+        <div class="stat"><div class="k">Messages</div><div class="v" id="r-messages">0</div></div>
+        <div class="stat"><div class="k">Repeats</div><div class="v" id="r-dupes">0</div></div>
+      </div>
+
+      <h3 style="margin-top:1rem">Received</h3>
+      <div id="received" class="log" aria-live="polite">
+        <div class="muted" style="border:0">Nothing yet.</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ------------------------------------------------------ waveform -->
+  <section class="panel" style="margin-top:1rem">
+    <div class="spread"><h2 style="margin:0">The signal</h2>
+      <span class="tiny muted">672 – 2313 Hz · 8 kHz · OFDM, differential QPSK, rate-½ K=7</span></div>
+    <canvas id="wave" height="110" style="margin-top:.7rem"></canvas>
+    <canvas id="spec" height="130" style="margin-top:.4rem"></canvas>
+    <p class="tiny muted" style="margin:.5rem 0 0">
+      Top: the rendered waveform. Bottom: its spectrogram — the wide bar at the start of each burst is
+      the chirp the receiver uses to find it, and the block after it is the data.
+    </p>
+  </section>
+
+  <!-- ------------------------------------------------------ profiles -->
+  <section class="panel" style="margin-top:1rem">
+    <div class="spread"><h2 style="margin:0">Which profile</h2>
+      <span class="tiny muted">for the payload above, at the chosen number of passes</span></div>
+    <div class="scroll-x"><table id="profile-table">
+      <thead><tr>
+        <th>Profile</th><th>Frame</th><th class="num">Frames</th><th class="num">Airtime</th>
+        <th class="num">Rate</th><th>Good for</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <!-- ------------------------------------------------------ curl -->
+  <section class="panel" style="margin-top:1rem">
+    <div class="spread"><h2 style="margin:0">The same thing over the API</h2>
+      <button id="copy-curl" class="sm">Copy</button></div>
+    <pre class="code" id="curl"></pre>
+  </section>
+</main>
+
+<script type="module">
+import {
+  listen, encode, play, downloadWav, decode, micAvailability,
+  PROFILES, PROFILE_NAMES, compareProfiles, capacityPerFrame, FS,
+} from "/cicada.js";
+
+const $ = id => document.getElementById(id);
+const te = new TextEncoder();
+
+// ------------------------------------------------------------- compose
+const profileSelect = $("profile");
+for (const name of PROFILE_NAMES) {
+  const o = document.createElement("option");
+  o.value = name;
+  o.textContent = `${PROFILES[name].label} · ${PROFILES[name].frameBytes} B frames`;
+  profileSelect.append(o);
+}
+profileSelect.value = "standard";
+
+let current = null;          // { samples, frames, bodyBytes }
+
+function payloadBytes() {
+  return te.encode($("payload").value);
+}
+
+function refresh() {
+  const body = payloadBytes();
+  const profile = profileSelect.value;
+  const repeats = Math.max(1, Math.min(10, Number($("repeats").value) || 1));
+  const channel = Math.max(0, Math.min(65535, Number($("channel").value) || 0));
+
+  $("s-bytes").textContent = `${body.length} B`;
+
+  const rows = compareProfiles(body.length, { repeats });
+  renderProfileTable(rows, profile);
+
+  const chosen = rows.find(r => r.profile === profile);
+  const warn = $("fit-warning");
+  if (!chosen?.usable) {
+    warn.innerHTML = `<div class="note" style="margin-bottom:.7rem">
+      <strong>${PROFILES[profile].label}</strong> ${chosen?.reason ?? "cannot carry this"} —
+      this payload is ${body.length} B. Pick a larger profile, or shorten the payload.</div>`;
+    $("s-frames").textContent = "—";
+    $("s-time").textContent = "—";
+    $("s-rate").textContent = "—";
+    $("play").disabled = $("download").disabled = true;
+    current = null;
+    drawWave(null);
+    updateCurl(body, profile, repeats, channel);
+    return;
+  }
+  warn.innerHTML = "";
+  $("play").disabled = $("download").disabled = false;
+  $("s-frames").textContent = chosen.frames;
+  $("s-time").textContent = `${chosen.seconds.toFixed(2)}s`;
+  $("s-rate").textContent = `${chosen.bytesPerSecond} B/s`;
+
+  current = encode({ bytes: body, profile, repeats, channel });
+  drawWave(current.samples);
+  updateCurl(body, profile, repeats, channel);
+}
+
+function renderProfileTable(rows, selected) {
+  const tbody = $("profile-table").querySelector("tbody");
+  tbody.replaceChildren();
+  for (const r of rows) {
+    const tr = document.createElement("tr");
+    const p = PROFILES[r.profile];
+    if (r.profile === selected) tr.style.background = "var(--panel-2)";
+    tr.innerHTML = r.usable
+      ? `<td><strong>${p.label}</strong></td>
+         <td class="mono">${p.frameBytes} B</td>
+         <td class="num">${r.frames}</td>
+         <td class="num">${r.seconds.toFixed(2)}s</td>
+         <td class="num">${r.bytesPerSecond} B/s</td>
+         <td class="muted small">${p.note}</td>`
+      : `<td><strong>${p.label}</strong></td>
+         <td class="mono">${p.frameBytes} B</td>
+         <td class="num muted" colspan="3">${r.reason}</td>
+         <td class="muted small">${p.note}</td>`;
+    tbody.append(tr);
+  }
+}
+
+function updateCurl(body, profile, repeats, channel) {
+  const text = $("payload").value;
+  const json = JSON.stringify({ text, profile, repeats, ...(channel ? { channel: "ch_..." } : {}) }, null, 2)
+    .split("\n").map((l, i) => (i ? "        " + l : l)).join("\n");
+  $("curl").textContent =
+`curl -X POST ${location.origin}/v1/transmissions \\
+  -H "Authorization: Bearer $CICADA_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '${json}' \\
+  | jq -r .audio_url`;
+}
+
+$("copy-curl").onclick = async () => {
+  await navigator.clipboard.writeText($("curl").textContent);
+  $("copy-curl").textContent = "Copied";
+  setTimeout(() => ($("copy-curl").textContent = "Copy"), 1400);
+};
+
+for (const id of ["payload", "profile", "repeats", "channel"]) {
+  $(id).addEventListener("input", refresh);
+}
+
+// ------------------------------------------------------------- playback
+let playing = false;
+$("play").onclick = async () => {
+  if (!current || playing) return;
+  playing = true;
+  $("play").disabled = true;
+  $("stop-play").disabled = false;
+  try {
+    await play(current.samples, { onEnded: () => {} });
+  } finally {
+    playing = false;
+    $("play").disabled = false;
+    $("stop-play").disabled = true;
+  }
+};
+$("stop-play").onclick = () => location.reload();
+
+$("download").onclick = () => {
+  if (current) downloadWav(current.samples, `cicada-${profileSelect.value}.wav`);
+};
+
+// ------------------------------------------------------------- receiving
+let session = null;
+const counters = { detected: 0, frames: 0, messages: 0, dupes: 0 };
+
+function bumpCounters(s) {
+  $("r-detected").textContent = s.detected ?? counters.detected;
+  $("r-frames").textContent = s.frames ?? counters.frames;
+  $("r-messages").textContent = s.messages ?? counters.messages;
+  $("r-dupes").textContent = s.duplicates ?? counters.dupes;
+}
+
+function logMessage(m, source) {
+  const box = $("received");
+  if (box.dataset.empty !== "no") { box.replaceChildren(); box.dataset.empty = "no"; }
+  const row = document.createElement("div");
+  row.className = "flash";
+  const body = m.card
+    ? `card #${m.card.code}${m.card.resolved ? ` → ${m.card.resolved}` : " (not in local bundle)"}`
+    : (m.text ?? `${m.bytes.length} binary bytes`);
+  row.innerHTML =
+    `<span class="t">${source}</span>` +
+    `<span style="flex:1;word-break:break-word">${escapeHtml(body)}</span>` +
+    `<span class="pill${m.signed ? (m.verified ? " good" : " bad") : ""}">` +
+    `${m.signed ? (m.verified ? "signed ✓" : "unverified") : `ch ${m.channel}`}</span>`;
+  box.prepend(row);
+}
+
+const escapeHtml = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+$("mic").onclick = async () => {
+  if (session) {
+    await session.stop();
+    session = null;
+    $("mic").textContent = "🎤 Start microphone";
+    $("mic").classList.add("primary");
+    $("mic-info").textContent = "";
+    $("level").style.width = "0";
+    return;
+  }
+  const avail = micAvailability();
+  if (!avail.ok) {
+    $("mic-error").innerHTML = `<div class="note" style="margin-bottom:.7rem">${escapeHtml(avail.message || avail.reason)}</div>`;
+    return;
+  }
+  try {
+    session = await listen({
+      onMessage: m => logMessage(m, "mic"),
+      onEvent: () => bumpCounters(session?.stats ?? {}),
+      onLevel: ({ peak }) => { $("level").style.width = `${Math.min(100, peak * 140)}%`; },
+    });
+    $("mic-error").innerHTML = "";
+    $("mic").textContent = "⏹ Stop microphone";
+    $("mic").classList.remove("primary");
+    $("mic-info").textContent = `${session.inputSampleRate} Hz${session.deviceLabel ? ` · ${session.deviceLabel}` : ""}`;
+  } catch (e) {
+    $("mic-error").innerHTML = `<div class="note" style="margin-bottom:.7rem">${escapeHtml(e.message)}</div>`;
+  }
+};
+
+$("loopback").onclick = async () => {
+  if (!current) return;
+  $("loopback").disabled = true;
+  $("loopback").textContent = "Decoding…";
+  try {
+    const { messages, stats } = await decode(current.samples, { sampleRate: FS });
+    bumpCounters(stats);
+    if (!messages.length) logMessage({ text: "(nothing decoded)", channel: 0, bytes: new Uint8Array() }, "file");
+    for (const m of messages) logMessage(m, "file");
+  } finally {
+    $("loopback").disabled = false;
+    $("loopback").textContent = "Decode without the room";
+  }
+};
+
+// ------------------------------------------------------------- drawing
+function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+function drawWave(samples) {
+  const c = $("wave"), ctx = c.getContext("2d");
+  const w = c.width = c.clientWidth * devicePixelRatio;
+  const h = c.height = 110 * devicePixelRatio;
+  ctx.clearRect(0, 0, w, h);
+  if (!samples) { drawSpec(null); return; }
+  ctx.fillStyle = css("--accent");
+  const per = Math.max(1, Math.floor(samples.length / w));
+  for (let x = 0; x < w; x++) {
+    let lo = 0, hi = 0;
+    for (let i = x * per; i < Math.min((x + 1) * per, samples.length); i++) {
+      if (samples[i] < lo) lo = samples[i];
+      if (samples[i] > hi) hi = samples[i];
+    }
+    const y0 = (1 - hi) * h / 2, y1 = (1 - lo) * h / 2;
+    ctx.fillRect(x, y0, 1, Math.max(1, y1 - y0));
+  }
+  drawSpec(samples);
+}
+
+/** Short-time magnitude spectrum, 0 to 4 kHz. */
+function drawSpec(samples) {
+  const c = $("spec"), ctx = c.getContext("2d");
+  const w = c.width = c.clientWidth * devicePixelRatio;
+  const h = c.height = 130 * devicePixelRatio;
+  ctx.fillStyle = css("--panel-2");
+  ctx.fillRect(0, 0, w, h);
+  if (!samples) return;
+
+  const N = 256, cols = Math.min(w, 700);
+  const hop = Math.max(1, Math.floor((samples.length - N) / cols));
+  const re = new Float64Array(N), im = new Float64Array(N);
+  const img = ctx.createImageData(cols, N / 2);
+  const accent = hexToRgb(css("--accent"));
+
+  for (let col = 0; col < cols; col++) {
+    const at = col * hop;
+    for (let i = 0; i < N; i++) {
+      const v = samples[at + i] ?? 0;
+      re[i] = v * (0.5 - 0.5 * Math.cos(2 * Math.PI * i / (N - 1)));
+      im[i] = 0;
+    }
+    naiveFft(re, im);
+    for (let k = 0; k < N / 2; k++) {
+      const mag = Math.hypot(re[k], im[k]);
+      const db = 20 * Math.log10(mag + 1e-9);
+      const t = Math.max(0, Math.min(1, (db + 62) / 62));
+      const row = (N / 2 - 1 - k);
+      const o = (row * cols + col) * 4;
+      img.data[o] = accent[0] * t;
+      img.data[o + 1] = accent[1] * t;
+      img.data[o + 2] = accent[2] * t;
+      img.data[o + 3] = 255 * (0.10 + 0.90 * t);
+    }
+  }
+  const tmp = document.createElement("canvas");
+  tmp.width = cols; tmp.height = N / 2;
+  tmp.getContext("2d").putImageData(img, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(tmp, 0, 0, w, h);
+
+  // Mark the occupied band. Nyquist here is 4 kHz, so the top of the image is 4 kHz.
+  ctx.strokeStyle = css("--ink-3");
+  ctx.setLineDash([4 * devicePixelRatio, 4 * devicePixelRatio]);
+  ctx.lineWidth = devicePixelRatio;
+  for (const hz of [672, 2313]) {
+    const y = h * (1 - hz / 4000);
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.fillStyle = css("--ink-3");
+  ctx.font = `${11 * devicePixelRatio}px ${css("--mono")}`;
+  ctx.fillText("2313 Hz", 6 * devicePixelRatio, h * (1 - 2313 / 4000) - 4 * devicePixelRatio);
+  ctx.fillText("672 Hz", 6 * devicePixelRatio, h * (1 - 672 / 4000) + 13 * devicePixelRatio);
+}
+
+function naiveFft(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) {
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; }
+  }
+  for (let half = 1; half < n; half <<= 1) {
+    const step = half << 1, ang = -Math.PI / half;
+    for (let m = 0; m < n; m += step) {
+      for (let k = 0; k < half; k++) {
+        const wr = Math.cos(ang * k), wi = Math.sin(ang * k);
+        const ur = re[m + k], ui = im[m + k];
+        const tr = re[m + k + half] * wr - im[m + k + half] * wi;
+        const ti = re[m + k + half] * wi + im[m + k + half] * wr;
+        re[m + k] = ur + tr; im[m + k] = ui + ti;
+        re[m + k + half] = ur - tr; im[m + k + half] = ui - ti;
+      }
+    }
+  }
+}
+
+function hexToRgb(h) {
+  const m = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(h.trim());
+  return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [168, 87, 31];
+}
+
+addEventListener("resize", () => current && drawWave(current.samples));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => current && drawWave(current.samples));
+refresh();
+</script>
+</body>
+</html>

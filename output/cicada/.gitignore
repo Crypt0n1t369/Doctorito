@@ -1,0 +1,12 @@
+# Runtime state. The database holds channel signing keys in PEM, API key
+# hashes and channel receive tokens — it must never reach a remote.
+data/
+*.db
+*.db-shm
+*.db-wal
+
+node_modules/
+.DS_Store
+
+# Rendered audio and scratch output from the examples.
+examples/*.wav

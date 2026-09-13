@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cicada Console</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>🦗</text></svg>">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark">🦗</span> <span class="name">Cicada</span> <span class="tag">data over sound</span></div>
+  <nav class="top">
+    <a href="/">Studio</a>
+    <a href="/console" aria-current="page">Console</a>
+    <a href="/receive">Receiver</a>
+    <a href="/docs">Docs</a>
+  </nav>
+</header>
+
+<main>
+  <!-- ------------------------------------------------------ sign in -->
+  <section class="panel" id="signin">
+    <h2>Connect</h2>
+    <p class="small muted">
+      Paste a secret key. It is kept in this browser only and sent as a bearer token.
+      A self-hosted server prints one on its first start; otherwise run
+      <code>npx cicada key create</code>.
+    </p>
+    <div class="row">
+      <input id="key" type="password" placeholder="ck_live_…" style="flex:1;min-width:220px" autocomplete="off">
+      <button id="connect" class="primary">Connect</button>
+    </div>
+    <div id="signin-error" style="margin-top:.7rem"></div>
+  </section>
+
+  <div id="app" hidden>
+    <div class="spread" style="margin-bottom:1rem">
+      <div>
+        <h1 style="margin:0">Console</h1>
+        <div class="small muted" id="who"></div>
+      </div>
+      <button id="disconnect" class="sm">Disconnect</button>
+    </div>
+
+    <!-- ------------------------------------------------------ usage -->
+    <section class="panel">
+      <div class="spread"><h2 style="margin:0">This period</h2><span class="tiny muted" id="period"></span></div>
+      <div class="stats" id="usage" style="margin-top:.7rem"></div>
+      <div class="small muted" style="margin-top:.7rem" id="usage-note"></div>
+    </section>
+
+    <!-- ------------------------------------------------------ channels -->
+    <section class="panel" style="margin-top:1rem">
+      <div class="spread"><h2 style="margin:0">Channels</h2>
+        <div class="row">
+          <input id="ch-name" placeholder="Channel name" style="width:180px">
+          <label class="row tiny" style="margin:0;gap:.3rem"><input id="ch-signed" type="checkbox" style="width:auto"> signed</label>
+          <button id="ch-create" class="sm">Create</button>
+        </div>
+      </div>
+      <div id="ch-error"></div>
+      <div class="scroll-x"><table id="channels">
+        <thead><tr><th>#</th><th>Name</th><th>Signing key</th><th>Receive token</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <p class="tiny muted" style="margin:.6rem 0 0">
+        The receive token is <em>meant</em> to ship inside receivers: it can read the trust bundle and
+        post receipts, and nothing else. The secret key never leaves your server.
+      </p>
+    </section>
+
+    <!-- ------------------------------------------------------ cards -->
+    <section class="panel" style="margin-top:1rem">
+      <div class="spread"><h2 style="margin:0">Cards</h2>
+        <select id="card-channel" style="width:auto;min-width:160px"></select>
+      </div>
+      <p class="small muted" style="margin-top:.4rem">
+        A card is a payload that lives on the receiver, not on the air. Broadcast its four-byte code
+        instead and the airtime stops depending on the payload's size at all —
+        <strong>0.55 s per pass</strong> in a micro frame, whether the card holds 65 bytes or 60 KB.
+        On a <em>signed</em> channel a 64-byte Ed25519 signature and its key id push the message to
+        72 bytes, so it needs a standard frame: <strong>1.20 s per pass</strong>.
+      </p>
+      <div class="row" style="margin:.6rem 0">
+        <input id="card-label" placeholder="Label" style="width:150px">
+        <input id="card-body" placeholder='Content, e.g. {"room":3}' style="flex:1;min-width:200px">
+        <button id="card-create" class="sm">Add card</button>
+      </div>
+      <div id="card-error"></div>
+      <div class="scroll-x"><table id="cards">
+        <thead><tr><th class="num">Code</th><th>Label</th><th>Content</th><th class="num">Bytes</th><th class="num">v</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </section>
+
+    <!-- ------------------------------------------------------ send -->
+    <section class="panel" style="margin-top:1rem">
+      <h2>Send</h2>
+      <div class="row" style="margin-bottom:.6rem">
+        <select id="send-channel" style="width:auto;min-width:150px"></select>
+        <select id="send-profile" style="width:auto"></select>
+        <input id="send-repeats" type="number" min="1" max="10" value="2" style="width:70px" title="passes">
+        <input id="send-text" placeholder="Message, or leave blank and pick a card" style="flex:1;min-width:180px">
+        <select id="send-card" style="width:auto"><option value="">— no card —</option></select>
+        <button id="send" class="primary sm">Render</button>
+      </div>
+      <div id="send-error"></div>
+      <div id="send-result"></div>
+    </section>
+
+    <!-- ------------------------------------------------------ history -->
+    <section class="panel" style="margin-top:1rem">
+      <div class="spread"><h2 style="margin:0">Transmissions</h2><button id="refresh-tx" class="sm">Refresh</button></div>
+      <div class="scroll-x"><table id="transmissions">
+        <thead><tr><th>When</th><th>Label</th><th>Profile</th><th class="num">Ch</th><th class="num">Bytes</th>
+          <th class="num">Frames</th><th class="num">Airtime</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </section>
+
+    <!-- ------------------------------------------------------ receipts -->
+    <section class="panel" style="margin-top:1rem">
+      <div class="spread"><h2 style="margin:0">Receipts</h2><button id="refresh-rcpt" class="sm">Refresh</button></div>
+      <p class="small muted" style="margin-top:.3rem">
+        What receivers reported hearing. Optional, and only as complete as the devices that chose to report.
+      </p>
+      <div class="scroll-x"><table id="receipts">
+        <thead><tr><th>When</th><th>Device</th><th>Outcome</th><th class="num">Latency</th><th>Detail</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </section>
+
+    <!-- ------------------------------------------------------ keys -->
+    <section class="panel" style="margin-top:1rem">
+      <div class="spread"><h2 style="margin:0">API keys</h2>
+        <div class="row"><input id="key-label" placeholder="Label" style="width:150px"><button id="key-create" class="sm">New key</button></div>
+      </div>
+      <div id="key-new"></div>
+      <div class="scroll-x"><table id="keys">
+        <thead><tr><th>Prefix</th><th>Label</th><th>Created</th><th>Last used</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+import { CicadaClient, PROFILES, PROFILE_NAMES, compareProfiles, SIGNED_OVERHEAD, play, downloadWav } from "/cicada.js";
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const when = iso => new Date(iso).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+const note = (el, msg, kind = "bad") =>
+  el.innerHTML = msg ? `<div class="note" style="margin:.5rem 0;border-color:var(--${kind})">${esc(msg)}</div>` : "";
+
+let client = null;
+let channels = [];
+
+// ------------------------------------------------------------- connect
+const saved = localStorage.getItem("cicada.key");
+if (saved) { $("key").value = saved; connect(); }
+
+$("connect").onclick = connect;
+$("key").addEventListener("keydown", e => e.key === "Enter" && connect());
+
+async function connect() {
+  const key = $("key").value.trim();
+  if (!key) return;
+  client = new CicadaClient({ key });
+  try {
+    const usage = await client.usage();
+    localStorage.setItem("cicada.key", key);
+    $("signin").hidden = true;
+    $("app").hidden = false;
+    $("who").textContent = `${usage.account.email} · ${usage.account.plan_label} plan`;
+    await refreshAll();
+  } catch (e) {
+    client = null;
+    note($("signin-error"), e.message);
+  }
+}
+
+$("disconnect").onclick = () => {
+  localStorage.removeItem("cicada.key");
+  location.reload();
+};
+
+async function refreshAll() {
+  await Promise.all([loadUsage(), loadChannels(), loadTransmissions(), loadReceipts(), loadKeys()]);
+}
+
+// --------------------------------------------------------------- usage
+async function loadUsage() {
+  const u = await client.usage();
+  $("period").textContent = u.period;
+  const labels = { render: "Renders", decode: "Decodes", simulate: "Simulations", card_sync: "Card syncs" };
+  $("usage").innerHTML = Object.entries(u.metrics).map(([k, v]) =>
+    `<div class="stat"><div class="k">${labels[k] ?? k}</div>
+       <div class="v">${v.used.toLocaleString()}</div>
+       <div class="tiny muted">of ${typeof v.limit === "number" ? v.limit.toLocaleString() : v.limit}${v.over ? ` · ${v.over} over` : ""}</div>
+     </div>`).join("") +
+    `<div class="stat"><div class="k">Channels</div><div class="v">${u.channels.used}</div>
+       <div class="tiny muted">of ${u.channels.limit}</div></div>
+     <div class="stat"><div class="k">Cards</div><div class="v">${u.cards.used}</div>
+       <div class="tiny muted">of ${u.cards.limit}</div></div>`;
+  $("usage-note").textContent =
+    `Estimated charges this period: $${u.estimated_charges_usd.toFixed(2)}. `
+    + `${(u.stored_audio_bytes / 1048576).toFixed(1)} MB of rendered audio stored. `
+    + `Receiving is never metered — it happens on the listener's device.`;
+}
+
+// ------------------------------------------------------------ channels
+async function loadChannels() {
+  const r = await client.listChannels();
+  channels = r.channels;
+  const tbody = $("channels").querySelector("tbody");
+  tbody.innerHTML = channels.length ? channels.map(c => {
+    const active = c.keys.find(k => !k.retired_at);
+    return `<tr>
+      <td class="mono">${c.number}</td>
+      <td><strong>${esc(c.name)}</strong></td>
+      <td class="small">${c.signed
+        ? `<span class="pill good">key ${active?.key_id ?? "?"}</span> <code class="tiny">${esc((active?.public_key ?? "").slice(0, 16))}…</code>`
+        : `<span class="muted">unsigned</span>`}</td>
+      <td><button class="sm" data-copy="${esc(c.receive_token)}">Copy token</button></td>
+      <td style="text-align:right;white-space:nowrap">
+        ${c.signed ? `<button class="sm" data-rotate="${c.id}">Rotate</button>` : ""}
+        <button class="sm danger" data-del-ch="${c.id}">Delete</button>
+      </td></tr>`;
+  }).join("") : `<tr><td colspan="5" class="muted">No channels yet. A channel gives your messages an
+    identity on the air, and — if signed — a key receivers can pin.</td></tr>`;
+
+  for (const sel of [$("card-channel"), $("send-channel")]) {
+    const keep = sel.value;
+    sel.innerHTML = (sel === $("send-channel") ? `<option value="">— no channel —</option>` : "")
+      + channels.map(c => `<option value="${c.id}">${esc(c.name)} (ch ${c.number})</option>`).join("");
+    if (keep) sel.value = keep;
+  }
+  await loadCards();
+}
+
+$("ch-create").onclick = async () => {
+  const name = $("ch-name").value.trim();
+  if (!name) return;
+  try {
+    await client.createChannel({ name, signed: $("ch-signed").checked });
+    $("ch-name").value = "";
+    note($("ch-error"), "");
+    await loadChannels();
+  } catch (e) { note($("ch-error"), e.message); }
+};
+
+document.addEventListener("click", async e => {
+  const t = e.target;
+  if (t.dataset.copy) {
+    await navigator.clipboard.writeText(t.dataset.copy);
+    const was = t.textContent;
+    t.textContent = "Copied";
+    setTimeout(() => (t.textContent = was), 1400);
+  }
+  if (t.dataset.rotate) {
+    if (!confirm("Rotate this channel's signing key?\n\nNew transmissions will use the new key. Receivers keep trusting the old one for 90 days, because a broadcast has no return channel to coordinate a cutover.")) return;
+    try { await client.rotateChannel(t.dataset.rotate); await loadChannels(); }
+    catch (err) { note($("ch-error"), err.message); }
+  }
+  if (t.dataset.delCh) {
+    if (!confirm("Delete this channel? Its cards, keys and receipts go with it.")) return;
+    try { await client.deleteChannel(t.dataset.delCh); await loadChannels(); }
+    catch (err) { note($("ch-error"), err.message); }
+  }
+  if (t.dataset.delCard) {
+    try { await client.deleteCard($("card-channel").value, Number(t.dataset.delCard)); await loadCards(); }
+    catch (err) { note($("card-error"), err.message); }
+  }
+  if (t.dataset.delTx) {
+    try { await client.deleteTransmission(t.dataset.delTx); await loadTransmissions(); }
+    catch (err) { alert(err.message); }
+  }
+  if (t.dataset.revoke) {
+    if (!confirm("Revoke this key? Anything using it stops working immediately.")) return;
+    try { await client.revokeKey(t.dataset.revoke); await loadKeys(); }
+    catch (err) { alert(err.message); }
+  }
+  if (t.dataset.useProfile) {
+    $("send-profile").value = t.dataset.useProfile;
+    $("send").click();
+  }
+  if (t.dataset.playTx) await playTransmission(t.dataset.playTx, t);
+  if (t.dataset.wavTx) {
+    const { samples } = await client.audio(t.dataset.wavTx);
+    downloadWav(samples, `${t.dataset.wavTx}.wav`);
+  }
+});
+
+async function playTransmission(id, button) {
+  const was = button.textContent;
+  button.textContent = "Playing…";
+  button.disabled = true;
+  try {
+    const { samples } = await client.audio(id);
+    await play(samples);
+  } catch (e) { alert(e.message); }
+  finally { button.textContent = was; button.disabled = false; }
+}
+
+// --------------------------------------------------------------- cards
+$("card-channel").onchange = loadCards;
+
+async function loadCards() {
+  const id = $("card-channel").value;
+  const tbody = $("cards").querySelector("tbody");
+  const sel = $("send-card");
+  if (!id) {
+    tbody.innerHTML = `<tr><td colspan="6" class="muted">Create a channel first — card codes are scoped to one.</td></tr>`;
+    sel.innerHTML = `<option value="">— no card —</option>`;
+    return;
+  }
+  const { cards } = await client.listCards(id);
+  tbody.innerHTML = cards.length ? cards.map(c => {
+    const text = new TextDecoder().decode(Uint8Array.from(atob(c.data), ch => ch.charCodeAt(0)));
+    return `<tr>
+      <td class="num">${c.code}</td>
+      <td>${esc(c.label) || "<span class='muted'>—</span>"}</td>
+      <td class="small mono" style="max-width:26rem;overflow:hidden;text-overflow:ellipsis">${esc(text.slice(0, 120))}</td>
+      <td class="num">${c.bytes}</td>
+      <td class="num">${c.version}</td>
+      <td style="text-align:right"><button class="sm danger" data-del-card="${c.code}">Delete</button></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="6" class="muted">No cards on this channel.</td></tr>`;
+
+  sel.innerHTML = `<option value="">— no card —</option>`
+    + cards.map(c => `<option value="${c.code}">#${c.code} ${esc(c.label || "")}</option>`).join("");
+}
+
+$("card-create").onclick = async () => {
+  const id = $("card-channel").value;
+  const body = $("card-body").value;
+  if (!id || !body) return;
+  try {
+    let payload;
+    try { payload = { json: JSON.parse(body) }; }
+    catch { payload = { text: body }; }
+    await client.createCard(id, { label: $("card-label").value, ...payload });
+    $("card-label").value = $("card-body").value = "";
+    note($("card-error"), "");
+    await loadCards();
+  } catch (e) { note($("card-error"), e.message); }
+};
+
+// ---------------------------------------------------------------- send
+$("send-profile").innerHTML = PROFILE_NAMES
+  .map(n => `<option value="${n}"${n === "standard" ? " selected" : ""}>${PROFILES[n].label}</option>`).join("");
+
+$("send-channel").addEventListener("change", async () => {
+  const id = $("send-channel").value;
+  const sel = $("send-card");
+  if (!id) { sel.innerHTML = `<option value="">— no card —</option>`; return; }
+  const { cards } = await client.listCards(id);
+  sel.innerHTML = `<option value="">— no card —</option>`
+    + cards.map(c => `<option value="${c.code}">#${c.code} ${esc(c.label || "")}</option>`).join("");
+  suggestProfile();
+});
+
+$("send-card").addEventListener("change", suggestProfile);
+$("send-text").addEventListener("input", suggestProfile);
+$("send-repeats").addEventListener("input", suggestProfile);
+
+/**
+ * Default to the profile with the shortest airtime that can carry what is
+ * selected. "First that fits" is wrong: robust holds 72 bytes only by splitting
+ * them across two frames (3.80 s), where standard takes one (2.55 s).
+ */
+function suggestProfile() {
+  const channel = channels.find(c => c.id === $("send-channel").value);
+  const bodyBytes = $("send-card").value
+    ? 4                                          // a card reference is four bytes
+    : new TextEncoder().encode($("send-text").value).length;
+  if (!bodyBytes) return;
+  const total = bodyBytes + (channel?.signed ? SIGNED_OVERHEAD : 0);
+  const repeats = Number($("send-repeats").value) || 2;
+  const fits = compareProfiles(total, { repeats }).filter(r => r.usable);
+  if (fits.length) {
+    $("send-profile").value = fits.reduce((a, b) => (b.seconds < a.seconds ? b : a)).profile;
+  }
+}
+
+$("send").onclick = async () => {
+  const body = {
+    profile: $("send-profile").value,
+    repeats: Number($("send-repeats").value) || 2,
+  };
+  const ch = $("send-channel").value;
+  const card = $("send-card").value;
+  if (ch) body.channel = ch;
+  if (card) body.card = Number(card);
+  else if ($("send-text").value) body.text = $("send-text").value;
+  else { note($("send-error"), "Type a message, or pick a card."); return; }
+
+  try {
+    const tx = await client.createTransmission(body);
+    note($("send-error"), "");
+    $("send-result").innerHTML =
+      `<div class="row" style="margin-top:.6rem">
+         <span class="pill good">rendered</span>
+         <span class="small mono">${tx.body_bytes} B · ${tx.frames} frame(s) · ${tx.seconds.toFixed(2)}s${tx.signed ? " · signed" : ""}</span>
+         <button class="sm" data-play-tx="${tx.id}">▶ Play</button>
+         <button class="sm" data-wav-tx="${tx.id}">WAV</button>
+       </div>`;
+    await Promise.all([loadTransmissions(), loadUsage()]);
+  } catch (e) {
+    const alts = (e.detail?.alternatives ?? []).filter(a => a.usable);
+    note($("send-error"), e.message);
+    if (alts.length) {
+      const best = alts.reduce((a, b) => (b.seconds < a.seconds ? b : a));
+      $("send-error").insertAdjacentHTML("beforeend",
+        `<div class="row small" style="margin:-.2rem 0 .4rem">
+           <span class="muted">Profiles that fit:</span>
+           ${alts.map(a => `<button class="sm" data-use-profile="${a.profile}">${esc(PROFILES[a.profile].label)} · ${a.seconds.toFixed(2)}s</button>`).join("")}
+           <span class="tiny muted">shortest is ${esc(PROFILES[best.profile].label)}</span>
+         </div>`);
+    }
+    $("send-result").innerHTML = "";
+  }
+};
+
+// ----------------------------------------------------------- history
+$("refresh-tx").onclick = loadTransmissions;
+
+async function loadTransmissions() {
+  const { transmissions } = await client.listTransmissions(25);
+  const tbody = $("transmissions").querySelector("tbody");
+  tbody.innerHTML = transmissions.length ? transmissions.map(t => `<tr>
+    <td class="small muted">${when(t.created_at)}</td>
+    <td>${esc(t.label) || (t.card_code != null ? `<span class="muted">card #${t.card_code}</span>` : "<span class='muted'>—</span>")}</td>
+    <td class="small">${esc(t.profile)}${t.signed ? ` <span class="pill good">signed</span>` : ""}</td>
+    <td class="num">${t.channel}</td>
+    <td class="num">${t.body_bytes}</td>
+    <td class="num">${t.frames}</td>
+    <td class="num">${t.seconds.toFixed(2)}s</td>
+    <td style="text-align:right;white-space:nowrap">
+      <button class="sm" data-play-tx="${t.id}">▶</button>
+      <button class="sm" data-wav-tx="${t.id}">WAV</button>
+      <button class="sm danger" data-del-tx="${t.id}">×</button>
+    </td></tr>`).join("") : `<tr><td colspan="8" class="muted">Nothing rendered yet.</td></tr>`;
+}
+
+// ----------------------------------------------------------- receipts
+$("refresh-rcpt").onclick = loadReceipts;
+
+async function loadReceipts() {
+  const { receipts } = await client.listReceipts({ limit: 30 });
+  const tbody = $("receipts").querySelector("tbody");
+  const badge = { decoded: "good", partial: "warn", failed: "bad" };
+  tbody.innerHTML = receipts.length ? receipts.map(r => `<tr>
+    <td class="small muted">${when(r.created_at)}</td>
+    <td class="small">${esc(r.device) || "<span class='muted'>—</span>"}</td>
+    <td><span class="pill ${badge[r.outcome] ?? ""}">${esc(r.outcome)}</span></td>
+    <td class="num">${r.latency_ms == null ? "—" : r.latency_ms + " ms"}</td>
+    <td class="tiny mono muted">${esc(JSON.stringify(r.detail))}</td>
+  </tr>`).join("") : `<tr><td colspan="5" class="muted">No receipts. Receivers post these with a channel's receive token.</td></tr>`;
+}
+
+// --------------------------------------------------------------- keys
+$("refresh-tx").onclick = loadTransmissions;
+
+async function loadKeys() {
+  const { keys } = await client.listKeys();
+  const tbody = $("keys").querySelector("tbody");
+  tbody.innerHTML = keys.map(k => `<tr${k.revoked ? ' style="opacity:.45"' : ""}>
+    <td class="mono small">${esc(k.prefix)}…</td>
+    <td>${esc(k.label) || "<span class='muted'>—</span>"}</td>
+    <td class="small muted">${when(k.created_at)}</td>
+    <td class="small muted">${k.last_used_at ? when(k.last_used_at) : "never"}</td>
+    <td style="text-align:right">${k.revoked
+      ? `<span class="pill">revoked</span>`
+      : `<button class="sm danger" data-revoke="${k.id}">Revoke</button>`}</td>
+  </tr>`).join("");
+}
+
+$("key-create").onclick = async () => {
+  try {
+    const k = await client.createKey($("key-label").value);
+    $("key-label").value = "";
+    $("key-new").innerHTML = `<div class="note" style="margin:.5rem 0">
+      <strong>Copy this now — it is not shown again.</strong><br>
+      <code style="word-break:break-all">${esc(k.secret)}</code>
+      <button class="sm" data-copy="${esc(k.secret)}" style="margin-left:.5rem">Copy</button></div>`;
+    await loadKeys();
+  } catch (e) { alert(e.message); }
+};
+</script>
+</body>
+</html>

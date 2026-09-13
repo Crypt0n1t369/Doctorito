@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cicada Docs</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>🦗</text></svg>">
+<style>
+  .doc { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 2rem; align-items: start; }
+  .toc { position: sticky; top: 4rem; font-size: .85rem; }
+  .toc a { display: block; padding: .16rem 0; color: var(--ink-2); text-decoration: none; }
+  .toc a:hover { color: var(--accent); }
+  .toc .sec { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3);
+              margin: .9rem 0 .25rem; font-weight: 600; }
+  .doc section { scroll-margin-top: 4rem; }
+  .doc h2 { margin-top: 2.2rem; padding-bottom: .3rem; border-bottom: 1px solid var(--line); }
+  .doc h3 { margin-top: 1.5rem; }
+  .ep { display: flex; gap: .6rem; align-items: baseline; font-family: var(--mono); font-size: .88rem;
+        padding: .4rem 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .ep .m { font-weight: 700; flex: 0 0 4.2rem; font-size: .76rem; }
+  .ep .m.GET { color: var(--good); } .ep .m.POST { color: var(--accent); } .ep .m.DELETE { color: var(--bad); }
+  .ep .d { color: var(--ink-3); font-family: var(--sans); font-size: .84rem; flex: 1 1 16rem; }
+  .doc table td:first-child { font-family: var(--mono); font-size: .84rem; white-space: nowrap; }
+  @media (max-width: 820px) { .doc { grid-template-columns: 1fr; } .toc { position: static; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark">🦗</span> <span class="name">Cicada</span> <span class="tag">data over sound</span></div>
+  <nav class="top">
+    <a href="/">Studio</a>
+    <a href="/console">Console</a>
+    <a href="/receive">Receiver</a>
+    <a href="/docs" aria-current="page">Docs</a>
+  </nav>
+</header>
+
+<main class="doc">
+  <aside class="toc">
+    <div class="sec">Start</div>
+    <a href="#what">What this is</a>
+    <a href="#quick">Quickstart</a>
+    <div class="sec">Concepts</div>
+    <a href="#profiles">Profiles</a>
+    <a href="#channels">Channels &amp; signing</a>
+    <a href="#cards">Cards</a>
+    <a href="#simulate">Channel simulation</a>
+    <div class="sec">Reference</div>
+    <a href="#api">HTTP API</a>
+    <a href="#sdk">Browser SDK</a>
+    <a href="#wire">Wire format</a>
+    <a href="#errors">Errors &amp; limits</a>
+    <div class="sec">Honest bits</div>
+    <a href="#measured">What is measured</a>
+    <a href="#limits">Where it fails</a>
+  </aside>
+
+  <div>
+    <h1>Cicada</h1>
+    <p class="lede">
+      A data channel made of sound. One speaker, any number of listening devices, no network,
+      no pairing, no camera. Roughly 122 bytes a second in a band you can hear.
+    </p>
+
+    <!-- ============================================================ -->
+    <section id="what">
+      <h2>What this is</h2>
+      <p>
+        Cicada modulates arbitrary bytes into audio between 672 and 2313 Hz and demodulates them back
+        on anything with a microphone. The physics buy you three properties that are awkward to get
+        any other way:
+      </p>
+      <ul>
+        <li><strong>No pairing.</strong> A device that can hear is a device that can receive. There is
+          no discovery, no handshake, no session, no return channel.</li>
+        <li><strong>One to many, for free.</strong> One speaker reaches every device in earshot at once.
+          The hundredth listener costs exactly what the first did.</li>
+        <li><strong>Range is the room.</strong> Sound stops at the walls. You cannot receive a message
+          you were not physically present for, which makes proximity a property of the medium rather
+          than something you have to prove.</li>
+      </ul>
+      <p>
+        It also travels anywhere audio already travels: a PA system, a phone call, a radio broadcast,
+        a video file, a voicemail.
+      </p>
+      <div class="note">
+        The band is audible on purpose. Ultrasonic carriers are inaudible to people but not to
+        microphones, which makes them a covert side channel. If a device is transmitting, the people
+        near it can hear that it is.
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="quick">
+      <h2>Quickstart</h2>
+      <p>Render a message to audio:</p>
+      <pre class="code">curl -X POST https://api.cicada.audio/v1/transmissions \
+  -H "Authorization: Bearer $CICADA_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Gate 14 · boarding closes 18:40", "profile": "robust"}'</pre>
+      <p>Play the <code>audio_url</code> through any speaker. On the receiving side:</p>
+      <pre class="code">import { listen } from "https://cdn.cicada.audio/cicada.js";
+
+const rx = await listen({
+  onMessage: m =&gt; console.log(m.channel, m.text),
+});
+// later: await rx.stop();</pre>
+      <p class="small muted">
+        Receiving needs no key and costs nothing — it runs entirely in the listener's browser.
+        Only rendering and server-side decoding are metered.
+      </p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="profiles">
+      <h2>Profiles</h2>
+      <p>
+        A profile fixes the frame size. Larger frames spend proportionally less time on preamble, so
+        they carry more per second — but a frame is all-or-nothing, so a longer one gives a burst of
+        noise more to ruin and offers fewer points at which the receiver can re-acquire.
+      </p>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Profile</th><th class="num">Frame</th><th class="num">1 frame holds</th>
+          <th class="num">Throughput</th><th>Use it when</th></tr></thead>
+        <tbody>
+          <tr><td>micro</td><td class="num">16 B</td><td class="num">11 B</td><td class="num">~16 B/s</td>
+            <td class="small">Card references and short tokens. Single-frame only.</td></tr>
+          <tr><td>robust</td><td class="num">64 B</td><td class="num">59 B</td><td class="num">~53 B/s</td>
+            <td class="small">Noisy rooms, moving listeners, anything you cannot repeat.</td></tr>
+          <tr><td><strong>standard</strong></td><td class="num">128 B</td><td class="num">123 B</td><td class="num">~86 B/s</td>
+            <td class="small">The default. Start here.</td></tr>
+          <tr><td>fast</td><td class="num">512 B</td><td class="num">507 B</td><td class="num">~146 B/s</td>
+            <td class="small">Quiet, close, controlled paths — a cable, a phone call, a quiet room.</td></tr>
+        </tbody>
+      </table></div>
+      <p class="small muted">
+        Throughput is payload bytes per second of airtime at one pass, including the 0.30 s gap
+        between bursts. <code>GET /v1/capacity?bytes=N</code> works this out for a specific payload
+        and recommends a profile; it is free and unmetered.
+      </p>
+      <h3>Passes</h3>
+      <p>
+        A broadcast has no acknowledgements, so the only defence against a listener who arrived late
+        or looked away is to send the thing again. <code>repeats</code> controls that. Repeats do not
+        add content — a receiver recognises the second copy and discards it — they add chances.
+      </p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="channels">
+      <h2>Channels and signing</h2>
+      <p>
+        A channel is a 16-bit number carried in every frame, so a receiver can ignore traffic that is
+        not addressed to it. Mark a channel <em>signed</em> and Cicada mints an Ed25519 key pair,
+        keeps the private half on the server, and signs every message you send on it.
+      </p>
+      <p>Receivers pin the public half:</p>
+      <pre class="code">GET /v1/channels/{id}/trust
+Authorization: Bearer rk_…          # the channel's receive token
+
+{ "channel": 2, "signed": true,
+  "keys": [ { "key_id": 1, "public_key": "41cc…", "algorithm": "ed25519", "retired": false } ] }</pre>
+      <p>
+        The receive token (<code>rk_…</code>) is designed to ship inside a client. It can read the
+        trust bundle and the card bundle, and post receipts. It cannot render, decode, or read
+        anything else. Your secret key never leaves your server.
+      </p>
+      <h3>What a signature does and does not tell you</h3>
+      <ul>
+        <li>It establishes that the holder of the channel's private key produced these exact bytes.</li>
+        <li>It does <strong>not</strong> establish that the content is true, current, or that the
+          person who commissioned it was authorised to. Sign the claim; do not confuse it with the fact.</li>
+        <li>It is bound to one channel. The channel number is inside the signed bytes, so the same
+          message relayed onto a different channel does not verify.</li>
+        <li>It does <strong>not</strong> stop replay <em>on its own channel</em>. A recorded broadcast
+          can be played back later and will still verify. Put a timestamp or a sequence number in your
+          own payload if that matters — Cicada deliberately does not decide your freshness policy
+          for you.</li>
+      </ul>
+      <h3>Rotation</h3>
+      <p>
+        <code>POST /v1/channels/{id}/rotate</code> issues a new key id and retires the old one. Retired
+        keys stay in the trust bundle for 90 days, because there is no return channel over which to
+        coordinate a cutover: a receiver that has not synced recently must still be able to verify a
+        transmitter that has not updated recently.
+      </p>
+      <p class="small muted">
+        Signing costs 68 bytes on the air (a 64-byte signature plus a 4-byte key id). On a micro
+        frame that leaves nothing, so signed messages need <code>robust</code> or larger.
+      </p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="cards">
+      <h2>Cards</h2>
+      <p>
+        Airtime is the scarce resource. Storage is not. A card is a payload you publish once through
+        the API; receivers cache the bundle over their normal network connection, and on the air you
+        broadcast only its four-byte code.
+      </p>
+      <pre class="code"># Publish the content once
+POST /v1/channels/{id}/cards
+{ "label": "Platform change", "json": { "train": "IC2041", "from": "4", "to": "11" } }
+→ { "code": 1, "bytes": 65, "version": 1 }
+
+# Broadcast four bytes
+POST /v1/transmissions
+{ "channel": "ch_…", "card": 1, "profile": "micro" }
+→ { "body_bytes": 4, "seconds": 0.55 }   # one pass, unsigned</pre>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Payload</th><th class="num">Sent directly</th><th class="num">As a card reference</th></tr></thead>
+        <tbody>
+          <tr><td>65 B of JSON</td><td class="num">1.20 s</td><td class="num"><strong>0.55 s</strong></td></tr>
+          <tr><td>1 KB</td><td class="num">6.72 s</td><td class="num"><strong>0.55 s</strong></td></tr>
+          <tr><td>10 KB</td><td class="num">68.6 s</td><td class="num"><strong>0.55 s</strong></td></tr>
+          <tr><td>60 KB</td><td class="num">6.9 min</td><td class="num"><strong>0.55 s</strong></td></tr>
+        </tbody>
+      </table></div>
+      <p class="small muted">
+        Airtime per pass, unsigned. On a small payload the saving is unremarkable — the argument is
+        the last three rows: the airtime never grows. Receivers resolve the code locally with no
+        network round trip, so resolution works offline too.
+      </p>
+      <div class="note">
+        Cards are the right tool when the set of things you might say is known in advance — platform
+        changes, exhibit numbers, menu items, shelter statuses. They are the wrong tool for content
+        that is genuinely novel each time, because the receiver has to have synced it first.
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="simulate">
+      <h2>Channel simulation</h2>
+      <p>
+        <code>POST /v1/simulate</code> pushes a payload through a modelled acoustic path and reports
+        how often it arrived. It is for choosing a profile before you go to site.
+      </p>
+      <pre class="code">POST /v1/simulate
+{ "text": "platform 4", "condition": "cafe", "profiles": ["robust","standard"], "trials": 10 }</pre>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Condition</th><th class="num">SNR</th><th class="num">RT60</th><th class="num">DRR</th><th>Models</th></tr></thead>
+        <tbody>
+          <tr><td>clean</td><td class="num">—</td><td class="num">0</td><td class="num">—</td><td class="small">File to file, no channel.</td></tr>
+          <tr><td>office</td><td class="num">20 dB</td><td class="num">0.35 s</td><td class="num">12 dB</td><td class="small">Small room, phone within arm's reach.</td></tr>
+          <tr><td>cafe</td><td class="num">6 dB</td><td class="num">0.60 s</td><td class="num">6 dB</td><td class="small">Babble, phone across a table.</td></tr>
+          <tr><td>street</td><td class="num">3 dB</td><td class="num">0.15 s</td><td class="num">20 dB</td><td class="small">Open air, traffic.</td></tr>
+          <tr><td>car</td><td class="num">10 dB</td><td class="num">0.20 s</td><td class="num">10 dB</td><td class="small">Engine and road rumble, hard surfaces.</td></tr>
+          <tr><td>phoneSpeaker</td><td class="num">15 dB</td><td class="num">0.30 s</td><td class="num">12 dB</td><td class="small">Small transducer driven near its limit.</td></tr>
+          <tr><td>broadcastFm</td><td class="num">12 dB</td><td class="num">0.45 s</td><td class="num">8 dB</td><td class="small">Station limiting, receiver speaker, room.</td></tr>
+          <tr><td>telephone</td><td class="num">18 dB</td><td class="num">0.05 s</td><td class="num">20 dB</td><td class="small">300–3400 Hz voice path.</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Delivery matrix</h3>
+      <p class="small muted">
+        20 trials per cell, one pass per transmission — no repeats, so this is the raw per-pass
+        delivery rate. Reproduce with <code>REPEATS=1 TRIALS=20 npm run bench</code>.
+      </p>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Profile</th><th class="num">Airtime</th><th class="num">clean</th><th class="num">office</th>
+          <th class="num">cafe</th><th class="num">street</th><th class="num">car</th>
+          <th class="num">phone</th><th class="num">FM</th><th class="num">tel</th></tr></thead>
+        <tbody>
+          <tr><td>micro</td><td class="num">0.55 s</td><td class="num">100%</td><td class="num">100%</td>
+            <td class="num">90%</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td>
+            <td class="num" style="color:var(--bad)">35%</td><td class="num">100%</td></tr>
+          <tr><td>robust</td><td class="num">0.84 s</td><td class="num">100%</td><td class="num">100%</td>
+            <td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td>
+            <td class="num">100%</td><td class="num">100%</td></tr>
+          <tr><td><strong>standard</strong></td><td class="num">1.20 s</td><td class="num">100%</td><td class="num">100%</td>
+            <td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td>
+            <td class="num">100%</td><td class="num">100%</td></tr>
+          <tr><td>fast</td><td class="num">3.29 s</td><td class="num">100%</td><td class="num">100%</td>
+            <td class="num">95%</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td>
+            <td class="num">100%</td><td class="num">100%</td></tr>
+        </tbody>
+      </table></div>
+      <p>
+        The one cell that fails badly is <strong>micro through a broadcast chain</strong>. A micro
+        burst is eleven OFDM symbols long; a limiter driven 12 dB into compression flattens the peaks
+        and there is not enough of the burst left to average over. If you are going out over a
+        broadcast or a PA with heavy loudness processing, do not use micro — use robust, and accept
+        the extra 0.3 s.
+      </p>
+      <div class="note">
+        These are models, not measurements. They are reproducible from a seed and they exercise the
+        real modem, so they are good for comparing profiles against each other. They are not evidence
+        that a particular room behaves this way. Measure anything you intend to deploy.
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="api">
+      <h2>HTTP API</h2>
+      <p class="small muted">
+        Base <code>https://api.cicada.audio</code>. Authenticate with
+        <code>Authorization: Bearer ck_live_…</code>. All responses are JSON except the audio download.
+      </p>
+
+      <h3>Transmissions</h3>
+      <div class="ep"><span class="m POST">POST</span><span>/v1/transmissions</span><span class="d">Render a message to audio</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/transmissions</span><span class="d">List recent renders</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/transmissions/{id}</span><span class="d">One transmission</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/transmissions/{id}/audio.wav</span><span class="d">The rendered audio, 8 kHz mono PCM</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/transmissions/{id}/frames</span><span class="d">Raw frames, for your own modulator</span></div>
+      <div class="ep"><span class="m DELETE">DELETE</span><span>/v1/transmissions/{id}</span><span class="d">Delete it and its audio</span></div>
+      <table style="margin-top:.7rem">
+        <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>text / json / data</td><td class="small">The payload: UTF-8 text, a JSON value, or base64 bytes. Exactly one.</td></tr>
+          <tr><td>card</td><td class="small">Broadcast a card code instead of a payload. Needs <code>channel</code>.</td></tr>
+          <tr><td>channel</td><td class="small">Channel id. Signs the message if the channel is signed.</td></tr>
+          <tr><td>profile</td><td class="small"><code>micro</code> | <code>robust</code> | <code>standard</code> | <code>fast</code>. Default <code>standard</code>.</td></tr>
+          <tr><td>repeats</td><td class="small">Passes, 1–10. Default 2.</td></tr>
+          <tr><td>label</td><td class="small">Your own note; shown in the console.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Decoding</h3>
+      <div class="ep"><span class="m POST">POST</span><span>/v1/decode</span><span class="d">Recording in, messages out</span></div>
+      <p class="small muted">
+        Accepts a raw WAV body, <code>multipart/form-data</code> with a <code>file</code> part, or JSON
+        with <code>audio_base64</code>. Signed messages are verified against your own channels' keys.
+        Costs one unit per 30 s of audio.
+      </p>
+
+      <h3>Channels</h3>
+      <div class="ep"><span class="m POST">POST</span><span>/v1/channels</span><span class="d">Create, optionally signed</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/channels</span><span class="d">List</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/channels/{id}</span><span class="d">One channel with its keys</span></div>
+      <div class="ep"><span class="m POST">POST</span><span>/v1/channels/{id}/rotate</span><span class="d">New signing key, old one retired</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/channels/{id}/trust</span><span class="d">Public keys for receivers · accepts rk_</span></div>
+      <div class="ep"><span class="m DELETE">DELETE</span><span>/v1/channels/{id}</span><span class="d">Delete, with its cards and keys</span></div>
+
+      <h3>Cards</h3>
+      <div class="ep"><span class="m POST">POST</span><span>/v1/channels/{id}/cards</span><span class="d">Create or update by code</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/channels/{id}/cards</span><span class="d">List</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/channels/{id}/cards/bundle</span><span class="d">Offline bundle, ETag'd · accepts rk_</span></div>
+      <div class="ep"><span class="m DELETE">DELETE</span><span>/v1/channels/{id}/cards/{code}</span><span class="d">Delete</span></div>
+
+      <h3>Everything else</h3>
+      <div class="ep"><span class="m POST">POST</span><span>/v1/simulate</span><span class="d">Delivery rate through a modelled channel</span></div>
+      <div class="ep"><span class="m POST">POST</span><span>/v1/receipts</span><span class="d">A receiver reports what it heard · accepts rk_</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/receipts</span><span class="d">Read them back</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/capacity</span><span class="d">Airtime calculator · free, unmetered</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/profiles</span><span class="d">Profile table · public</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/conditions</span><span class="d">Simulation conditions · public</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/plans</span><span class="d">Plans and limits · public</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/usage</span><span class="d">This period's metered usage</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/keys</span><span class="d">List API keys</span></div>
+      <div class="ep"><span class="m POST">POST</span><span>/v1/keys</span><span class="d">Mint one; the secret is shown once</span></div>
+      <div class="ep"><span class="m DELETE">DELETE</span><span>/v1/keys/{id}</span><span class="d">Revoke</span></div>
+      <div class="ep"><span class="m GET">GET</span><span>/v1/health</span><span class="d">Public</span></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="sdk">
+      <h2>Browser SDK</h2>
+      <pre class="code">import { listen, transmit, decode, encode, downloadWav, CicadaClient } from "/cicada.js";
+
+// Receive from the microphone
+const rx = await listen({
+  trust: { "2/1": "41cc…" },          // channel/keyId → Ed25519 public key
+  cards: { 1: '{"train":"IC2041"}' }, // cached card bundle
+  onMessage: m =&gt; { /* m.text, m.card, m.verified, m.channel */ },
+  onEvent:   e =&gt; { /* frame, duplicate, rejected, foreign-frame, error */ },
+  onLevel:   l =&gt; { /* l.peak, l.rms */ },
+});
+console.log(rx.stats);   // detected, decoded, undecodable, frames, messages, duplicates
+await rx.stop();
+
+// Transmit through the speakers
+await transmit({ text: "hello", profile: "robust", repeats: 2 });
+
+// Encode without playing, then save
+const { samples } = encode({ json: { gate: 14 }, profile: "standard" });
+downloadWav(samples, "gate.wav");
+
+// Decode a file the user picked
+const { messages } = await decode(await file.arrayBuffer());</pre>
+      <h3>The microphone needs a secure context</h3>
+      <p>
+        Browsers grant microphone access only over <code>https</code> or on
+        <code>http://localhost</code>. A LAN IP address and a <code>file://</code> page are both
+        refused no matter how many times the user agrees. <code>micAvailability()</code> tells you
+        which case you are in instead of failing silently.
+      </p>
+      <p class="small muted">
+        The SDK asks for the microphone with echo cancellation, noise suppression and automatic gain
+        control switched off. Those are tuned for speech and will chew on a modem signal sitting in
+        the same band.
+      </p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="wire">
+      <h2>Wire format</h2>
+      <table>
+        <tbody>
+          <tr><td>Sample rate</td><td>8 kHz mono</td></tr>
+          <tr><td>Band</td><td>671.9 – 2312.5 Hz (FFT bins 43–148)</td></tr>
+          <tr><td>Modulation</td><td>OFDM, 106 carriers, differential QPSK with Gray mapping</td></tr>
+          <tr><td>Symbol</td><td>512-point FFT + 64-sample cyclic prefix = 72 ms</td></tr>
+          <tr><td>Coding</td><td>Rate-½ convolutional, K=7, polynomials 0o133/0o171, soft-decision Viterbi</td></tr>
+          <tr><td>Interleaver</td><td>Deterministic coprime stride over the whole codeword</td></tr>
+          <tr><td>Integrity</td><td>CRC32C over the frame; a burst that fails it is discarded, never guessed</td></tr>
+          <tr><td>Preamble</td><td>128 ms linear chirp, 700→2300 Hz, found by matched filter</td></tr>
+        </tbody>
+      </table>
+      <h3>Framing</h3>
+      <p>A message that fits one frame uses a 5-byte header; longer ones use 12 bytes.</p>
+      <pre class="code">solo    ver:u8 | flags:u8 | channel:u16 | len:u8
+multi   ver:u8 | flags:u8 | channel:u16 | messageId:u32 | offset:u16 | totalLen:u16
+
+flags   bit0 signed   bit1 solo   bit2 card reference
+
+signed message body:   keyId:u32 || payload || ed25519sig:64
+card reference body:   code:u32
+
+signature covers:      channel:u16 || keyId:u32 || payload</pre>
+      <p class="small muted">
+        The channel number is inside the signed bytes but is <em>not</em> repeated in the body — it
+        already travels in every frame header, so binding it costs nothing on the air. Without that
+        binding a signature would be valid for its bytes on any channel, and a relay onto a different
+        one would be stopped only by the trust table happening to hold a different key there.
+      </p>
+      <p class="small muted">
+        There is no CRC in the frame header because the modem has already checked CRC32C over the
+        whole burst — a frame that reaches the framing layer is intact.
+      </p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="errors">
+      <h2>Errors and limits</h2>
+      <pre class="code">{ "error": { "type": "request_error",
+             "message": "Profile \"micro\" holds at most 11 bytes; this message is 72.",
+             "alternatives": [ … ],
+             "request_id": "3f9a…" } }</pre>
+      <p class="small muted">
+        Every response carries <code>x-request-id</code>. Where a request failed because of a size or
+        profile choice, the error body includes the profiles that would have worked.
+      </p>
+      <table>
+        <tbody>
+          <tr><td>400</td><td class="small">Bad payload, bad WAV, or a profile the message does not fit</td></tr>
+          <tr><td>401</td><td class="small">Missing, invalid or revoked key</td></tr>
+          <tr><td>403</td><td class="small">Plan does not allow it, or a receive token was used on a secret endpoint</td></tr>
+          <tr><td>404</td><td class="small">No such resource on this account</td></tr>
+          <tr><td>413</td><td class="small">Body over 32 MB</td></tr>
+          <tr><td>429</td><td class="small">Rate limit, or a monthly quota on a plan without overage</td></tr>
+        </tbody>
+      </table>
+      <table style="margin-top:.9rem">
+        <tbody>
+          <tr><td>Message</td><td class="small">65,535 bytes on the wire; in practice airtime binds first</td></tr>
+          <tr><td>Card</td><td class="small">256 KB</td></tr>
+          <tr><td>Decode</td><td class="small">600 s of audio per request</td></tr>
+          <tr><td>Channels</td><td class="small">65,535 per account</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="measured">
+      <h2>What is actually measured</h2>
+      <p>
+        These numbers come from running the real modem, and you can reproduce them with
+        <code>npm run bench</code>:
+      </p>
+      <table>
+        <tbody>
+          <tr><td>122 B/s</td><td class="small">128-byte frames, burst only</td></tr>
+          <tr><td>163 B/s</td><td class="small">512-byte frames, burst only</td></tr>
+          <tr><td>−4 dB SNR</td><td class="small">128-byte frames still decode 97 of 100 times in additive white noise</td></tr>
+          <tr><td>−3 dB SNR</td><td class="small">512-byte frames, 98 of 100 — then a hard cliff by −4 dB</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Decoding at negative SNR means the modem works when the noise is louder than the signal. That
+        is what the coding and the coherent OFDM gain buy you, and it is why the audible band is
+        usable at a polite volume.
+      </p>
+      <div class="note">
+        Every figure above is from software: synthetic channels, no physical speaker, room or
+        microphone anywhere in the measurement. They bound what the modem can do, not what your
+        deployment will do.
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="limits">
+      <h2>Where this fails</h2>
+      <ul>
+        <li><strong>Long reverberation.</strong> The cyclic prefix is 8 ms. A room whose echoes run
+          much longer than that smears one symbol into the next, and no amount of volume fixes it.
+          Reverberant halls, atriums and stairwells are the hard case — not distance.</li>
+        <li><strong>Aggressive loudness processing.</strong> OFDM has a high peak-to-average ratio, so
+          a broadcast limiter pushed hard flattens exactly the peaks that carry the information. The
+          <code>broadcastFm</code> simulation exists because this is the most common real-world killer.</li>
+        <li><strong>Voice-tuned audio processing.</strong> Noise suppression and automatic gain control
+          are designed to remove things that are not speech. A modem in the speech band looks exactly
+          like something to remove. Turn them off on capture; you often cannot turn them off in
+          somebody else's conference system.</li>
+        <li><strong>No acknowledgements.</strong> There is no return channel. You cannot know a
+          specific device received something unless it tells you over a network — which is what
+          receipts are, and receipts are only as complete as the devices that chose to send them.</li>
+        <li><strong>Replay.</strong> A recording of a valid signed broadcast stays valid. If freshness
+          matters, carry it in your payload.</li>
+        <li><strong>It is audible.</strong> That is the design, but it means you cannot use it
+          continuously in a quiet space without annoying people. Send in bursts.</li>
+      </ul>
+      <p class="small muted">
+        None of this is a reason not to use it. It is the shape of the envelope: short, repeated,
+        authenticated bursts in ordinary rooms, where the alternative is asking someone to install an
+        app, join a network, or point a camera at a sticker.
+      </p>
+    </section>
+  </div>
+</main>
+</body>
+</html>

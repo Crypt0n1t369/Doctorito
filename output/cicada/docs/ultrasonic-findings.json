@@ -1,0 +1,257 @@
+{
+  "generatedAt": "2026-09-13T13:20:24.505Z",
+  "sections": {
+    "linkBudget": [
+      {
+        "centreHz": 1500,
+        "bandLoHz": 680,
+        "bandHiHz": 2320,
+        "transducerDb": 0
+      },
+      {
+        "centreHz": 6000,
+        "bandLoHz": 5180,
+        "bandHiHz": 6820,
+        "transducerDb": 0
+      },
+      {
+        "centreHz": 12000,
+        "bandLoHz": 11180,
+        "bandHiHz": 12820,
+        "transducerDb": -7
+      },
+      {
+        "centreHz": 16000,
+        "bandLoHz": 15180,
+        "bandHiHz": 16820,
+        "transducerDb": -21
+      },
+      {
+        "centreHz": 18000,
+        "bandLoHz": 17180,
+        "bandHiHz": 18820,
+        "transducerDb": -28
+      },
+      {
+        "centreHz": 19000,
+        "bandLoHz": 18180,
+        "bandHiHz": 19820,
+        "transducerDb": -31.5
+      },
+      {
+        "centreHz": 20000,
+        "bandLoHz": 19180,
+        "bandHiHz": 20820,
+        "transducerDb": -35
+      },
+      {
+        "centreHz": 21000,
+        "bandLoHz": 20180,
+        "bandHiHz": 21820,
+        "transducerDb": -38.5
+      }
+    ],
+    "byCentre": [
+      {
+        "centreHz": 1500,
+        "deliveryPct": 100
+      },
+      {
+        "centreHz": 12000,
+        "deliveryPct": 100
+      },
+      {
+        "centreHz": 16000,
+        "deliveryPct": 100
+      },
+      {
+        "centreHz": 18000,
+        "deliveryPct": 100
+      },
+      {
+        "centreHz": 19000,
+        "deliveryPct": 63
+      },
+      {
+        "centreHz": 20000,
+        "deliveryPct": 0
+      }
+    ],
+    "range": [
+      {
+        "metres": 0.3,
+        "audibleLossDb": 10.5,
+        "audiblePct": 100,
+        "ultrasonicLossDb": -21.2,
+        "ultrasonicPct": 100
+      },
+      {
+        "metres": 1,
+        "audibleLossDb": 0,
+        "audiblePct": 100,
+        "ultrasonicLossDb": -31.9,
+        "ultrasonicPct": 100
+      },
+      {
+        "metres": 2,
+        "audibleLossDb": -6,
+        "audiblePct": 100,
+        "ultrasonicLossDb": -38.4,
+        "ultrasonicPct": 0
+      },
+      {
+        "metres": 5,
+        "audibleLossDb": -14,
+        "audiblePct": 100,
+        "ultrasonicLossDb": -47.7,
+        "ultrasonicPct": 0
+      },
+      {
+        "metres": 10,
+        "audibleLossDb": -20.1,
+        "audiblePct": 100,
+        "ultrasonicLossDb": -55.9,
+        "ultrasonicPct": 0
+      },
+      {
+        "metres": 20,
+        "audibleLossDb": -26.2,
+        "audiblePct": 100,
+        "ultrasonicLossDb": -66.3,
+        "ultrasonicPct": 0
+      }
+    ],
+    "reverberation": [
+      {
+        "rt60At1kHz": 0.4,
+        "rt60At19kHz": 0.18,
+        "audiblePct": 33,
+        "ultrasonicPct": 100
+      },
+      {
+        "rt60At1kHz": 0.8,
+        "rt60At19kHz": 0.37,
+        "audiblePct": 0,
+        "ultrasonicPct": 33
+      },
+      {
+        "rt60At1kHz": 1.5,
+        "rt60At19kHz": 0.68,
+        "audiblePct": 0,
+        "ultrasonicPct": 0
+      },
+      {
+        "rt60At1kHz": 2.5,
+        "rt60At19kHz": 1.14,
+        "audiblePct": 0,
+        "ultrasonicPct": 0
+      },
+      {
+        "rt60At1kHz": 4,
+        "rt60At19kHz": 1.83,
+        "audiblePct": 0,
+        "ultrasonicPct": 0
+      }
+    ],
+    "pipelines": [
+      {
+        "pipeline": "FM broadcast",
+        "cutoffHz": 15000,
+        "audiblePct": 100,
+        "ultrasonicPct": 0,
+        "why": "ITU baseband: programme audio stops at 15 kHz; the stereo pilot sits at 19 kHz"
+      },
+      {
+        "pipeline": "DAB+ / AAC 96k",
+        "cutoffHz": 15500,
+        "audiblePct": 100,
+        "ultrasonicPct": 0,
+        "why": "codec lowpass at typical broadcast bitrates"
+      },
+      {
+        "pipeline": "Opus voice 24k",
+        "cutoffHz": 12000,
+        "audiblePct": 100,
+        "ultrasonicPct": 0,
+        "why": "wideband voice mode"
+      },
+      {
+        "pipeline": "Telephone",
+        "cutoffHz": 3400,
+        "audiblePct": 100,
+        "ultrasonicPct": 0,
+        "why": "narrowband voice path"
+      },
+      {
+        "pipeline": "Video AAC 128k",
+        "cutoffHz": 16000,
+        "audiblePct": 100,
+        "ultrasonicPct": 0,
+        "why": "typical encoder cutoff"
+      },
+      {
+        "pipeline": "PA / venue amp",
+        "cutoffHz": 18000,
+        "audiblePct": 100,
+        "ultrasonicPct": 0,
+        "why": "class-D amplifier and ceiling speakers"
+      },
+      {
+        "pipeline": "Direct playback",
+        "cutoffHz": 24000,
+        "audiblePct": 100,
+        "ultrasonicPct": 100,
+        "why": "a phone or laptop speaker, nothing in between"
+      }
+    ],
+    "bandwidth": [
+      {
+        "band": "672 – 2313 Hz",
+        "width": 1.64,
+        "note": "today: below every voice-codec cutoff"
+      },
+      {
+        "band": "18.0 – 19.6 kHz",
+        "width": 1.64,
+        "note": "the only ultrasonic band both a phone speaker and mic reach"
+      },
+      {
+        "band": "20 – 24 kHz",
+        "width": 4,
+        "note": "within Nyquist at 48 kHz, but phone speakers are essentially dead"
+      }
+    ],
+    "audibility": [
+      {
+        "group": "Under 18",
+        "limitHz": 19000,
+        "verdict": "hears a 19 kHz tone plainly"
+      },
+      {
+        "group": "18–24",
+        "limitHz": 17500,
+        "verdict": "many hear it, especially at close range"
+      },
+      {
+        "group": "25–39",
+        "limitHz": 16000,
+        "verdict": "usually not at 19 kHz"
+      },
+      {
+        "group": "40+",
+        "limitHz": 14000,
+        "verdict": "no"
+      },
+      {
+        "group": "Dogs",
+        "limitHz": 45000,
+        "verdict": "yes, and 19 kHz is well inside their range"
+      },
+      {
+        "group": "Cats",
+        "limitHz": 64000,
+        "verdict": "yes"
+      }
+    ]
+  }
+}

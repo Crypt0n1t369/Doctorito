@@ -1,0 +1,593 @@
+<title>Why Cicada Stays Audible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+
+<style>
+:root {
+  --paper:      #F3F4F1;
+  --surface:    #FBFBF9;
+  --surface-2:  #EAEBE6;
+  --ink:        #15181A;
+  --ink-2:      #4A504F;
+  --ink-3:      #7B817E;
+  --rule:       #D8DAD3;
+  --rule-soft:  #E4E6E0;
+  --signal:     #B4531B;
+  --signal-dim: #D9895A;
+  --signal-wash:#F0E2D8;
+  --gauge:      #2C5F6B;
+  --gauge-wash: #DCE6E7;
+  --good:       #3E7A52;
+  --risk:       #A33B32;
+  --risk-wash:  #F2DEDC;
+
+  --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:  "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --measure: 68ch;
+  --gutter: clamp(1.1rem, 4vw, 2.5rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121414; --surface: #1A1D1D; --surface-2: #232726;
+    --ink: #ECEEEA; --ink-2: #AAB0AD; --ink-3: #767C79;
+    --rule: #303533; --rule-soft: #262A29;
+    --signal: #E08B4C; --signal-dim: #A86237; --signal-wash: #2E2117;
+    --gauge: #78B4BF; --gauge-wash: #1B2729;
+    --good: #6FB287; --risk: #D97A70; --risk-wash: #2C1C1A;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121414; --surface: #1A1D1D; --surface-2: #232726;
+  --ink: #ECEEEA; --ink-2: #AAB0AD; --ink-3: #767C79;
+  --rule: #303533; --rule-soft: #262A29;
+  --signal: #E08B4C; --signal-dim: #A86237; --signal-wash: #2E2117;
+  --gauge: #78B4BF; --gauge-wash: #1B2729;
+  --good: #6FB287; --risk: #D97A70; --risk-wash: #2C1C1A;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--serif);
+       font-size: 17px; line-height: 1.62; margin: 0; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--gutter) 6rem; }
+.col { max-width: var(--measure); }
+
+h1, h2, h3, .label, th, .fig-title { font-family: var(--sans); }
+h1 { font-size: clamp(1.9rem, 5vw, 2.85rem); line-height: 1.07; font-weight: 700;
+     letter-spacing: -.028em; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.3rem, 3vw, 1.58rem); font-weight: 600; letter-spacing: -.018em;
+     text-wrap: balance; margin: 0 0 .2rem; }
+h3 { font-size: 1.02rem; font-weight: 600; margin: 1.9rem 0 .35rem; }
+p { margin: 0 0 1.05em; }
+a { color: var(--signal); }
+strong { font-weight: 600; }
+.label { font-size: .7rem; font-weight: 600; text-transform: uppercase;
+         letter-spacing: .11em; color: var(--ink-3); }
+
+header.masthead { border-bottom: 1px solid var(--rule); margin-bottom: 2.8rem; }
+.masthead-inner { max-width: 1080px; margin: 0 auto;
+                  padding: 2.6rem var(--gutter) 2.2rem; display: grid; gap: 1.3rem; }
+.eyebrow { display: flex; gap: .8rem; align-items: baseline; flex-wrap: wrap; }
+.standfirst { font-size: clamp(1.02rem, 2.2vw, 1.16rem); color: var(--ink-2);
+              max-width: 60ch; margin: 0; }
+.byline { font-family: var(--mono); font-size: .76rem; color: var(--ink-3);
+          display: flex; gap: 1.1rem; flex-wrap: wrap; padding-top: .4rem;
+          border-top: 1px solid var(--rule-soft); }
+
+section { padding-top: 2.6rem; }
+section + section { border-top: 1px solid var(--rule-soft); }
+.sec-head { display: grid; gap: .1rem; margin-bottom: 1.1rem; }
+
+.figure { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px;
+          padding: 1.25rem 1.35rem; margin: 1.6rem 0 1.9rem; }
+.fig-title { font-size: .84rem; font-weight: 600; margin: 0 0 .8rem; }
+.fig-note { font-family: var(--sans); font-size: .78rem; color: var(--ink-3);
+            margin: .8rem 0 0; line-height: 1.5; max-width: 76ch; }
+.scroll { overflow-x: auto; }
+
+table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .87rem; }
+th, td { text-align: left; padding: .5rem .7rem .5rem 0; border-bottom: 1px solid var(--rule-soft);
+         vertical-align: top; }
+th { font-size: .68rem; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3);
+     font-weight: 600; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums;
+             white-space: nowrap; padding-right: 0; }
+tbody tr:last-child td { border-bottom: 0; }
+tr.emphasis td { background: var(--signal-wash); }
+tr.emphasis td:first-child { font-weight: 600; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+.yes { color: var(--good); font-weight: 600; }
+.no  { color: var(--risk); font-weight: 600; }
+
+.callout { border-left: 2px solid var(--signal); padding: .1rem 0 .1rem 1rem;
+           margin: 1.5rem 0; color: var(--ink-2); font-size: .96rem; max-width: 66ch; }
+.callout strong { color: var(--ink); }
+.callout.hard { border-color: var(--risk); }
+
+/* the three channels and the gap each one leaves */
+.gaps { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+        border-radius: 4px; overflow: hidden; margin: 1.5rem 0 1.8rem; }
+@media (min-width: 780px) { .gaps { grid-template-columns: repeat(3, 1fr); } }
+.gap { background: var(--surface); padding: 1.1rem 1.15rem; display: grid; gap: .45rem;
+       align-content: start; }
+.gap.ours { background: var(--signal-wash); }
+.gap .who { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); letter-spacing: .05em; }
+.gap.ours .who { color: var(--signal); }
+.gap h3 { margin: 0; font-size: 1rem; }
+.gap .reaches { font-size: .89rem; color: var(--ink-2); margin: 0; }
+.gap .fails { font-family: var(--sans); font-size: .82rem; padding-top: .5rem;
+              margin-top: .15rem; border-top: 1px solid var(--rule-soft); color: var(--risk); }
+.gap.ours .fails { color: var(--ink-2); }
+
+.niches { display: grid; gap: 0; margin: 1.4rem 0 1rem; }
+.niche { display: grid; gap: .35rem; padding: 1.1rem 0; border-bottom: 1px solid var(--rule-soft); }
+.niche:first-child { border-top: 1px solid var(--rule); }
+.niche .top { display: flex; gap: .7rem; align-items: baseline; flex-wrap: wrap; }
+.niche h3 { margin: 0; font-size: 1rem; }
+.niche .money { font-family: var(--mono); font-size: .82rem; color: var(--signal); font-weight: 500;
+                margin-left: auto; }
+.niche p { margin: 0; font-size: .93rem; color: var(--ink-2); max-width: 74ch; }
+.niche .against { font-family: var(--mono); font-size: .76rem; color: var(--gauge);
+                  padding-left: .7rem; border-left: 2px solid var(--gauge); margin-top: .35rem; }
+.rank { font-family: var(--mono); font-size: .74rem; font-weight: 600; color: var(--ink-3);
+        background: var(--surface-2); padding: .1rem .4rem; border-radius: 3px; }
+
+ul.plain { margin: 0 0 1.1em; padding-left: 1.15em; }
+ul.plain li { margin-bottom: .5em; }
+footer { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--rule);
+         font-family: var(--sans); font-size: .8rem; color: var(--ink-3); max-width: 76ch; }
+svg text { font-family: var(--mono); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow">
+      <span class="label">Strategy note</span>
+      <span class="label" style="color:var(--signal)">Cicada</span>
+      <span class="label">Companion to the business case</span>
+    </div>
+    <h1>Why Cicada stays audible</h1>
+    <p class="standfirst">
+      Two questions worth settling with measurements rather than opinion: should the modem move into
+      the near-ultrasonic band, and is there already a way to do this over radio without sound at all?
+      The answers are no and yes — and the second one narrows the product to something much more
+      defensible than “data over radio”.
+    </p>
+    <div class="byline">
+      <span>13 September 2026</span>
+      <span>Every figure below runs the unmodified modem</span>
+      <span>experiments/ultrasonic.mjs</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============================================== 1 · ultrasonic -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Question one</span>
+      <h2>Near-ultrasonic costs 31 dB and buys no speed</h2>
+    </div>
+
+    <div class="col">
+      <p>
+        The appeal is obvious: move the carrier to 19 kHz and the data stops being audible. To test it
+        rather than argue it, the existing modem was upconverted to arbitrary centre frequencies, run
+        through models of a phone loudspeaker and MEMS microphone, atmospheric absorption, room
+        reverberation and each pipeline's cutoff, then decoded back. A decode either happens or it
+        does not.
+      </p>
+    </div>
+
+    <div class="figure">
+      <p class="fig-title">Where each band dies — cutoffs of the paths audio actually travels</p>
+      <div class="scroll">
+        <svg viewBox="0 0 700 268" width="100%" height="268" role="img"
+             aria-label="A frequency axis from 0 to 24 kilohertz. The audible band at 0.67 to 2.3 kHz sits below every pipeline cutoff. The near-ultrasonic band at 18.2 to 19.8 kHz sits above all of them except direct playback at 24 kHz.">
+          <!-- axis -->
+          <line x1="70" y1="200" x2="655" y2="200" stroke="var(--rule)" stroke-width="1"/>
+          <g fill="var(--ink-3)" font-size="10" text-anchor="middle">
+            <text x="70"  y="216">0</text>
+            <text x="192" y="216">5 kHz</text>
+            <text x="314" y="216">10</text>
+            <text x="436" y="216">15</text>
+            <text x="558" y="216">20</text>
+            <text x="655" y="216">24</text>
+          </g>
+          <text x="362" y="238" fill="var(--ink-3)" font-size="10" text-anchor="middle">frequency</text>
+
+          <!-- pipeline cutoffs, staggered so the crowded ones stay readable -->
+          <g stroke="var(--gauge)" stroke-width="1" stroke-dasharray="3 3">
+            <line x1="153" y1="58"  x2="153" y2="200"/>
+            <line x1="363" y1="76"  x2="363" y2="200"/>
+            <line x1="436" y1="94"  x2="436" y2="200"/>
+            <line x1="448" y1="112" x2="448" y2="200"/>
+            <line x1="460" y1="130" x2="460" y2="200"/>
+            <line x1="509" y1="148" x2="509" y2="200"/>
+            <line x1="655" y1="166" x2="655" y2="200"/>
+          </g>
+          <g fill="var(--gauge)" font-size="9.5">
+            <text x="158" y="55">3.4 kHz · narrowband telephony</text>
+            <text x="368" y="73">12 kHz · voice call</text>
+            <text x="441" y="91">15 kHz · FM broadcast</text>
+            <text x="453" y="109">15.5 · DAB+</text>
+            <text x="465" y="127">16 · video / streaming</text>
+            <text x="514" y="145">18 kHz · venue PA</text>
+            <text x="500" y="163" text-anchor="end">24 kHz · direct playback only ▸</text>
+          </g>
+
+          <!-- the two bands -->
+          <rect x="86" y="176" width="41" height="20" rx="2" fill="var(--signal)"/>
+          <text x="107" y="172" fill="var(--signal)" font-size="10" font-weight="600" text-anchor="middle">audible</text>
+          <text x="107" y="264" fill="var(--ink-3)" font-size="9" text-anchor="middle">0.67–2.3 kHz</text>
+
+          <rect x="513" y="176" width="41" height="20" rx="2" fill="var(--risk)"/>
+          <text x="534" y="172" fill="var(--risk)" font-size="10" font-weight="600" text-anchor="middle">19 kHz</text>
+          <text x="534" y="264" fill="var(--ink-3)" font-size="9" text-anchor="middle">18.2–19.8 kHz</text>
+
+          <!-- verdict brackets -->
+          <text x="70" y="30" fill="var(--ink-2)" font-size="10.5" font-weight="600">Below every cutoff — reaches all seven paths</text>
+          <text x="655" y="30" fill="var(--risk)" font-size="10.5" font-weight="600" text-anchor="end">Above six of seven</text>
+        </svg>
+      </div>
+      <p class="fig-note">
+        FM's 15 kHz limit is not a codec quirk but the standard itself: programme audio stops there so
+        the 19 kHz stereo pilot tone has room. A near-ultrasonic carrier and the FM pilot are competing
+        for the same frequency.
+      </p>
+    </div>
+
+    <div class="figure">
+      <p class="fig-title">Delivery, audible against 19 kHz, six trials per cell</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Delivery path</th><th class="n">Cutoff</th><th class="n">Audible</th><th class="n">19 kHz</th></tr></thead>
+          <tbody>
+            <tr><td>Direct playback — phone or laptop speaker</td><td class="n">24 kHz</td>
+                <td class="n yes">100%</td><td class="n yes">100%</td></tr>
+            <tr><td>Venue PA</td><td class="n">18 kHz</td><td class="n yes">100%</td><td class="n no">0%</td></tr>
+            <tr class="emphasis"><td>FM broadcast</td><td class="n">15 kHz</td><td class="n">100%</td><td class="n">0%</td></tr>
+            <tr><td>DAB+ / digital radio</td><td class="n">15.5 kHz</td><td class="n yes">100%</td><td class="n no">0%</td></tr>
+            <tr><td>Video or streaming audio</td><td class="n">16 kHz</td><td class="n yes">100%</td><td class="n no">0%</td></tr>
+            <tr><td>Voice call</td><td class="n">12 kHz</td><td class="n yes">100%</td><td class="n no">0%</td></tr>
+            <tr><td>Narrowband telephony</td><td class="n">3.4 kHz</td><td class="n yes">100%</td><td class="n no">0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fig-note">
+        Not degraded — absent. The audio plays, the receiver hears nothing, and the failure looks
+        exactly like a decoder bug. This is the most expensive mistake available in data-over-sound,
+        which is why the service now takes the delivery path as an input.
+      </p>
+    </div>
+
+    <h3 style="margin-top:2.2rem">And the range collapses</h3>
+    <div class="col">
+      <p>
+        A phone loudspeaker and a MEMS microphone are both flat through the voice band and both fall
+        away above about 10 kHz. End to end the pair is <strong>31.5 dB down at 19 kHz</strong>. The
+        modem cliffs at −4 dB SNR, so that penalty comes straight off the range.
+      </p>
+    </div>
+
+    <div class="figure">
+      <p class="fig-title">Range in a quiet room, reference SNR 25 dB at 1 m</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th class="n">Distance</th><th class="n">Audible path loss</th><th class="n">Audible</th>
+            <th class="n">19 kHz path loss</th><th class="n">19 kHz</th></tr></thead>
+          <tbody>
+            <tr><td class="n">0.3 m</td><td class="n">+10.5 dB</td><td class="n yes">100%</td>
+                <td class="n">−21.2 dB</td><td class="n yes">100%</td></tr>
+            <tr><td class="n">1 m</td><td class="n">0.0 dB</td><td class="n yes">100%</td>
+                <td class="n">−31.9 dB</td><td class="n yes">100%</td></tr>
+            <tr class="emphasis"><td class="n">2 m</td><td class="n">−6.0 dB</td><td class="n">100%</td>
+                <td class="n">−38.4 dB</td><td class="n">0%</td></tr>
+            <tr><td class="n">5 m</td><td class="n">−14.0 dB</td><td class="n yes">100%</td>
+                <td class="n">−47.7 dB</td><td class="n no">0%</td></tr>
+            <tr><td class="n">20 m</td><td class="n">−26.2 dB</td><td class="n yes">100%</td>
+                <td class="n">−66.3 dB</td><td class="n no">0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fig-note">
+        Spherical spreading plus atmospheric absorption, which is itself forty times worse at 19 kHz
+        than at 1.5 kHz. Ultrasound is an <strong>arm's-length</strong> medium on consumer hardware,
+        not a room-scale one.
+      </p>
+    </div>
+
+    <h3>Two things people expect that are not true</h3>
+    <div class="col">
+      <p>
+        <strong>It is not faster.</strong> Throughput is set by occupied bandwidth, not by how high the
+        carrier sits. The modem occupies 1.64 kHz wherever you put it, and 18.0–19.6 kHz is about all
+        the room there is before phone speakers stop reproducing anything at all. Same bandwidth, same
+        86 B/s.
+      </p>
+      <p>
+        <strong>It is not inaudible.</strong> Under-18s hear a 19 kHz tone plainly and many people
+        under 25 hear it at close range — which is precisely the range where it works. Dogs hear to
+        about 45 kHz and cats to 64 kHz, so 19 kHz is comfortably inside both.
+      </p>
+      <div class="callout hard">
+        <strong>There is also a reputational cost.</strong> Inaudible beacons are how ultrasonic
+        cross-device tracking worked, and that technique drew regulatory attention and app-store bans.
+        An audible channel is one you can point at and say: when this device transmits, you can hear
+        it. That is a materially easier conversation with a procurement officer, a works council, or a
+        data-protection regulator — and it is the harder thing to claim back once given up.
+      </div>
+    </div>
+
+    <h3>The one place ultrasound genuinely wins</h3>
+    <div class="col">
+      <p>
+        Reverberation is the modem's real enemy: the cyclic prefix is 8 ms and a longer echo smears one
+        symbol into the next. Air absorbs high frequencies faster, so a room with a 0.4 s decay at
+        1 kHz has only about 0.18 s at 19 kHz. Setting the link-budget penalty aside to isolate the
+        effect, at that reverberation <strong>19 kHz delivered 100% where the audible band managed
+        33%</strong>.
+      </p>
+      <p>
+        That is real, and it roughly doubles the reverberation the modem tolerates. It is also worth
+        little in practice, because it only applies inside the one metre where ultrasound works at
+        all — and at one metre the direct sound dominates the echo anyway.
+      </p>
+      <div class="callout">
+        <strong>Verdict: ultrasonic is a different product, not an upgrade.</strong> It is an
+        arm's-length, direct-playback channel, which is a real but small niche already served by NFC
+        and QR codes. Ship it as a selectable band for the pairing case. Do not build the business on
+        it, and never let it become the default.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== 2 · radio -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Question two</span>
+      <h2>Yes, radio can already carry data — to receivers that are not phones</h2>
+    </div>
+
+    <div class="col">
+      <p>
+        This is the sharper question, and the answer reframes the product. FM has carried a data
+        channel since the 1980s: <strong>RDS</strong>, on a 57 kHz subcarrier, at 1187.5 bit/s. That is
+        not merely comparable to Cicada — it is the same speed.
+      </p>
+    </div>
+
+    <div class="figure">
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Channel</th><th class="n">Raw rate</th><th>Receiver it needs</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>RDS</td><td class="n">1 187.5 bit/s</td><td>An FM tuner with an RDS decoder</td>
+                <td>Universal in car radios since the 1990s</td></tr>
+            <tr><td>RDS2</td><td class="n">4 750 bit/s</td><td>An RDS2 decoder</td>
+                <td class="no">Encoders exist since 2018; no commercial receivers</td></tr>
+            <tr><td>DAB+ data</td><td class="n">varies</td><td>A DAB receiver</td><td>Deployed, but not in phones</td></tr>
+            <tr class="emphasis"><td>Cicada, fast profile</td><td class="n">1 164 bit/s</td>
+                <td>A microphone</td><td>Every phone made</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fig-note">
+        The argument for Cicada was never throughput. RDS is exactly as fast. The argument is entirely
+        about which receiver you can reach.
+      </p>
+    </div>
+
+    <div class="col">
+      <p>
+        And that is where RDS stops. <strong>Phones cannot receive it.</strong> Apple has shipped no FM
+        receiver since the iPhone 7 in 2016 and never connected the circuitry in the models before it.
+        Most Android flagships dropped the chip, carriers asked manufacturers to disable what remained,
+        and the headphone jack that served as the FM antenna went with it.
+      </p>
+      <p>
+        The channel that <em>does</em> reach every phone is <strong>cell broadcast</strong> — EU-Alert,
+        mandated across member states since June 2022. It is unaffected by network congestion, it needs
+        no app, and for public warning it is the correct primary channel. It also requires a working
+        mobile network and a working grid.
+      </p>
+    </div>
+
+    <div class="gaps">
+      <div class="gap">
+        <span class="who">Transmitter → receiver</span>
+        <h3>RDS / RDS2</h3>
+        <p class="reaches">Reaches car radios and dedicated receivers, at 1 187.5 bit/s, with no audible trace.</p>
+        <p class="fails">Cannot reach a phone. There is no receiver in it.</p>
+      </div>
+      <div class="gap">
+        <span class="who">Network → receiver</span>
+        <h3>Cell broadcast</h3>
+        <p class="reaches">Reaches every phone in a cell, instantly, with no app and no congestion penalty.</p>
+        <p class="fails">Needs the mobile network and the grid to be working.</p>
+      </div>
+      <div class="gap ours">
+        <span class="who">Speaker → microphone</span>
+        <h3>Cicada</h3>
+        <p class="reaches">Reaches every phone in earshot of any speaker — a radio, a PA, a laptop, a phone call.</p>
+        <p class="fails">Needs a speaker in earshot. Needs nothing else.</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="callout">
+        <strong>So the positioning is not “data over radio”. It is the last hop.</strong> Cicada is the
+        only one of the three that spans the gap between broadcast infrastructure that keeps running
+        without a network — FM transmitters on generators, station PA systems, a phone on speaker — and
+        the receiver every person already carries. RDS owns the first hop and cannot finish it. Cell
+        broadcast finishes it beautifully, until the network is the thing that failed.
+      </div>
+      <p>
+        That is a narrower claim than the one worth starting with, and a much harder one to attack. It
+        also settles the ultrasonic question a second time: the whole point is that a normal radio
+        loudspeaker in a normal room can deliver it, and a normal radio loudspeaker cannot reproduce
+        19 kHz — even if FM were willing to carry it, which it is not.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================== 3 · niches -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Where the money is</span>
+      <h2>Four niches, ranked by how quickly someone writes a cheque</h2>
+    </div>
+
+    <div class="niches">
+      <div class="niche">
+        <div class="top">
+          <span class="rank">1</span>
+          <h3>Accessible passenger information</h3>
+          <span class="money">€2–8k per site per year</span>
+        </div>
+        <p>
+          A spoken platform announcement is useless to a deaf passenger and to anyone who does not
+          speak the language. The current answer is an induction loop: expensive to install, reaches
+          only hearing aids with a T-coil, and carries no text. Put the same announcement in the PA
+          audio as data and every phone in the concourse can show it as text, in the reader's own
+          language, with no network and no app-store dependency — over speakers that are
+          <em>already installed</em>.
+        </p>
+        <div class="against">Driver · European Accessibility Act in force since 28 June 2025, transition to 2030, penalties to €100k or 4% of turnover. Sectoral rail rules (TSI PRM) already govern visual and audible passenger information — confirm the precise obligation per operator and country.</div>
+        <div class="against">Against · nothing competes directly. Loops solve a narrower problem and cost more.</div>
+      </div>
+
+      <div class="niche">
+        <div class="top">
+          <span class="rank">2</span>
+          <h3>Resilient public warning</h3>
+          <span class="money">€150–500k per country</span>
+        </div>
+        <p>
+          Civil protection agencies already have cell broadcast and it is the right primary channel.
+          Cicada is the documented <em>second</em> path for when the grid or the network is the thing
+          that failed: FM stays on generators, people still have radios and phones, and the phone
+          cannot hear RDS. Sell it as the fallback that gets exercised in drills, never as a
+          replacement — a replacement pitch loses to a mandated incumbent and deserves to.
+        </p>
+        <div class="against">Driver · Critical Entities Resilience Directive and NIS2 both push named, tested fallbacks for essential services.</div>
+        <div class="against">Against · cell broadcast, which wins whenever the network is up. Say so first.</div>
+      </div>
+
+      <div class="niche">
+        <div class="top">
+          <span class="rank">3</span>
+          <h3>Air-gapped data ingress</h3>
+          <span class="money">€25–150k per site per year</span>
+        </div>
+        <p>
+          Getting configuration, attestations or key material into a machine with no network is done
+          today with USB sticks, which are a notorious attack vector. An acoustic path is one-way by
+          construction, cannot exfiltrate without a speaker, and is audible — so it is auditable by
+          anyone standing in the room.
+        </p>
+        <div class="against">Against · many security teams classify any acoustic channel as a threat to be blocked. The counter-argument is that a sanctioned, audible, logged channel is better than an unmonitored one, but expect to make it more than once.</div>
+      </div>
+
+      <div class="niche">
+        <div class="top">
+          <span class="rank">4</span>
+          <h3>Arm's-length device provisioning</h3>
+          <span class="money">per-device royalty</span>
+        </div>
+        <p>
+          Commissioning headless sensors and controllers that have a microphone but no screen, no
+          keypad and no network. This is the one place near-ultrasonic earns its keep, because the path
+          is direct playback at under a metre — exactly the envelope the measurements leave it.
+        </p>
+        <div class="against">Against · NFC and QR are cheaper and better whenever the device has a screen or a person has a camera. Needs an embedded C port before it is sellable.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== 4 · model -->
+  <section>
+    <div class="sec-head">
+      <span class="label">What changes in the model</span>
+      <h2>The compliance buyer procures sites, not API calls</h2>
+    </div>
+
+    <div class="col">
+      <p>
+        The original plan metered renders and decodes, with channels and cards pricing deployment
+        scale. That is right for developers and wrong for the buyer who now looks most attractive. A
+        rail operator does not think in API calls. It thinks in stations, and it buys an annual line
+        item per station that renews without anyone revisiting the decision.
+      </p>
+
+      <h3>Add a site licence between Scale and Self-hosted</h3>
+      <ul class="plain">
+        <li><strong>Per site, per year</strong> — a station, a terminal, a venue. Unmetered rendering
+          within it, because the content is mostly static and metering it would price the product
+          wrongly for the people most likely to buy.</li>
+        <li><strong>Runs on their hardware.</strong> Station PA systems are not internet-connected and
+          should not become so for this. The self-hosted build already exists.</li>
+        <li><strong>Priced against the alternative</strong>, which is an induction loop install at
+          five figures per platform, not against an API call.</li>
+      </ul>
+      <p>
+        A hundred-station operator is €200–800k a year on that basis, renewing, from one sale. That is
+        a different business from a $49 subscription, and the SaaS tiers keep earning their place as
+        the thing developers find first.
+      </p>
+
+      <h3>Two product decisions that follow directly</h3>
+      <ul class="plain">
+        <li><strong>The delivery path is now an input, not an assumption.</strong> The service asks
+          where the audio is going and refuses to be optimistic about a band that path removes. This is
+          shipped: <span class="mono">GET /v1/paths</span>, and
+          <span class="mono">/v1/capacity?path=fmBroadcast&amp;band=nearUltrasonic</span> returns a
+          warning and the band to use instead.</li>
+        <li><strong>Near-ultrasonic ships as a band, gated to direct playback.</strong> Selectable
+          where it works, refused where it does not, never the default.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================== 5 -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Next</span>
+      <h2>What would settle these</h2>
+    </div>
+    <div class="col">
+      <ul class="plain">
+        <li><strong>Measure one real PA system.</strong> The 18 kHz figure for venue PA is the least
+          certain number here and the one the best niche depends on. A single afternoon in a real
+          concourse with a measurement microphone settles it.</li>
+        <li><strong>Get the accessibility obligation in writing.</strong> Whether visual duplication of
+          live announcements is required, or merely expected, decides whether niche one is a compliance
+          purchase or a nice-to-have. That is a question for a transport regulator, not an engineer.</li>
+        <li><strong>Confirm the transducer curve on three real phones.</strong> The 31.5 dB penalty is
+          modelled. If real hardware is better than modelled — some phones are — the ultrasonic
+          envelope grows from one metre to perhaps three, which does not change the verdict but does
+          change niche four.</li>
+      </ul>
+    </div>
+
+    <footer>
+      <p style="margin:0 0 .6em">
+        <strong style="color:var(--ink)">Measured here</strong> — the unmodified modem upconverted to
+        centre frequencies from 1.5 to 21 kHz, through modelled transducer response, ISO 9613-1
+        atmospheric absorption, frequency-dependent reverberation, spherical spreading and seven
+        pipeline cutoffs. Reproduce with <span class="mono">node experiments/ultrasonic.mjs</span>.
+      </p>
+      <p style="margin:0">
+        <strong style="color:var(--ink)">Not measured</strong> — any physical speaker, room or
+        microphone. The transducer curve, the PA cutoff and the absorption figures are models drawn
+        from published behaviour. They are sound enough to separate <em>marginal</em> from
+        <em>impossible</em>, which is what these two questions needed. They are not a substitute for an
+        afternoon with a measurement microphone.
+      </p>
+    </footer>
+  </section>
+</div>

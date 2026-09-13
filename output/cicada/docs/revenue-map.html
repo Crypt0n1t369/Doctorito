@@ -1,0 +1,538 @@
+<title>Cicada Revenue Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+
+<style>
+:root {
+  --paper: #F3F4F1; --surface: #FBFBF9; --surface-2: #EAEBE6;
+  --ink: #15181A; --ink-2: #4A504F; --ink-3: #7B817E;
+  --rule: #D8DAD3; --rule-soft: #E4E6E0;
+  --signal: #B4531B; --signal-dim: #D9895A; --signal-wash: #F0E2D8;
+  --gauge: #2C5F6B; --gauge-wash: #DCE6E7;
+  --good: #3E7A52; --risk: #A33B32; --risk-wash: #F2DEDC;
+  --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --measure: 68ch; --gutter: clamp(1.1rem, 4vw, 2.5rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121414; --surface: #1A1D1D; --surface-2: #232726;
+    --ink: #ECEEEA; --ink-2: #AAB0AD; --ink-3: #767C79;
+    --rule: #303533; --rule-soft: #262A29;
+    --signal: #E08B4C; --signal-dim: #A86237; --signal-wash: #2E2117;
+    --gauge: #78B4BF; --gauge-wash: #1B2729;
+    --good: #6FB287; --risk: #D97A70; --risk-wash: #2C1C1A;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121414; --surface: #1A1D1D; --surface-2: #232726;
+  --ink: #ECEEEA; --ink-2: #AAB0AD; --ink-3: #767C79;
+  --rule: #303533; --rule-soft: #262A29;
+  --signal: #E08B4C; --signal-dim: #A86237; --signal-wash: #2E2117;
+  --gauge: #78B4BF; --gauge-wash: #1B2729;
+  --good: #6FB287; --risk: #D97A70; --risk-wash: #2C1C1A;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--serif);
+       font-size: 17px; line-height: 1.62; margin: 0; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--gutter) 6rem; }
+.col { max-width: var(--measure); }
+h1, h2, h3, .label, th, .fig-title { font-family: var(--sans); }
+h1 { font-size: clamp(1.9rem, 5vw, 2.85rem); line-height: 1.07; font-weight: 700;
+     letter-spacing: -.028em; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.3rem, 3vw, 1.58rem); font-weight: 600; letter-spacing: -.018em;
+     text-wrap: balance; margin: 0 0 .2rem; }
+h3 { font-size: 1.02rem; font-weight: 600; margin: 1.9rem 0 .35rem; }
+p { margin: 0 0 1.05em; }
+strong { font-weight: 600; }
+.label { font-size: .7rem; font-weight: 600; text-transform: uppercase;
+         letter-spacing: .11em; color: var(--ink-3); }
+
+header.masthead { border-bottom: 1px solid var(--rule); margin-bottom: 2.8rem; }
+.masthead-inner { max-width: 1080px; margin: 0 auto;
+                  padding: 2.6rem var(--gutter) 2.2rem; display: grid; gap: 1.3rem; }
+.eyebrow { display: flex; gap: .8rem; align-items: baseline; flex-wrap: wrap; }
+.standfirst { font-size: clamp(1.02rem, 2.2vw, 1.16rem); color: var(--ink-2);
+              max-width: 60ch; margin: 0; }
+.byline { font-family: var(--mono); font-size: .76rem; color: var(--ink-3);
+          display: flex; gap: 1.1rem; flex-wrap: wrap; padding-top: .4rem;
+          border-top: 1px solid var(--rule-soft); }
+
+section { padding-top: 2.6rem; }
+section + section { border-top: 1px solid var(--rule-soft); }
+.sec-head { display: grid; gap: .1rem; margin-bottom: 1.1rem; }
+
+.figure { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px;
+          padding: 1.25rem 1.35rem; margin: 1.6rem 0 1.9rem; }
+.fig-title { font-size: .84rem; font-weight: 600; margin: 0 0 .8rem; }
+.fig-note { font-family: var(--sans); font-size: .78rem; color: var(--ink-3);
+            margin: .8rem 0 0; line-height: 1.5; max-width: 78ch; }
+.scroll { overflow-x: auto; }
+
+table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .87rem; }
+th, td { text-align: left; padding: .5rem .7rem .5rem 0; border-bottom: 1px solid var(--rule-soft);
+         vertical-align: top; }
+th { font-size: .68rem; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3);
+     font-weight: 600; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums;
+             white-space: nowrap; padding-right: 0; }
+tbody tr:last-child td { border-bottom: 0; }
+tr.emphasis td { background: var(--signal-wash); }
+tr.emphasis td:first-child { font-weight: 600; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+.callout { border-left: 2px solid var(--signal); padding: .1rem 0 .1rem 1rem;
+           margin: 1.5rem 0; color: var(--ink-2); font-size: .96rem; max-width: 68ch; }
+.callout strong { color: var(--ink); }
+.callout.cool { border-color: var(--gauge); }
+
+/* a revenue stream, with what it needs and what stands against it */
+.streams { display: grid; gap: 0; margin: 1.4rem 0 1rem; }
+.stream { display: grid; gap: .35rem; padding: 1.15rem 0; border-bottom: 1px solid var(--rule-soft); }
+.stream:first-child { border-top: 1px solid var(--rule); }
+.stream .top { display: flex; gap: .65rem; align-items: baseline; flex-wrap: wrap; }
+.stream h3 { margin: 0; font-size: 1.02rem; }
+.stream .money { font-family: var(--mono); font-size: .82rem; color: var(--signal);
+                 font-weight: 500; margin-left: auto; }
+.stream p { margin: 0; font-size: .93rem; color: var(--ink-2); max-width: 76ch; }
+.stream .needs { font-family: var(--mono); font-size: .76rem; color: var(--gauge);
+                 padding-left: .7rem; border-left: 2px solid var(--gauge); margin-top: .3rem; }
+.stream .against { font-family: var(--mono); font-size: .76rem; color: var(--risk);
+                   padding-left: .7rem; border-left: 2px solid var(--risk); margin-top: .25rem; }
+.tag { font-family: var(--mono); font-size: .68rem; font-weight: 600; letter-spacing: .04em;
+       padding: .12rem .45rem; border-radius: 3px; background: var(--surface-2); color: var(--ink-3); }
+.tag.built { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); }
+.tag.near { background: var(--signal-wash); color: var(--signal); }
+.tag.research { background: var(--gauge-wash); color: var(--gauge); }
+.tag.spec { background: var(--risk-wash); color: var(--risk); }
+
+ul.plain { margin: 0 0 1.1em; padding-left: 1.15em; }
+ul.plain li { margin-bottom: .5em; }
+footer { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--rule);
+         font-family: var(--sans); font-size: .8rem; color: var(--ink-3); max-width: 78ch; }
+svg text { font-family: var(--mono); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow">
+      <span class="label">Revenue strategy</span>
+      <span class="label" style="color:var(--signal)">Cicada</span>
+      <span class="label">Third of three notes</span>
+    </div>
+    <h1>One deployment, two markets</h1>
+    <p class="standfirst">
+      Nine ways this could earn, from one that is built and has a regulatory deadline behind it to
+      several that need work nobody has done yet. The short-term answer is accessibility. The
+      long-term answer is that every venue fitted for deaf passengers is simultaneously a signed,
+      structured event source that an on-device AI agent can read without asking anyone's permission.
+    </p>
+    <div class="byline">
+      <span>13 September 2026</span>
+      <span>Passenger page and desk are working code</span>
+      <span>124 tests passing</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============================================== what a PA announcement is -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Groundwork</span>
+      <h2>What a PA announcement actually is</h2>
+    </div>
+    <div class="col">
+      <p>
+        The public-address system is the loudspeakers bolted to the ceiling of a station concourse,
+        an airport pier, a hospital corridor, a ferry deck, a shopping centre. A <em>PA
+        announcement</em> is anything spoken through them: the platform has changed, the train is
+        late, the lift is broken, please leave the building.
+      </p>
+      <p>
+        Two things about them matter commercially. The first is that they are <strong>already
+        installed everywhere</strong> — this is the one piece of infrastructure a venue does not have
+        to buy. The second is that they are <strong>not free text</strong>. They are a small set of
+        sentence templates with a few values filled in:
+      </p>
+      <div class="figure" style="margin:1.2rem 0">
+        <p class="mono" style="font-size:.95rem;margin:0 0 .5rem">
+          "Train <span style="color:var(--signal)">{service}</span> to
+          <span style="color:var(--signal)">{destination}</span> now departs from platform
+          <span style="color:var(--signal)">{platform}</span>, not platform
+          <span style="color:var(--signal)">{wasPlatform}</span>,
+          <span style="color:var(--signal)">{reason}</span>."
+        </p>
+        <p class="fig-note" style="margin-top:.6rem">
+          Sync that sentence to phones in every language the venue serves, and the broadcast only has
+          to carry the template number and five values. Eleven bytes. It stays eleven bytes whether
+          the station publishes in two languages or twelve, because none of the text is on the air.
+        </p>
+      </div>
+      <p>
+        A spoken platform change occupies the PA for six to eight seconds, in one language. The same
+        announcement as data is <strong>0.55 seconds unsigned, or 1.2 seconds signed</strong>, in four
+        languages at once — and a passenger who cannot hear it reads it on their phone instead.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================== the map -->
+  <section>
+    <div class="sec-head">
+      <span class="label">The map</span>
+      <h2>Nine streams, by what they are worth and how long they take</h2>
+    </div>
+
+    <div class="figure">
+      <p class="fig-title">Revenue streams: time to first money against what a deal is worth</p>
+      <div class="scroll">
+        <svg viewBox="0 0 720 400" width="100%" height="400" role="img"
+             aria-label="A scatter chart. Accessible passenger information sits alone in the near-term, high-value corner at three months. Resilient public warning and air-gapped ingress sit at twelve to eighteen months. The agent trust layer and local event bus sit at eighteen to thirty-six months at the highest value. Acoustic provenance and presence attestation sit in the middle. Device provisioning and humanitarian field messaging are lower value.">
+          <!-- axes -->
+          <line x1="72" y1="340" x2="690" y2="340" stroke="var(--rule)" stroke-width="1"/>
+          <line x1="72" y1="28" x2="72" y2="340" stroke="var(--rule)" stroke-width="1"/>
+          <g stroke="var(--rule-soft)" stroke-width="1">
+            <line x1="72" y1="262" x2="690" y2="262"/>
+            <line x1="72" y1="184" x2="690" y2="184"/>
+            <line x1="72" y1="106" x2="690" y2="106"/>
+          </g>
+          <g fill="var(--ink-3)" font-size="10" text-anchor="end">
+            <text x="64" y="344">€10k</text>
+            <text x="64" y="266">€100k</text>
+            <text x="64" y="188">€500k</text>
+            <text x="64" y="110">€2m</text>
+            <text x="64" y="34">platform</text>
+          </g>
+          <g fill="var(--ink-3)" font-size="10" text-anchor="middle">
+            <text x="110" y="360">3 mo</text>
+            <text x="240" y="360">9 mo</text>
+            <text x="370" y="360">18 mo</text>
+            <text x="500" y="360">24 mo</text>
+            <text x="640" y="360">36 mo</text>
+          </g>
+          <text x="381" y="382" fill="var(--ink-3)" font-size="10" text-anchor="middle">time to first revenue</text>
+          <text x="20" y="184" fill="var(--ink-3)" font-size="10" text-anchor="middle"
+                transform="rotate(-90 20 184)">annual value per customer</text>
+
+          <!-- the near-term corner -->
+          <rect x="72" y="120" width="120" height="120" fill="var(--signal-wash)" opacity=".55"/>
+          <text x="80" y="136" fill="var(--signal)" font-size="9.5" font-weight="600">start here</text>
+
+          <!-- built / near -->
+          <circle cx="110" cy="176" r="9" fill="var(--signal)"/>
+          <text x="126" y="173" fill="var(--ink)" font-size="11" font-weight="600">Accessible passenger information</text>
+          <text x="126" y="186" fill="var(--ink-3)" font-size="9.5">built · €200–800k per operator · EAA deadline</text>
+
+          <circle cx="370" cy="168" r="8" fill="var(--signal-dim)"/>
+          <text x="384" y="165" fill="var(--ink)" font-size="11" font-weight="600">Resilient public warning</text>
+          <text x="384" y="178" fill="var(--ink-3)" font-size="9.5">€150–500k per country</text>
+
+          <circle cx="345" cy="258" r="7" fill="var(--signal-dim)"/>
+          <text x="358" y="255" fill="var(--ink)" font-size="11">Air-gapped ingress</text>
+          <text x="358" y="268" fill="var(--ink-3)" font-size="9.5">€25–150k per site</text>
+
+          <circle cx="255" cy="300" r="6" fill="var(--gauge)"/>
+          <text x="268" y="297" fill="var(--ink)" font-size="11">Presence attestation</text>
+          <text x="268" y="310" fill="var(--ink-3)" font-size="9.5">GPS-independent · €30–90k</text>
+
+          <circle cx="240" cy="322" r="6" fill="var(--gauge)"/>
+          <text x="253" y="332" fill="var(--ink)" font-size="11">Device provisioning</text>
+
+          <!-- agentic -->
+          <circle cx="500" cy="72" r="10" fill="var(--gauge)"/>
+          <text x="516" y="69" fill="var(--ink)" font-size="11" font-weight="600">Agent trust layer</text>
+          <text x="516" y="82" fill="var(--ink-3)" font-size="9.5">what an agent may believe from a microphone</text>
+
+          <circle cx="430" cy="112" r="9" fill="var(--gauge)"/>
+          <text x="446" y="109" fill="var(--ink)" font-size="11" font-weight="600">Local event bus for agents</text>
+          <text x="446" y="122" fill="var(--ink-3)" font-size="9.5">rides on every deployment above</text>
+
+          <circle cx="560" cy="200" r="8" fill="var(--gauge)"/>
+          <text x="574" y="197" fill="var(--ink)" font-size="11">Acoustic provenance</text>
+          <text x="574" y="210" fill="var(--ink-3)" font-size="9.5">needs inaudible carrier · research</text>
+
+          <circle cx="300" cy="326" r="6" fill="var(--ink-3)"/>
+          <text x="313" y="336" fill="var(--ink)" font-size="11">Humanitarian field messaging</text>
+
+          <!-- the connection that is the whole strategy -->
+          <path d="M 119 176 Q 270 140 421 112" fill="none" stroke="var(--signal)"
+                stroke-width="1.5" stroke-dasharray="4 3" opacity=".8"/>
+          <text x="268" y="146" fill="var(--signal)" font-size="9.5" font-style="italic" text-anchor="middle">the same deployment</text>
+        </svg>
+      </div>
+      <p class="fig-note">
+        Values are per customer per year, estimated against what the alternative costs — an induction
+        loop install, a resilience audit, a USB transfer procedure — not against an API call. The
+        dashed line is the strategy: the installed base built for the first market is what makes the
+        second one possible.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================== buildable -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Buildable now</span>
+      <h2>Four streams that need no new science</h2>
+    </div>
+
+    <div class="streams">
+      <div class="stream">
+        <div class="top">
+          <span class="tag built">built</span>
+          <h3>Accessible passenger information</h3>
+          <span class="money">€2–8k per site per year</span>
+        </div>
+        <p>
+          The announcement as large text on every phone in the concourse, in the reader's language,
+          offline, with a haptic alert for anything urgent. Runs over speakers the venue already owns.
+          Replaces nothing and duplicates nothing — it reaches the people the PA never did.
+        </p>
+        <div class="needs">Needs · one measured PA system, and the obligation confirmed in writing per country.</div>
+        <div class="against">Against · nothing competes directly. Induction loops solve a narrower problem at higher cost.</div>
+      </div>
+
+      <div class="stream">
+        <div class="top">
+          <span class="tag near">near</span>
+          <h3>Resilient public warning</h3>
+          <span class="money">€150–500k per country</span>
+        </div>
+        <p>
+          Cell broadcast is the correct primary channel and is already mandated. This is the second
+          path for when the grid or the network is the thing that failed: FM stays up on generators,
+          people still have radios and phones, and a phone cannot hear RDS. Sold as the fallback that
+          gets exercised in drills — never as a replacement.
+        </p>
+        <div class="needs">Needs · a lighthouse civil-protection buyer and one live exercise with published results.</div>
+        <div class="against">Against · cell broadcast whenever the network is up. Concede that first or lose the room.</div>
+      </div>
+
+      <div class="stream">
+        <div class="top">
+          <span class="tag near">near</span>
+          <h3>Air-gapped data ingress</h3>
+          <span class="money">€25–150k per site per year</span>
+        </div>
+        <p>
+          Configuration, attestations and key material into machines with no network, currently moved
+          on USB sticks. An acoustic path is one-way by construction, cannot exfiltrate without a
+          speaker, and is audible — so it is auditable by anyone standing in the room.
+        </p>
+        <div class="against">Against · many security teams classify any acoustic channel as a threat. Expect to argue that a sanctioned, audible, logged channel beats an unmonitored one more than once.</div>
+      </div>
+
+      <div class="stream">
+        <div class="top">
+          <span class="tag near">near</span>
+          <h3>Arm's-length device provisioning</h3>
+          <span class="money">per-device royalty</span>
+        </div>
+        <p>
+          Commissioning headless sensors and controllers that have a microphone but no screen, keypad
+          or network. The one place near-ultrasonic earns its keep, since the path is direct playback
+          under a metre.
+        </p>
+        <div class="needs">Needs · an embedded C port of the modem. The JavaScript one is a prototype, not a product.</div>
+        <div class="against">Against · NFC and QR are cheaper whenever the device has a screen or a person has a camera.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== agentic -->
+  <section>
+    <div class="sec-head">
+      <span class="label">The agentic turn</span>
+      <h2>Agents are about to get microphones, and nothing tells them what to believe</h2>
+    </div>
+
+    <div class="col">
+      <p>
+        Two things are becoming true at once. Assistants are moving onto devices that listen
+        continuously, and they are being given the authority to act — to rebook a train, to move a
+        meeting, to warn someone. That combination creates a problem nobody has a product for:
+        <strong>a microphone is an input channel with no authentication on it whatsoever.</strong>
+      </p>
+      <p>
+        Anything audible in a room is, to an agent, indistinguishable from an instruction. A voice on
+        a speaker saying "the platform has changed to eleven" and a person standing behind you saying
+        the same thing are the same bytes. As synthetic speech becomes free, that stops being a
+        theoretical concern.
+      </p>
+      <div class="callout">
+        <strong>A signed channel is the missing primitive.</strong> Cicada already emits
+        announcements that carry a venue's Ed25519 signature, bound to the channel they were issued
+        for, verifiable offline against a pinned key. That is exactly the shape of "this instruction
+        genuinely came from the operator of this building, and not from someone standing next to you."
+      </div>
+    </div>
+
+    <div class="streams">
+      <div class="stream">
+        <div class="top">
+          <span class="tag research">18–24 mo</span>
+          <h3>Local event bus for on-device agents</h3>
+          <span class="money">platform</span>
+        </div>
+        <p>
+          An agent in a station today would have to scrape a website to learn the platform changed.
+          An agent that can hear gets the same fact as a signed, structured, typed event — template
+          1, service 2041, platform 11 — with no API key, no partnership, no rate limit and no
+          integration deal. The venue publishes once for its passengers; every agent in earshot reads
+          it for free.
+        </p>
+        <div class="needs">Needs · nothing new in the modem. A documented event schema, a public trust directory, and an SDK aimed at assistant platforms rather than at web pages.</div>
+        <div class="against">Against · the same fact is usually available over an API, when the agent has a network and the venue has an API. This wins in the gap: no signal, no integration, or no time.</div>
+      </div>
+
+      <div class="stream">
+        <div class="top">
+          <span class="tag research">24–36 mo</span>
+          <h3>The agent trust layer</h3>
+          <span class="money">platform</span>
+        </div>
+        <p>
+          Not "how does an agent hear data" but "what is an agent permitted to <em>act on</em> from
+          its microphone". A policy layer that says: treat audio as data, never as instructions,
+          unless it carries a signature from a key this device has pinned. Sold to assistant
+          platforms and to enterprises deploying agents in physical space.
+        </p>
+        <div class="needs">Needs · the installed base from the streams above. A trust layer with nothing signing into it is a specification, not a product.</div>
+        <div class="against">Against · platforms may decide their own attestation scheme, or decide the problem is theirs. Being first with real deployments is the only defence.</div>
+      </div>
+
+      <div class="stream">
+        <div class="top">
+          <span class="tag spec">research</span>
+          <h3>Acoustic provenance</h3>
+          <span class="money">€100k+ · media, legal, insurance</span>
+        </div>
+        <p>
+          File-level provenance breaks the moment somebody films a screen. A signature carried in the
+          <em>sound itself</em> survives re-recording, which is the one path that defeats every
+          container-based scheme. "This audio was genuinely spoken at this event, at this time, by
+          this authority" — verifiable from a phone recording of it.
+        </p>
+        <div class="needs">Needs · real research. The carrier must be inaudible and must ride underneath speech rather than taking its own time slot, which is psychoacoustic masking, not this modem.</div>
+        <div class="against">Against · an entrenched audience-measurement industry already does the hard part. Partner rather than rebuild.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== unstable -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Unstable times</span>
+      <h2>Two streams that exist because infrastructure is being attacked</h2>
+    </div>
+
+    <div class="col">
+      <p>
+        Resilience budgets are growing and, unusually, they are procurement-ready: the Critical
+        Entities Resilience Directive and NIS2 both push named, tested fallbacks for essential
+        services, which turns "what if this fails" from a conversation into a line item.
+      </p>
+    </div>
+
+    <div class="streams">
+      <div class="stream">
+        <div class="top">
+          <span class="tag near">12 mo</span>
+          <h3>Presence attestation without GPS</h3>
+          <span class="money">€30–90k per site</span>
+        </div>
+        <p>
+          Satellite positioning is being jammed and spoofed routinely across the Baltic and Black Sea
+          regions, and a great deal of "this person was here" evidence rests on it. A signed,
+          timestamped broadcast that a device can only have heard by being physically in the room is
+          a different kind of proof, and it does not depend on a satellite, a network or a map.
+          Shift attendance in critical facilities, chain of custody, safety inductions.
+        </p>
+        <div class="needs">Needs · a rolling nonce in the payload so a recording cannot be replayed later. The protocol deliberately does not decide freshness policy today; this stream requires that it does.</div>
+        <div class="against">Against · replay is the whole attack. Until the freshness design is done and reviewed, this is not sellable.</div>
+      </div>
+
+      <div class="stream">
+        <div class="top">
+          <span class="tag spec">opportunistic</span>
+          <h3>Humanitarian field messaging</h3>
+          <span class="money">grant-funded</span>
+        </div>
+        <p>
+          Reception centres, border crossings and field operations where the population speaks several
+          languages, the network is saturated or absent, and a loudspeaker already exists. The
+          multilingual template layer is the whole product; it needs no modification.
+        </p>
+        <div class="against">Against · grant-funded, slow, and low margin. Worth doing for the reference and the goodwill, not for the revenue.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== focus -->
+  <section>
+    <div class="sec-head">
+      <span class="label">The answer</span>
+      <h2>Accessibility now, the agent trust layer later, and they are the same deployment</h2>
+    </div>
+
+    <div class="col">
+      <h3>Short term — the next twelve months</h3>
+      <p>
+        <strong>Accessible passenger information, and nothing else.</strong> It is the only stream
+        where the product is built, the buyer is identifiable, the budget already exists because of a
+        deadline that has passed rather than one that is coming, and no competitor occupies the
+        ground. Every other stream on this map is improved by having one reference customer here, and
+        none of them is improved by starting early.
+      </p>
+      <p>
+        The work is not engineering. It is one measured PA system, one written legal opinion on the
+        obligation, and one station that will let you fit it.
+      </p>
+
+      <h3>Long term — years two and three</h3>
+      <p>
+        <strong>The agent trust layer</strong>, built on the installed base that the accessibility
+        business puts in the ground. This is the part worth being deliberate about now, because it
+        changes nothing about what you build this year and everything about how you describe it.
+      </p>
+      <div class="callout">
+        <strong>Every station fitted for deaf passengers is, at no extra cost, a signed structured
+        event source that any agent in earshot can read.</strong> The same 0.55-second broadcast
+        serves both. One is a compliance purchase with a deadline; the other is a platform position
+        that cannot be bought at any price without the first one existing. That is the reason to do
+        the boring regulated business first, and it is the only reason that matters.
+      </div>
+
+      <h3>What not to do</h3>
+      <ul class="plain">
+        <li><strong>Retail proximity marketing.</strong> Tried, low value, and it is the use case that
+          earned ultrasonic data-over-sound its regulatory reputation.</li>
+        <li><strong>Consumer file transfer.</strong> AirDrop and Quick Share are better at it and free.</li>
+        <li><strong>Payments.</strong> NFC wins and the compliance burden is disproportionate.</li>
+        <li><strong>Chasing the agent platforms first.</strong> A trust layer with nothing signing into
+          it is a specification. Deployments come first, in that order, deliberately.</li>
+      </ul>
+    </div>
+
+    <footer>
+      <p style="margin:0 0 .6em">
+        <strong style="color:var(--ink)">Built and tested</strong> — the announcement layer, the
+        operator desk and the passenger page are working code with 124 tests passing. An eleven-byte
+        trilingual platform change was rendered, broadcast, decoded, signature-verified and displayed
+        in four languages. Seed it with <span class="mono">examples/seed-station.mjs</span>.
+      </p>
+      <p style="margin:0">
+        <strong style="color:var(--ink)">Estimates, not quotes</strong> — every figure on the map is
+        an estimate built from what the displaced alternative costs, not from a signed contract or a
+        quoted price. The regulatory drivers are real and cited, but whether a specific obligation
+        binds a specific operator is a question for a lawyer in that country, not for this document.
+        Treat the ordering as the finding and the numbers as the argument for it.
+      </p>
+    </footer>
+  </section>
+</div>
