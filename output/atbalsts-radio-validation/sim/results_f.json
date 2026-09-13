@@ -1,0 +1,168 @@
+{
+ "F1": [
+  {
+   "tag": "receiver SNR +30 dB",
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "receiver SNR +25 dB",
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "receiver SNR +20 dB",
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "receiver SNR +15 dB",
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "receiver SNR +12 dB",
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "receiver SNR +10 dB",
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "receiver SNR +8 dB",
+   "ok": 118,
+   "n": 120,
+   "rate": 0.9833333333333333,
+   "lo": 0.9412628731870861,
+   "hi": 0.9954175314588486
+  },
+  {
+   "tag": "receiver SNR +6 dB",
+   "ok": 42,
+   "n": 120,
+   "rate": 0.35,
+   "lo": 0.27051765896559277,
+   "hi": 0.4387884223511861
+  }
+ ],
+ "F2": [
+  {
+   "tag": "burst +20 dB above programme audio",
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "burst +15 dB above programme audio",
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "burst +10 dB above programme audio",
+   "ok": 100,
+   "n": 120,
+   "rate": 0.8333333333333334,
+   "lo": 0.756545606089762,
+   "hi": 0.8894408798729518
+  },
+  {
+   "tag": "burst +6 dB above programme audio",
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513
+  },
+  {
+   "tag": "burst +3 dB above programme audio",
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513
+  },
+  {
+   "tag": "burst +0 dB above programme audio",
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513
+  },
+  {
+   "tag": "burst -3 dB above programme audio",
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513
+  }
+ ],
+ "F3": [
+  {
+   "tag": "missed first 0 ms of the burst",
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "missed first 50 ms of the burst",
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513
+  },
+  {
+   "tag": "missed first 100 ms of the burst",
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513
+  },
+  {
+   "tag": "missed first 200 ms of the burst",
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513
+  },
+  {
+   "tag": "missed first 400 ms of the burst",
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513
+  }
+ ]
+}

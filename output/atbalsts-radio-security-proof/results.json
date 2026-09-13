@@ -1,0 +1,124 @@
+{
+  "generated": "2026-09-09T19:31:05.415Z",
+  "node": "v22.17.1",
+  "checks": [
+    {
+      "name": "RFC 9180 base/X25519/AES128: deterministic encapsulation, 257 encryptions and 257 decryptions, 3 exports in both contexts",
+      "passed": true
+    },
+    {
+      "name": "RFC 8032 Ed25519 test 1: expected public key and signature, verify and tamper rejection",
+      "passed": true
+    },
+    {
+      "name": "Exact sealed report is 314 bytes; intended centre recovers all fields",
+      "passed": true
+    },
+    {
+      "name": "Relay public key and unrelated private key cannot decrypt",
+      "passed": true
+    },
+    {
+      "name": "Fresh encryption of identical report gives different encapsulation and ciphertext",
+      "passed": true
+    },
+    {
+      "name": "One-bit mutation at EACH of 314 envelope byte positions rejected",
+      "passed": true
+    },
+    {
+      "name": "Relabel destination to an alias for same key still fails cryptographic binding",
+      "passed": true
+    },
+    {
+      "name": "Replay decrypts at crypto layer but queue and centre deduplicate by full object hash",
+      "passed": true
+    },
+    {
+      "name": "Opaque gateway export contains ciphertext only, keeps exact bytes, enforces quota",
+      "passed": true
+    },
+    {
+      "name": "Malformed size, extra fields, oversized UTF-8 text and invalid coordinates rejected",
+      "passed": true
+    },
+    {
+      "name": "Deliberately false but well-formed report stays unverified and has no public-state effects",
+      "passed": true
+    },
+    {
+      "name": "COSE_Sign1 exact profile accepts authorized complete snapshot and rejects private objects",
+      "passed": true
+    },
+    {
+      "name": "One-bit mutation at EACH public object byte position rejected",
+      "passed": true
+    },
+    {
+      "name": "Wrong signer, unknown key ID, wrong area, wrong epoch and incomplete snapshot rejected",
+      "passed": true
+    },
+    {
+      "name": "Newer complete snapshot withdraws situation; replay cannot resurrect it; duplicate is harmless",
+      "passed": true
+    },
+    {
+      "name": "Expired signed data and unknown clock are explicitly distinguished from current data",
+      "passed": true
+    },
+    {
+      "name": "Independent Python cryptography: JS→Python decrypt, Python→JS decrypt, Ed25519 verify",
+      "passed": true
+    },
+    {
+      "name": "Sealed report → existing modem → 16-bit PCM WAV → streaming decoder → opaque relay → centre plaintext",
+      "passed": true
+    },
+    {
+      "name": "Signed area snapshot → PCM WAV → streaming decoder → verified local app state",
+      "passed": true
+    }
+  ],
+  "measurements": {
+    "sealed-report": {
+      "objectBytes": 314,
+      "framesPerPass": 3,
+      "repeats": 2,
+      "decodedFrames": 6,
+      "failedCandidates": 0,
+      "wavSeconds": 8.588
+    },
+    "public-snapshot": {
+      "objectBytes": 378,
+      "framesPerPass": 4,
+      "repeats": 2,
+      "decodedFrames": 8,
+      "failedCandidates": 0,
+      "wavSeconds": 11.284
+    },
+    "reportCborBytes": 72,
+    "publicPayloadBytes": 296,
+    "privateMutationCases": 314,
+    "publicMutationCases": 378
+  },
+  "officialVectors": {
+    "suite": "mode=0, kem=0x0020, kdf=0x0001, aead=0x0001",
+    "encryptions": 257,
+    "decryptions": 257,
+    "exporterChecks": 6,
+    "encapsulationChecks": 1
+  },
+  "independentImplementation": {
+    "cryptography": "50.0.1",
+    "jsToPython": true,
+    "pythonToJs": true,
+    "ed25519Verification": true
+  },
+  "totalChecks": 19,
+  "limitations": [
+    "Software audio loop only: no new speaker/microphone, FM or LoRa field test.",
+    "No production integration, key provisioning, hardware key custody or persistent transactional storage.",
+    "Negative tests are evidence, not a cryptographic proof or independent security audit.",
+    "Python independently verifies Ed25519 input; full COSE parsing is tested in JS only."
+  ]
+}

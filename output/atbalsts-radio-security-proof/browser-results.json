@@ -1,0 +1,17 @@
+{
+  "secureContext": true,
+  "online": false,
+  "privateRoundtrip": true,
+  "wrongKeyRejected": true,
+  "signedPublicState": true,
+  "reportBytes": 314,
+  "browser": "152.0.7977.83",
+  "externalRequests": 0,
+  "wireframe": {
+    "navigationPassed": true,
+    "deliveryRemainsUnconfirmed": true,
+    "previewUsesPlainText": true,
+    "screenshotsTaken": 0
+  },
+  "limitation": "Fresh headless desktop Chrome, offline after module load; not an installed PWA cold-start or physical-phone test."
+}

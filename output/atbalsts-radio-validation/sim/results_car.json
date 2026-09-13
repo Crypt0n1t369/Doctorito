@@ -1,0 +1,348 @@
+{
+ "J1": [
+  {
+   "tag": "DRR -12 dB  (~176 cm from a speaker)",
+   "guard": 64,
+   "ok": 119,
+   "n": 120,
+   "rate": 0.9916666666666667,
+   "lo": 0.9543025846256777,
+   "hi": 0.9985274821693252
+  },
+  {
+   "tag": "DRR  -9 dB  (~124 cm from a speaker)",
+   "guard": 64,
+   "ok": 113,
+   "n": 120,
+   "rate": 0.9416666666666667,
+   "lo": 0.8844727405319686,
+   "hi": 0.9714593533686271
+  },
+  {
+   "tag": "DRR  -6 dB  (~88 cm from a speaker)",
+   "guard": 64,
+   "ok": 115,
+   "n": 120,
+   "rate": 0.9583333333333334,
+   "lo": 0.9061578707045692,
+   "hi": 0.9820735474941622
+  },
+  {
+   "tag": "DRR  -3 dB  (~62 cm from a speaker)",
+   "guard": 64,
+   "ok": 117,
+   "n": 120,
+   "rate": 0.975,
+   "lo": 0.9290687625956524,
+   "hi": 0.9914619799012145
+  },
+  {
+   "tag": "DRR  +0 dB  (~44 cm from a speaker)",
+   "guard": 64,
+   "ok": 119,
+   "n": 120,
+   "rate": 0.9916666666666667,
+   "lo": 0.9543025846256777,
+   "hi": 0.9985274821693252
+  },
+  {
+   "tag": "DRR  +3 dB  (~31 cm from a speaker)",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "DRR  +6 dB  (~22 cm from a speaker)",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "DRR  +9 dB  (~16 cm from a speaker)",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "DRR +12 dB  (~11 cm from a speaker)",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  }
+ ],
+ "J2": [
+  {
+   "tag": "guard 4 ms, car cabin, DRR 0 dB",
+   "guard": 32,
+   "ok": 107,
+   "n": 120,
+   "rate": 0.8916666666666667,
+   "lo": 0.8234449199472613,
+   "hi": 0.9355892010589275
+  },
+  {
+   "tag": "guard 8 ms, car cabin, DRR 0 dB",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "guard 16 ms, car cabin, DRR 0 dB",
+   "guard": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "guard 32 ms, car cabin, DRR 0 dB",
+   "guard": 256,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  }
+ ],
+ "J2room": [
+  {
+   "tag": "guard 4 ms, living room, DRR +6 dB",
+   "guard": 32,
+   "ok": 115,
+   "n": 120,
+   "rate": 0.9583333333333334,
+   "lo": 0.9061578707045692,
+   "hi": 0.9820735474941622
+  },
+  {
+   "tag": "guard 8 ms, living room, DRR +6 dB",
+   "guard": 64,
+   "ok": 117,
+   "n": 120,
+   "rate": 0.975,
+   "lo": 0.9290687625956524,
+   "hi": 0.9914619799012145
+  },
+  {
+   "tag": "guard 16 ms, living room, DRR +6 dB",
+   "guard": 128,
+   "ok": 119,
+   "n": 120,
+   "rate": 0.9916666666666667,
+   "lo": 0.9543025846256777,
+   "hi": 0.9985274821693252
+  },
+  {
+   "tag": "guard 32 ms, living room, DRR +6 dB",
+   "guard": 256,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  }
+ ],
+ "J3": [
+  {
+   "tag": "phone touching the speaker grille (~3 cm) \u00b7 parked, engine off",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr": 23,
+   "snr": 25,
+   "place": "phone touching the speaker grille (~3 cm)",
+   "cond": "parked, engine off"
+  },
+  {
+   "tag": "phone touching the speaker grille (~3 cm) \u00b7 city, 50 km/h",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr": 23,
+   "snr": 15,
+   "place": "phone touching the speaker grille (~3 cm)",
+   "cond": "city, 50 km/h"
+  },
+  {
+   "tag": "phone touching the speaker grille (~3 cm) \u00b7 highway, 100 km/h",
+   "guard": 64,
+   "ok": 98,
+   "n": 120,
+   "rate": 0.8166666666666667,
+   "lo": 0.7379892641067634,
+   "hi": 0.8756978975578147,
+   "drr": 23,
+   "snr": 8,
+   "place": "phone touching the speaker grille (~3 cm)",
+   "cond": "highway, 100 km/h"
+  },
+  {
+   "tag": "phone held at the speaker (~10 cm) \u00b7 parked, engine off",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr": 13,
+   "snr": 25,
+   "place": "phone held at the speaker (~10 cm)",
+   "cond": "parked, engine off"
+  },
+  {
+   "tag": "phone held at the speaker (~10 cm) \u00b7 city, 50 km/h",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr": 13,
+   "snr": 15,
+   "place": "phone held at the speaker (~10 cm)",
+   "cond": "city, 50 km/h"
+  },
+  {
+   "tag": "phone held at the speaker (~10 cm) \u00b7 highway, 100 km/h",
+   "guard": 64,
+   "ok": 102,
+   "n": 120,
+   "rate": 0.85,
+   "lo": 0.7753231505975375,
+   "hi": 0.9029626596633118,
+   "drr": 13,
+   "snr": 8,
+   "place": "phone held at the speaker (~10 cm)",
+   "cond": "highway, 100 km/h"
+  },
+  {
+   "tag": "phone in a dash cradle (~30 cm) \u00b7 parked, engine off",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr": 3,
+   "snr": 25,
+   "place": "phone in a dash cradle (~30 cm)",
+   "cond": "parked, engine off"
+  },
+  {
+   "tag": "phone in a dash cradle (~30 cm) \u00b7 city, 50 km/h",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr": 3,
+   "snr": 15,
+   "place": "phone in a dash cradle (~30 cm)",
+   "cond": "city, 50 km/h"
+  },
+  {
+   "tag": "phone in a dash cradle (~30 cm) \u00b7 highway, 100 km/h",
+   "guard": 64,
+   "ok": 21,
+   "n": 120,
+   "rate": 0.175,
+   "lo": 0.11740448670592563,
+   "hi": 0.25275868948042857,
+   "drr": 3,
+   "snr": 8,
+   "place": "phone in a dash cradle (~30 cm)",
+   "cond": "highway, 100 km/h"
+  },
+  {
+   "tag": "phone on the passenger seat (~50 cm) \u00b7 parked, engine off",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr": -1,
+   "snr": 25,
+   "place": "phone on the passenger seat (~50 cm)",
+   "cond": "parked, engine off"
+  },
+  {
+   "tag": "phone on the passenger seat (~50 cm) \u00b7 city, 50 km/h",
+   "guard": 64,
+   "ok": 119,
+   "n": 120,
+   "rate": 0.9916666666666667,
+   "lo": 0.9543025846256777,
+   "hi": 0.9985274821693252,
+   "drr": -1,
+   "snr": 15,
+   "place": "phone on the passenger seat (~50 cm)",
+   "cond": "city, 50 km/h"
+  },
+  {
+   "tag": "phone on the passenger seat (~50 cm) \u00b7 highway, 100 km/h",
+   "guard": 64,
+   "ok": 3,
+   "n": 120,
+   "rate": 0.025,
+   "lo": 0.00853802009878548,
+   "hi": 0.07093123740434756,
+   "drr": -1,
+   "snr": 8,
+   "place": "phone on the passenger seat (~50 cm)",
+   "cond": "highway, 100 km/h"
+  }
+ ],
+ "J4": [
+  {
+   "tag": "cheap loudspeaker",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "radio loudspeaker",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "car loudspeaker",
+   "guard": 64,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  }
+ ]
+}

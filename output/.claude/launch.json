@@ -1,0 +1,26 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "atbalsts-demo",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "atbalsts-radio-validation/demo/serve.py",
+        "--port",
+        "8000"
+      ],
+      "port": 8000
+    },
+    {
+      "name": "cicada",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "cicada",
+        "run",
+        "dev"
+      ],
+      "port": 4137
+    }
+  ]
+}

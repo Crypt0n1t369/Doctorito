@@ -1,0 +1,50 @@
+{
+  "statistics": {
+    "session": "3ikpsj6w",
+    "exported_utc": "2026-09-09T14:11:04.070Z",
+    "active_seconds": 30.68,
+    "first_object_seconds": 19.05779999999702,
+    "detected_bursts": 24,
+    "frames_ok": 17,
+    "frames_failed": 7,
+    "detected_frame_success_fraction": 0.7083333333333334,
+    "objects_verified": 1,
+    "status_records_applied": 180,
+    "body_bytes": 904,
+    "signed_object_bytes": 968,
+    "unique_fragments_needed_for_object": 9,
+    "body_bits_per_second": 235.72359843546283,
+    "body_bytes_per_second": 29.465449804432854,
+    "registry_preloaded": 803,
+    "facilities_with_status": 180,
+    "registry_status_coverage_fraction": 0.22415940224159403,
+    "situations_received": 0,
+    "peak_max": 3.1908,
+    "windows_above_one": 5,
+    "high_peak_time_range": [
+      6,
+      7
+    ],
+    "linear_180_second_projection_bytes_NOT_measured": 5303.780964797914
+  },
+  "outcomes": [
+    {
+      "outcome": "Decoded",
+      "count": 17,
+      "detected_total": 24,
+      "share": 0.7083333333333334,
+      "session": "3ikpsj6w",
+      "source_mode": "microphone",
+      "active_seconds": 30.68
+    },
+    {
+      "outcome": "Failed",
+      "count": 7,
+      "detected_total": 24,
+      "share": 0.2916666666666667,
+      "session": "3ikpsj6w",
+      "source_mode": "microphone",
+      "active_seconds": 30.68
+    }
+  ]
+}

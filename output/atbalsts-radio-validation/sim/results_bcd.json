@@ -1,0 +1,456 @@
+{
+ "B": [
+  {
+   "tag": "DRR +12 dB, babble SNR +30 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr_db": 12,
+   "snr_db": 30
+  },
+  {
+   "tag": "DRR +12 dB, babble SNR +25 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr_db": 12,
+   "snr_db": 25
+  },
+  {
+   "tag": "DRR +12 dB, babble SNR +20 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr_db": 12,
+   "snr_db": 20
+  },
+  {
+   "tag": "DRR +12 dB, babble SNR +15 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr_db": 12,
+   "snr_db": 15
+  },
+  {
+   "tag": "DRR +12 dB, babble SNR +12 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr_db": 12,
+   "snr_db": 12
+  },
+  {
+   "tag": "DRR +12 dB, babble SNR +10 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr_db": 12,
+   "snr_db": 10
+  },
+  {
+   "tag": "DRR +12 dB, babble SNR +8 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 118,
+   "n": 120,
+   "rate": 0.9833333333333333,
+   "lo": 0.9412628731870861,
+   "hi": 0.9954175314588486,
+   "drr_db": 12,
+   "snr_db": 8
+  },
+  {
+   "tag": "DRR +12 dB, babble SNR +6 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 44,
+   "n": 120,
+   "rate": 0.36666666666666664,
+   "lo": 0.28582798260490794,
+   "hi": 0.4557774230100067,
+   "drr_db": 12,
+   "snr_db": 6
+  },
+  {
+   "tag": "DRR +6 dB, babble SNR +30 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "drr_db": 6,
+   "snr_db": 30
+  },
+  {
+   "tag": "DRR +6 dB, babble SNR +25 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 119,
+   "n": 120,
+   "rate": 0.9916666666666667,
+   "lo": 0.9543025846256777,
+   "hi": 0.9985274821693252,
+   "drr_db": 6,
+   "snr_db": 25
+  },
+  {
+   "tag": "DRR +6 dB, babble SNR +20 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 118,
+   "n": 120,
+   "rate": 0.9833333333333333,
+   "lo": 0.9412628731870861,
+   "hi": 0.9954175314588486,
+   "drr_db": 6,
+   "snr_db": 20
+  },
+  {
+   "tag": "DRR +6 dB, babble SNR +15 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 114,
+   "n": 120,
+   "rate": 0.95,
+   "lo": 0.8951958053541377,
+   "hi": 0.9768859506955258,
+   "drr_db": 6,
+   "snr_db": 15
+  },
+  {
+   "tag": "DRR +6 dB, babble SNR +12 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 103,
+   "n": 120,
+   "rate": 0.8583333333333333,
+   "lo": 0.7848035127258367,
+   "hi": 0.9096319596840804,
+   "drr_db": 6,
+   "snr_db": 12
+  },
+  {
+   "tag": "DRR +6 dB, babble SNR +10 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 74,
+   "n": 120,
+   "rate": 0.6166666666666667,
+   "lo": 0.5273391477284313,
+   "hi": 0.6987561223585186,
+   "drr_db": 6,
+   "snr_db": 10
+  },
+  {
+   "tag": "DRR +6 dB, babble SNR +8 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 8,
+   "n": 120,
+   "rate": 0.06666666666666667,
+   "lo": 0.03416489747129058,
+   "hi": 0.12605267077718166,
+   "drr_db": 6,
+   "snr_db": 8
+  },
+  {
+   "tag": "DRR +6 dB, babble SNR +6 dB",
+   "guard": 64,
+   "payload": 128,
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513,
+   "drr_db": 6,
+   "snr_db": 6
+  }
+ ],
+ "C": [
+  {
+   "tag": "reference (full chain)",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "no broadcast processing",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "no compressor (ratio 1)",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "severe clipping (1 dB headroom)",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "no clipping",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "no loudspeaker model",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "anechoic (no room)",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "long reverb RT60 0.9 s",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "no mic AGC",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "PHONE NOISE SUPPRESSION ON",
+   "guard": 64,
+   "payload": 128,
+   "ok": 40,
+   "n": 120,
+   "rate": 0.3333333333333333,
+   "lo": 0.255316102227993,
+   "hi": 0.4216906547906502
+  },
+  {
+   "tag": "clock offset 0 ppm",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "clock offset 200 ppm",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "clock offset 1000 ppm",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "guard 4 ms (burst 0.97 s)",
+   "guard": 32,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "guard 8 ms (burst 1.06 s)",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "guard 16 ms (burst 1.26 s)",
+   "guard": 128,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  }
+ ],
+ "D": [
+  {
+   "tag": "85-byte modem payload",
+   "guard": 64,
+   "payload": 85,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "burst_s": 0.824
+  },
+  {
+   "tag": "128-byte modem payload",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "burst_s": 1.064
+  },
+  {
+   "tag": "170-byte modem payload",
+   "guard": 64,
+   "payload": 170,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "burst_s": 1.344
+  },
+  {
+   "tag": "255-byte modem payload",
+   "guard": 64,
+   "payload": 255,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0,
+   "burst_s": 1.864
+  }
+ ],
+ "E": [
+  {
+   "tag": "   0 ms dropout mid-burst",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": "  50 ms dropout mid-burst",
+   "guard": 64,
+   "payload": 128,
+   "ok": 120,
+   "n": 120,
+   "rate": 1.0,
+   "lo": 0.9689797289440706,
+   "hi": 1.0
+  },
+  {
+   "tag": " 100 ms dropout mid-burst",
+   "guard": 64,
+   "payload": 128,
+   "ok": 118,
+   "n": 120,
+   "rate": 0.9833333333333333,
+   "lo": 0.9412628731870861,
+   "hi": 0.9954175314588486
+  },
+  {
+   "tag": " 250 ms dropout mid-burst",
+   "guard": 64,
+   "payload": 128,
+   "ok": 11,
+   "n": 120,
+   "rate": 0.09166666666666666,
+   "lo": 0.0519566467894248,
+   "hi": 0.15670990790625097
+  },
+  {
+   "tag": " 500 ms dropout mid-burst",
+   "guard": 64,
+   "payload": 128,
+   "ok": 0,
+   "n": 120,
+   "rate": 0.0,
+   "lo": 0.0,
+   "hi": 0.031020271055929513
+  }
+ ]
+}

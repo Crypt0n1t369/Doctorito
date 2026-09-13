@@ -1,0 +1,134 @@
+[
+ {
+  "drr": 9,
+  "snr": 8,
+  "payload": 85,
+  "success": 0.875,
+  "goodput": 56.21508379888269,
+  "frames": 21,
+  "p_one_pass": 0.06055766392718898,
+  "p_two_pass": 0.7184095301156721,
+  "two_pass_s": 45.1
+ },
+ {
+  "drr": 9,
+  "snr": 8,
+  "payload": 128,
+  "success": 0.7666666666666667,
+  "goodput": 65.34753932014206,
+  "frames": 13,
+  "p_one_pass": 0.03161444462235493,
+  "p_two_pass": 0.4829827927395673,
+  "two_pass_s": 34.2
+ },
+ {
+  "drr": 9,
+  "snr": 8,
+  "payload": 170,
+  "success": 0.7416666666666667,
+  "goodput": 71.65411961522375,
+  "frames": 10,
+  "p_one_pass": 0.050360218527971096,
+  "p_two_pass": 0.5012387271100419,
+  "two_pass_s": 31.9
+ },
+ {
+  "drr": 9,
+  "snr": 8,
+  "payload": 255,
+  "success": 0.6833333333333333,
+  "goodput": 77.25480920845159,
+  "frames": 6,
+  "p_one_pass": 0.10181121915723595,
+  "p_two_pass": 0.5304576090625722,
+  "two_pass_s": 25.4
+ },
+ {
+  "drr": 6,
+  "snr": 12,
+  "payload": 85,
+  "success": 0.9333333333333333,
+  "goodput": 59.96275605214154,
+  "frames": 21,
+  "p_one_pass": 0.2348401283542258,
+  "p_two_pass": 0.9107003525059719,
+  "two_pass_s": 45.1
+ },
+ {
+  "drr": 6,
+  "snr": 12,
+  "payload": 128,
+  "success": 0.85,
+  "goodput": 72.45053272450532,
+  "frames": 13,
+  "p_one_pass": 0.12090549356574626,
+  "p_two_pass": 0.7439058241578584,
+  "two_pass_s": 34.2
+ },
+ {
+  "drr": 6,
+  "snr": 12,
+  "payload": 170,
+  "success": 0.85,
+  "goodput": 82.12045169385195,
+  "frames": 10,
+  "p_one_pass": 0.1968744043407226,
+  "p_two_pass": 0.7964667694434978,
+  "two_pass_s": 31.9
+ },
+ {
+  "drr": 6,
+  "snr": 12,
+  "payload": 255,
+  "success": 0.8,
+  "goodput": 90.4446546830653,
+  "frames": 6,
+  "p_one_pass": 0.2621440000000001,
+  "p_two_pass": 0.7827577896959999,
+  "two_pass_s": 25.4
+ },
+ {
+  "drr": 6,
+  "snr": 10,
+  "payload": 85,
+  "success": 0.65,
+  "goodput": 41.759776536312856,
+  "frames": 21,
+  "p_one_pass": 0.00011780954793617752,
+  "p_two_pass": 0.06429683981330048,
+  "two_pass_s": 45.1
+ },
+ {
+  "drr": 6,
+  "snr": 10,
+  "payload": 128,
+  "success": 0.55,
+  "goodput": 46.87975646879757,
+  "frames": 13,
+  "p_one_pass": 0.0004214198259757207,
+  "p_two_pass": 0.05278359822529906,
+  "two_pass_s": 34.2
+ },
+ {
+  "drr": 6,
+  "snr": 10,
+  "payload": 170,
+  "success": 0.55,
+  "goodput": 53.13676286072773,
+  "frames": 10,
+  "p_one_pass": 0.0025329516211914085,
+  "p_two_pass": 0.10406553404635709,
+  "two_pass_s": 31.9
+ },
+ {
+  "drr": 6,
+  "snr": 10,
+  "payload": 255,
+  "success": 0.38333333333333336,
+  "goodput": 43.33806370230212,
+  "frames": 6,
+  "p_one_pass": 0.0031729228609396446,
+  "p_two_pass": 0.05664771769894445,
+  "two_pass_s": 25.4
+ }
+]

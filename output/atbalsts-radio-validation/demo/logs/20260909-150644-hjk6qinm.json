@@ -1,0 +1,41 @@
+{
+ "exercise": true,
+ "session": "hjk6qinm",
+ "generated": "2026-09-09T12:06:44.243Z",
+ "page": {
+  "url": "http://localhost:8000/receiver.html",
+  "framed": false,
+  "secureContext": true,
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Claude/1.49585.0 Chrome/152.0.7977.76 Safari/537.36",
+  "language": "en-GB",
+  "screen": "1680x1050"
+ },
+ "input": {
+  "mode": "idle",
+  "microphone": null,
+  "lastError": null,
+  "activeSeconds": 0,
+  "levelSamples": 0,
+  "levelPeakMax": 0,
+  "fractionAboveNoiseFloor": 0
+ },
+ "decode": {
+  "burstsHeard": 0,
+  "framesOk": 0,
+  "framesFailed": 0,
+  "objectsVerified": 0,
+  "recordsApplied": 0,
+  "verifiedBytes": 0,
+  "firstObjectSeconds": null,
+  "verifiedBitsPerSecond": 0,
+  "decodeRate": null
+ },
+ "result": "no audio captured — input never started",
+ "state": {
+  "registry": 803,
+  "withStatus": 0,
+  "situations": 0
+ },
+ "levels": [],
+ "log": []
+}

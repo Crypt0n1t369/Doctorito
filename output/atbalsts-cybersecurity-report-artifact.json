@@ -1,0 +1,1205 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Atbalsts Security and Product Readiness",
+    "description": "A decision-oriented cybersecurity, compliance, and modular product architecture path based on the latest repository and live-production evidence.",
+    "generatedAt": "2026-09-10T14:07:51+03:00",
+    "sources": [
+      {
+        "id": "repo-snapshot",
+        "label": "Atbalsts repository at origin/main 6636f6f",
+        "href": "https://github.com/goofis11/palidzi/tree/6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+        "query": {
+          "engine": "SQLite",
+          "description": "Reproducible SQL materialization of source-verified controls inspected at the linked commit.",
+          "executed_at": "2026-09-10T14:07:51+03:00",
+          "filters": [
+            "Commit 6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+            "Current feature branch tree matches origin/main; origin/main is one merge commit ahead",
+            "Open issues may be stale and were checked against source before being treated as current"
+          ],
+          "tables_used": [
+            "src/server.ts",
+            "src/lib/auth/*",
+            "src/lib/storage/*",
+            "src/lib/*-store.ts",
+            "public/sw.js",
+            "supabase/migrations/*",
+            ".github/workflows/*",
+            "wrangler.jsonc",
+            "docs/PLAN.md"
+          ],
+          "language": "sql",
+          "sql": "WITH \"preserve_controls\"(\"order\", \"practice\", \"evidence\", \"next\") AS (\n  VALUES\n    ('01', 'Secure session cookies and origin checks', 'HttpOnly, Secure, SameSite cookies and origin checks protect state-changing routes in source.', 'Centralize policy and test every new service/origin; add CSRF-specific tests where cross-site flows are allowed.'),\n    ('02', 'Fail-closed production configuration', 'Invalid auth providers and missing production storage fail closed in current source.', 'Make the same rule part of deployment policy and post-deploy attestation.'),\n    ('03', 'Deterministic emergency boundary', 'Emergency answers terminate before any model call; deterministic guidance remains available if the model provider fails.', 'Keep this invariant in a shared policy engine and red-team multilingual/obfuscated inputs.'),\n    ('04', 'AI disclosure and bounded authority', 'Citizen and operator surfaces label AI output; the operator assistant produces advice rather than directly mutating state.', 'Add documented intended purpose, redacted/allowlisted context, provider controls, evaluation logs, and a hard no-dispatch/no-publish token.'),\n    ('05', 'Offline cache minimization', 'The service worker allowlists public readiness content and static assets and purges disallowed caches on sign-out.', 'Add a signed/versioned content manifest and fail readiness checks when essential offline resources are missing.'),\n    ('06', 'Atomic publication path', 'Publication and withdrawal use a multi-document commit with revision checks, idempotency, audit entry, and outbox.', 'Move the same transaction/state-machine pattern into incident, mission, approval, and notification workflows.'),\n    ('07', 'Private upload bucket with basic limits', 'Uploads are private and constrained by size and declared image MIME types.', 'Quarantine, inspect real file content, normalize images, strip metadata, scan where appropriate, and delete orphaned/expired objects.'),\n    ('08', 'Repeatable security probes', 'The repository runs 31 focused probes plus typecheck, lint, and production build in CI.', 'Add protected-branch gates, SAST/secret/dependency scanning, SBOM/provenance, environment approval, and verified deployment smoke tests.')\n)\nSELECT \"order\", \"practice\", \"evidence\", \"next\"\nFROM \"preserve_controls\"\nORDER BY \"order\" ASC",
+          "metric_definitions": [
+            "Rows reproduce the reviewed preserve_controls evidence used in this report; qualitative statuses are assessment labels, not a calculated compliance score."
+          ]
+        }
+      },
+      {
+        "id": "release-evidence",
+        "label": "GitHub Actions and live production evidence",
+        "href": "https://github.com/goofis11/palidzi/actions",
+        "query": {
+          "engine": "SQLite",
+          "description": "Reproducible SQL materialization of the release-control observations assembled from the named GitHub Actions runs, repository settings, and public production response.",
+          "executed_at": "2026-09-10T14:07:51+03:00",
+          "filters": [
+            "CI run 34356973421",
+            "Deploy run 34356972836",
+            "Live endpoint https://atbalsts.sortium.co/api/health observed September 10, 2026",
+            "No authenticated or destructive production testing"
+          ],
+          "tables_used": [
+            "GitHub Actions run 34356973421",
+            "GitHub Actions run 34356972836",
+            "GitHub default-branch metadata",
+            "atbalsts.sortium.co response headers and /api/health"
+          ],
+          "language": "sql",
+          "sql": "WITH \"release_controls\"(\"priority\", \"control\", \"status\", \"evidence\") AS (\n  VALUES\n    ('01', 'Production release identity', 'Blocked', 'Deploy run failed because CLOUDFLARE_API_TOKEN was absent; live /api/health reports build = unknown, so source-to-production identity is unproven.'),\n    ('02', 'Operator identity', 'Not production-ready', 'Live mode is shared_passcode with zero named operators; there is no per-user MFA, attributable authorization, or immediate individual revocation.'),\n    ('03', 'Code verification', 'Strong baseline', 'Latest main CI passed npm ci, typecheck, lint, 31 security probes, and a production build.'),\n    ('04', 'Session lifecycle', 'Gap', 'Opaque operator sessions last 8 hours and citizen sessions 30 days; resetting an upstream password does not revoke independent application sessions.'),\n    ('06', 'Mutation integrity', 'Partial', 'Publish and withdraw use atomic commit, idempotency, audit, and outbox; reports, missions, decisions, and other sensitive flows do not yet share that guarantee.'),\n    ('08', 'Browser boundary', 'Partial', 'HSTS, no-sniff, referrer policy, frame-ancestor denial, and no-store exist. Live responses also contain malformed numeric headers, and a full CSP is not enforced.'),\n    ('09', 'Data-plane privilege', 'Concentrated risk', 'The Worker uses a Supabase service-role credential across the application. Compromise crosses citizen, operator, content, and control data.'),\n    ('10', 'Repository governance', 'Gap', 'The default branch reports protected = false. Code, dependency, and secret scanning could not be evidenced through the available GitHub endpoints.'),\n    ('11', 'Deployment topology', 'Concentrated risk', 'Public PWA, reports, operator control, volunteer missions, AI, and external live-data ingestion share one Worker and domain.'),\n    ('05', 'Distributed abuse controls', 'Gap', 'Current in-memory rate limiters are per Worker isolate and explicitly fail open; authentication, context, model, and ingest abuse require a shared enforcement point.'),\n    ('07', 'Audit independence', 'Gap', 'Several audit collections are mutable, capped documents in the same privileged storage trust domain; they are not tamper-evident or independently retained.')\n)\nSELECT \"priority\", \"control\", \"status\", \"evidence\"\nFROM \"release_controls\"\nORDER BY \"priority\" ASC",
+          "metric_definitions": [
+            "Rows reproduce the reviewed release_controls evidence used in this report; qualitative statuses are assessment labels, not a calculated compliance score."
+          ]
+        }
+      },
+      {
+        "id": "npm-audit",
+        "label": "npm audit on the reviewed lockfile",
+        "href": "https://github.com/goofis11/palidzi/blob/6636f6fae01bba5a4a9697c196638b7f0ee84ea9/package-lock.json",
+        "query": {
+          "engine": "SQLite",
+          "query": "npm audit --json",
+          "language": "sql",
+          "description": "Reproducible SQL materialization of the reviewed npm audit severity totals and package-path notes; the values originate from npm audit --json on the linked lockfile.",
+          "executed_at": "2026-09-10T14:07:51+03:00",
+          "filters": [
+            "Repository package-lock.json at the reviewed tree",
+            "Counts include production and development dependency paths",
+            "Presence in the dependency graph is not proof of runtime exploitability"
+          ],
+          "metric_definitions": [
+            "Advisories are counted using npm's total vulnerability counts by severity.",
+            "The reviewed result contains 9 advisories: 6 high, 3 moderate, 0 critical, and 0 low."
+          ],
+          "tables_used": [
+            "inline reviewed npm audit result",
+            "package-lock.json"
+          ],
+          "sql": "WITH npm_audit(severity, advisories, affected_packages, environment, audit_date, assessment, sort_order) AS (\n  VALUES\n    ('High', 6, '@cloudflare/vite-plugin, miniflare, wrangler, js-yaml, sharp, undici', 'Mixed dependency graph; several paths are build/deployment tooling', '2026-09-10', 'Review reachability and upgrade deliberately before the next trusted release', 1),\n    ('Moderate', 3, '@lovable.dev/vite-tanstack-config, env-runner, nitro', 'Primarily framework/build chain', '2026-09-10', 'Pin compatible patched versions or document time-bounded exceptions', 2),\n    ('Critical', 0, 'None reported', 'Current lockfile', '2026-09-10', 'No critical advisory reported; this is not a reachability assessment', 3),\n    ('Low', 0, 'None reported', 'Current lockfile', '2026-09-10', 'No low advisory reported', 4)\n)\nSELECT severity, advisories, affected_packages, environment, audit_date, assessment\nFROM npm_audit\nORDER BY sort_order"
+        }
+      },
+      {
+        "id": "legal-index",
+        "label": "Official Latvian and EU legal sources indexed in the report",
+        "query": {
+          "engine": "SQLite",
+          "description": "Reproducible SQL materialization of the legal applicability screen; row conclusions were derived from the named official publications and remain conditional on entity, product, deployment, customer, and intended-use facts.",
+          "executed_at": "2026-09-10T14:07:51+03:00",
+          "filters": [
+            "Latvia and European Union",
+            "Law and guidance current as reviewed September 10, 2026",
+            "Not a formal legal opinion"
+          ],
+          "tables_used": [
+            "Nacionālās kiberdrošības likums",
+            "Ministru kabineta noteikumi Nr. 397",
+            "Regulation (EU) 2016/679",
+            "Regulation (EU) 2024/2847",
+            "Regulation (EU) 2024/1689",
+            "Valsts informācijas sistēmu likums"
+          ],
+          "language": "sql",
+          "sql": "WITH \"compliance_baseline\"(\"priority\", \"framework\", \"fit\", \"action\", \"official_reference\") AS (\n  VALUES\n    ('01', 'EU GDPR', 'Directly relevant now for real-person use', 'Complete data map, purposes/legal bases, controller/processor roles, privacy notice, processor terms, subprocessor/transfers review, retention/deletion, rights handling, breach process, and DPIA before a real-person pilot.', 'EUR-Lex Regulation (EU) 2016/679; DVI DPIA guidance'),\n    ('02', 'Latvian National Cybersecurity Law / NIS2', 'Conditional on entity, service, size, designation, and customer role', 'Perform and record an applicability self-assessment. If in scope, appoint the responsible security role and operationalize 24-hour early warning, 72-hour reporting, and one-month final reporting.', 'likumi.lv: Nacionālās kiberdrošības likums'),\n    ('03', 'Cabinet Regulation No. 397', 'Mandatory for covered entities; best-practice target regardless', 'Use it as the control baseline for asset/data classification, MFA/access, segmentation, logging, backups and restore tests, risk/continuity plans, incidents, supplier clauses, and synthetic test data.', 'likumi.lv: Minimālās kiberdrošības prasības'),\n    ('04', 'EU Cyber Resilience Act', 'Product classification needed immediately', 'Determine whether each sellable slice is a product with digital elements and who is the manufacturer. If in scope, stand up PSIRT/reporting ownership now; build SBOM, vulnerability handling, secure-update/support-period evidence, and the technical file.', 'European Commission CRA summary, manufacturer guide, reporting and FAQ'),\n    ('05', 'EU AI Act', 'Transparency relevant now; high-risk status depends on intended use', 'Document intended purpose and Article 6 analysis, maintain visible AI disclosure and AI literacy, keep models advisory/no-write, and either bar dispatch/triage influence or implement the high-risk control set.', 'European Commission AI regulatory framework and transparency guidance'),\n    ('06', 'Latvian state information-system rules', 'Conditional on a public-authority or delegated-state deployment', 'Assess before a government implementation; if applicable, align identity, data minimization, metadata/quality, controlled exchange, and technical requirements from the start.', 'likumi.lv: Valsts informācijas sistēmu likums and general technical requirements'),\n    ('07', 'Voluntary assurance stack', 'Recommended for engineering and procurement', 'Use NIST CSF 2.0 for governance, OWASP ASVS 5 Level 2 plus selected Level 3 items for acceptance, NIST SSDF for delivery, and CIS Controls for operations. Pursue ISO 27001, then 27701/22301/42001 when customer demand justifies certification.', 'NIST, OWASP, CIS, and ISO official publications')\n)\nSELECT \"priority\", \"framework\", \"fit\", \"action\", \"official_reference\"\nFROM \"compliance_baseline\"\nORDER BY \"priority\" ASC",
+          "metric_definitions": [
+            "Rows reproduce the reviewed compliance_baseline evidence used in this report; qualitative statuses are assessment labels, not a calculated compliance score."
+          ]
+        }
+      },
+      {
+        "id": "architecture-review",
+        "label": "Architecture and product-boundary assessment",
+        "href": "https://github.com/goofis11/palidzi/tree/6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+        "query": {
+          "engine": "Threat-model and architecture synthesis",
+          "description": "Recommendations derived from the reviewed code, production exposure, data inventory, existing threat model, open control backlog, and official compliance obligations.",
+          "executed_at": "2026-09-10T14:07:51+03:00",
+          "filters": [
+            "Prioritizes blast-radius reduction, identity, data governance, release integrity, and operational resilience",
+            "Defers cosmetic work and broad rewrites that do not close a material risk",
+            "Assumes government and crisis-response customers may require stronger isolation than a consumer SaaS baseline"
+          ],
+          "tables_used": [
+            "Repository architecture",
+            "Production health and headers",
+            "GitHub issues 31-53",
+            "Pull request 58",
+            "docs/THREAT-MODEL-2026-09-04.md",
+            "docs/PLAN.md"
+          ]
+        }
+      },
+      {
+        "id": "product-architecture",
+        "label": "Atbalsts product-boundary recommendations",
+        "href": "https://github.com/goofis11/palidzi/tree/6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+        "query": {
+          "engine": "SQLite",
+          "language": "sql",
+          "sql": "WITH \"product_slices\"(\"sequence\", \"product\", \"boundary\", \"gate\", \"recommendation\") AS (\n  VALUES\n    (1, 'Readiness Kit', 'Static/local-first PWA containing /72h and radio-exercise content; no login, PII, live feeds, or privileged API.', 'Signed/versioned offline manifest, complete offline test, safe update/rollback, accessible content review.', 'First product. Lowest operational and privacy risk; can ship independently.'),\n    (2, 'Public Map', 'Separate public origin, Worker, cache, and read-only publication store; consumes a one-way versioned snapshot.', 'Explicit public DTO instead of the full published domain object, source/provenance rules, simulation markers, withdrawal propagation, threat-mode policy, and no service-role or operator access.', 'Second product. Keep read-only and independently degradable.'),\n    (3, 'Citizen Intake', 'Separate API/origin, queue and quarantine; dedicated database role and object store; never publishes directly.', 'Distributed abuse controls, identity/session lifecycle, DPIA, retention, DSAR/delete, upload validation, redaction, operator acknowledgment.', 'Release only after ingress and privacy gates; offer without missions first.'),\n    (4, 'Command Centre', 'Private hostname and service identity; dedicated operator state and audit plane; no anonymous public routes.', 'Per-user SSO/eID, MFA, RBAC/capabilities, live revocation, tamper-evident audit, backup/restore, trusted fallback channel.', 'Private pilot only after identity and release provenance are verified.'),\n    (5, 'Volunteer Missions', 'Separate high-impact PII/contact vault and explicit dispatch state machine with professional authorization.', 'DPIA, necessity decision for sensitive competencies, parent-incident/hazard/skill gating, notifications and acknowledgments, duty-of-care and safeguarding policy; merge or supersede the open dispatch-safety PR only after review and tests.', 'Highest-risk slice. Isolate and do not launch broadly until safety PRs and governance are complete.'),\n    (6, 'AI Gateway', 'Optional service that receives allowlisted/redacted projections; separate provider keys, budgets, logs, and kill switch.', 'Prompt-injection boundary, provider/data terms, evaluations, AI Act intended-purpose assessment, no write/publish/dispatch authority.', 'Shared optional service; core products must remain usable when it is disabled.'),\n    (7, 'Source Connectors', 'One ingestion worker and credential set per external source; normalized signed envelopes and freshness/provenance metadata.', 'Budget/rate controls, sanitization before policy checks, schema validation, replay/idempotency, source-specific kill switch, no PII or publication authority.', 'Operate as replaceable adapters, not inside the command or public runtime.')\n)\nSELECT \"sequence\", \"product\", \"boundary\", \"gate\", \"recommendation\"\nFROM \"product_slices\"\nORDER BY \"sequence\" ASC",
+          "description": "Reproducible SQL materialization of the product-slice assessment derived from the reviewed architecture, data inventory, production exposure, threat model, and compliance screen.",
+          "executed_at": "2026-09-10T14:07:51+03:00",
+          "filters": [
+            "Ordered by recommended productization sequence",
+            "Sequence reflects blast radius, data sensitivity, decision authority, and current control maturity",
+            "Not a quantitative compliance score"
+          ],
+          "metric_definitions": [
+            "Sequence is an ordinal implementation recommendation; it is not a measured risk probability."
+          ],
+          "tables_used": [
+            "Repository architecture",
+            "Production health and headers",
+            "docs/THREAT-MODEL-2026-09-04.md",
+            "docs/PLAN.md"
+          ]
+        }
+      },
+      {
+        "id": "roadmap-recommendations",
+        "label": "Atbalsts prioritized security roadmap",
+        "href": "https://github.com/goofis11/palidzi/tree/6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+        "query": {
+          "engine": "SQLite",
+          "language": "sql",
+          "sql": "WITH \"roadmap\"(\"phase_order\", \"window\", \"outcome\", \"work\", \"exit_gate\") AS (\n  VALUES\n    ('0', '0–48 hours', 'Restore release trust and contain the control plane', 'Add a scoped Cloudflare deploy identity and protected production environment; deploy an exact reviewed SHA; verify SHA, migrations, storage and auth; fix malformed headers; reduce public health detail; place the operator surface on a separate protected host with per-user SSO/MFA or disable it; rotate superseded credentials.', 'Production names its commit, post-deploy checks pass, and no shared passcode alone can reach operator actions.'),\n    ('1', 'Days 3–30', 'Establish governance and minimum operational controls', 'Complete data map, legal-basis/role matrix, DPIA, privacy notice, retention and rights workflows; classify CRA/NIS2/AI Act scope; create PSIRT/security contact and incident runbook; add distributed limiting/WAF, branch protection, review gates, dependency/secret/code scanning, SBOM, backup restore test, RPO/RTO and key rotation.', 'A named owner can show control evidence, handle an incident, restore data, revoke access, and explain every sensitive field.'),\n    ('2', 'Days 31–90', 'Create enforceable product and data boundaries', 'Separate public, control, PII, untrusted-ingress and audit planes; normalize per-entity data; introduce versioned DTOs, RBAC/capabilities, session revocation, append-only audit checkpoints, media quarantine/normalization, mission safety acknowledgments, AI gateway, and CSP report-only to enforced rollout.', 'Each product can be deployed, disabled, restored, and tested without granting access to another product''s authority or data.'),\n    ('3', 'Months 3–12', 'Build procurement and conformity evidence', 'Run an independent penetration test and incident/DR exercises; prepare customer security pack; implement CRA technical documentation and support policy; pursue ISO 27001 when pipeline justifies it, adding ISO 27701, 22301 and 42001 according to privacy, continuity and AI scope.', 'Independent testing and evidence support the claims made to customers; no certification claim precedes its actual scope and audit.')\n)\nSELECT \"phase_order\", \"window\", \"outcome\", \"work\", \"exit_gate\"\nFROM \"roadmap\"\nORDER BY \"phase_order\" ASC",
+          "description": "Reproducible SQL materialization of the recommended delivery phases, ordered by harm reduction and prerequisite dependency.",
+          "executed_at": "2026-09-10T14:07:51+03:00",
+          "filters": [
+            "Architecture and control priorities only",
+            "Cosmetic and low-impact work deferred",
+            "Time windows are planning estimates, not contractual commitments"
+          ],
+          "metric_definitions": [
+            "Phase order is a dependency-aware recommendation, not a calculated maturity score."
+          ],
+          "tables_used": [
+            "Repository architecture",
+            "GitHub Actions and issue backlog",
+            "Production public observations",
+            "Official legal and standards screen"
+          ]
+        }
+      },
+      {
+        "id": "law-nkl",
+        "label": "Latvian National Cybersecurity Law",
+        "href": "https://likumi.lv/ta/id/353390-nacionalas-kiberdrosibas-likums"
+      },
+      {
+        "id": "law-mk397",
+        "label": "Latvian Cabinet Regulation No. 397",
+        "href": "https://likumi.lv/ta/id/361481-minimalas-kiberdrosibas-prasibas"
+      },
+      {
+        "id": "law-gdpr",
+        "label": "Regulation (EU) 2016/679 (GDPR)",
+        "href": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679"
+      },
+      {
+        "id": "guidance-dpiA",
+        "label": "Latvian DVI DPIA guidance",
+        "href": "https://www.dvi.gov.lv/lv/jaunums/dviskaidro-NIDA"
+      },
+      {
+        "id": "law-cra",
+        "label": "European Commission CRA overview",
+        "href": "https://digital-strategy.ec.europa.eu/en/policies/cra-summary"
+      },
+      {
+        "id": "guidance-cra-reporting",
+        "label": "European Commission CRA reporting guidance",
+        "href": "https://digital-strategy.ec.europa.eu/en/policies/cra-reporting"
+      },
+      {
+        "id": "law-ai-act",
+        "label": "European Commission AI Act framework",
+        "href": "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai"
+      },
+      {
+        "id": "guidance-ai-transparency",
+        "label": "European Commission AI transparency guidance",
+        "href": "https://digital-strategy.ec.europa.eu/en/policies/guidelines-ai-transparency-obligations"
+      },
+      {
+        "id": "law-state-is",
+        "label": "Latvian State Information Systems Law",
+        "href": "https://likumi.lv/ta/id/62324-valsts-informacijas-sistemu-likums"
+      },
+      {
+        "id": "law-state-tech",
+        "label": "Latvian information-system technical requirements",
+        "href": "https://likumi.lv/ta/id/343549-informacijas-sistemu-visparejas-tehniskas-prasibas"
+      },
+      {
+        "id": "standard-asvs",
+        "label": "OWASP ASVS 5",
+        "href": "https://owasp.org/www-project-application-security-verification-standard/"
+      },
+      {
+        "id": "standard-nist-csf",
+        "label": "NIST Cybersecurity Framework 2.0",
+        "href": "https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20"
+      }
+    ],
+    "charts": [
+      {
+        "id": "dependency-advisories",
+        "title": "Dependency advisories by severity",
+        "subtitle": "npm audit on the reviewed lockfile, September 10, 2026; 9 total and 0 critical.",
+        "showDescription": true,
+        "intent": "comparison",
+        "question": "How many dependency advisories does the current lockfile report at each severity?",
+        "rationale": "A zero-based category bar chart makes the four severity counts directly comparable without implying runtime reachability.",
+        "comparisonContext": {
+          "grain": "npm advisory severity",
+          "denominator": "9 advisories in the current dependency graph",
+          "unit": "advisories"
+        },
+        "type": "bar",
+        "dataset": "dependency_advisories",
+        "sourceId": "npm-audit",
+        "encodings": {
+          "x": {
+            "field": "severity",
+            "type": "ordinal",
+            "label": "Severity"
+          },
+          "y": {
+            "field": "advisories",
+            "type": "quantitative",
+            "aggregate": "none",
+            "format": "number",
+            "label": "Advisories",
+            "unit": "advisories"
+          },
+          "tooltip": [
+            {
+              "field": "severity",
+              "type": "ordinal",
+              "label": "Severity"
+            },
+            {
+              "field": "advisories",
+              "type": "quantitative",
+              "format": "number",
+              "label": "Advisories"
+            },
+            {
+              "field": "affected_packages",
+              "type": "text",
+              "label": "Observed package paths"
+            },
+            {
+              "field": "assessment",
+              "type": "text",
+              "label": "Interpretation"
+            }
+          ]
+        },
+        "xAxisTitle": "Severity",
+        "yAxisTitle": "Advisories",
+        "valueFormat": "number",
+        "layout": "full",
+        "maxRows": 4,
+        "emptyState": "No dependency audit rows were available.",
+        "surface": {
+          "surface": "card",
+          "viewMode": "both",
+          "showControls": false
+        }
+      }
+    ],
+    "tables": [
+      {
+        "id": "release-controls",
+        "title": "Latest-state release and security evidence",
+        "subtitle": "Source at origin/main 6636f6f and public production observations reviewed September 10, 2026.",
+        "showDescription": true,
+        "dataset": "release_controls",
+        "defaultSort": {
+          "field": "priority",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "sourceId": "release-evidence",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "priority",
+            "label": "Order",
+            "type": "text"
+          },
+          {
+            "field": "control",
+            "label": "Control area",
+            "type": "text"
+          },
+          {
+            "field": "status",
+            "label": "Observed status",
+            "type": "text"
+          },
+          {
+            "field": "evidence",
+            "label": "Evidence and implication",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "compliance-baseline",
+        "title": "Compliance and assurance baseline",
+        "subtitle": "Legal applicability is conditional where noted; official references are named in each row.",
+        "showDescription": true,
+        "dataset": "compliance_baseline",
+        "defaultSort": {
+          "field": "priority",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "sourceId": "legal-index",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "priority",
+            "label": "Order",
+            "type": "text"
+          },
+          {
+            "field": "framework",
+            "label": "Framework",
+            "type": "text"
+          },
+          {
+            "field": "fit",
+            "label": "Likely fit",
+            "type": "text"
+          },
+          {
+            "field": "action",
+            "label": "What Atbalsts should do",
+            "type": "text"
+          },
+          {
+            "field": "official_reference",
+            "label": "Official reference",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "preserve-controls",
+        "title": "Controls already worth preserving",
+        "subtitle": "These are source-verified foundations; production verification is called out separately.",
+        "showDescription": true,
+        "dataset": "preserve_controls",
+        "defaultSort": {
+          "field": "order",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "sourceId": "repo-snapshot",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "order",
+            "label": "Order",
+            "type": "text"
+          },
+          {
+            "field": "practice",
+            "label": "Practice",
+            "type": "text"
+          },
+          {
+            "field": "evidence",
+            "label": "What exists",
+            "type": "text"
+          },
+          {
+            "field": "next",
+            "label": "Preserve and extend",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "product-slices",
+        "title": "Recommended product slices",
+        "subtitle": "Separate deployment and data boundaries are security controls; sequence reflects current readiness and harm potential.",
+        "showDescription": true,
+        "dataset": "product_slices",
+        "defaultSort": {
+          "field": "sequence",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "sourceId": "product-architecture",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "sequence",
+            "label": "Sequence",
+            "type": "number",
+            "format": "number"
+          },
+          {
+            "field": "product",
+            "label": "Product or service",
+            "type": "text"
+          },
+          {
+            "field": "boundary",
+            "label": "Required boundary",
+            "type": "text"
+          },
+          {
+            "field": "gate",
+            "label": "Release gate",
+            "type": "text"
+          },
+          {
+            "field": "recommendation",
+            "label": "Recommendation",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "roadmap",
+        "title": "Prioritized delivery path",
+        "subtitle": "Do the smallest set of work that changes the risk envelope before scaling or certification.",
+        "showDescription": true,
+        "dataset": "roadmap",
+        "defaultSort": {
+          "field": "phase_order",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "sourceId": "roadmap-recommendations",
+        "layout": "full",
+        "columns": [
+          {
+            "field": "phase_order",
+            "label": "Phase",
+            "type": "text"
+          },
+          {
+            "field": "window",
+            "label": "Window",
+            "type": "text"
+          },
+          {
+            "field": "outcome",
+            "label": "Outcome",
+            "type": "text"
+          },
+          {
+            "field": "work",
+            "label": "Priority work",
+            "type": "text"
+          },
+          {
+            "field": "exit_gate",
+            "label": "Exit gate",
+            "type": "text"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "layout": "full",
+        "body": "# Atbalsts Security and Product Readiness"
+      },
+      {
+        "id": "executive-summary",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Executive Summary\n\n- **Do not commercialize the current all-in-one deployment as one product.** The public PWA, citizen intake, operator control plane, volunteer dispatch, AI, external feeds, and high-impact personal data currently share a Worker, domain, privileged Supabase role, and broad failure radius. Keep one codebase if useful, but ship separate deployable products with separate identities, storage roles, secrets, and release gates.\n\n- **The source contains several strong safety primitives, but production is not release-verifiable.** Latest `origin/main` resolves to `6636f6f`; CI passed typecheck, lint, 31 security probes, and a production build. Deployment then failed because the Cloudflare token was absent. The live health response reports build `unknown`, shared-passcode operator authentication, and zero named operators, so the reviewed commit cannot be proven to be the deployed commit.\n\n- **Treat GDPR as the immediate legal baseline; classify NIS2, CRA, and AI Act scope now.** Latvia's national cybersecurity law and Cabinet Regulation No. 397 become mandatory based on entity and service status, but they are also the right operational target for crisis software. CRA vulnerability and severe-incident reporting starts September 11, 2026 for in-scope products. AI transparency duties are already relevant, and emergency dispatch or triage use can move an AI function into the high-risk regime.\n\n- **Launch the low-risk slices first.** The offline readiness kit can become a static/local-first product, followed by a public read-only map fed by an explicit publication projection. Keep intake, the private command centre, volunteer missions, AI, and external connectors behind stronger boundaries until their specific release gates are met."
+      },
+      {
+        "id": "decision",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## The decision is to split the risk envelope before selling the platform\n\nAtbalsts is a useful prototype with credible safety work, but it is not yet a defensible single-tenant crisis-control product or a safe shared SaaS. The main problem is not missing polish. It is **coupled authority**: one compromised Worker or service-role credential can affect public information, private reports, operator actions, mission data, uploads, and AI context.\n\nThe recommended product strategy is a **modular monorepo with separate deployment artifacts**, not long-lived customer or product branches. Branches drift and duplicate security fixes. Stable interfaces and independently releasable security envelopes let the same core support a readiness product, a public map, intake, an operator console, and later volunteer coordination without granting each module the authority of the whole platform.\n\n**Operating rule:** a module may only read the minimum projection it needs, and no public, AI, or untrusted-ingress component may hold publication, dispatch, or high-impact PII authority."
+      },
+      {
+        "id": "release-finding",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## The code is reviewable, but the production release is not yet trustworthy\n\nThe current feature checkout is one merge commit behind `origin/main`, while its file tree is identical to main. That made it safe to inspect without rewriting the user's branch. The latest main CI run succeeded, but the deploy run failed before Cloudflare deployment because `CLOUDFLARE_API_TOKEN` was missing. Production returns a healthy response, yet reports its build as `unknown` and exposes detailed provider, model, storage, and authentication posture.\n\nThis creates a release-control gap: passing tests establish source quality, not production identity. Before any pilot with real people or a procurement claim, the team needs an exact commit-to-production chain, environment approval, migrations/config attestation, rollback evidence, and post-deploy verification."
+      },
+      {
+        "id": "release-table",
+        "type": "table",
+        "tableId": "release-controls",
+        "layout": "full"
+      },
+      {
+        "id": "dependency-finding",
+        "type": "markdown",
+        "layout": "full",
+        "sourceId": "npm-audit",
+        "body": "## Dependency findings need triage, not an automatic upgrade\n\nThe reviewed lockfile reports **9 advisories: 6 high and 3 moderate, with no critical or low findings**. The chains mainly run through Cloudflare/Vite/Wrangler, Nitro, `undici`, `sharp`, and `js-yaml`; several appear to be build or deployment tooling rather than exposed application code.\n\nThe right response is a reachability and bundle review followed by pinned upgrades and a clean rebuild. Do not run an unreviewed broad `npm audit fix`: the suggested resolutions can move major versions and create new deployment risk. Make the release gate depend on exploitable reachability, severity, an approved exception, and an SBOM—not a raw zero-count target."
+      },
+      {
+        "id": "dependency-chart",
+        "type": "chart",
+        "chartId": "dependency-advisories",
+        "layout": "full"
+      },
+      {
+        "id": "compliance-finding",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Compliance is layered; GDPR is the immediate baseline\n\n**GDPR applies to the real-person data model.** Atbalsts can hold identity and contact details, precise locations, emergency contacts, competencies, incident reports, mission participation, and proof images. Crisis free text may reveal health or other special-category information. Citizen chat/context and unsent drafts are also retained in browser storage, which matters on shared devices. No complete controller/privacy notice, retention schedule, or data-rights workflow was found. Before a real-person pilot, complete the data map, purpose and legal-basis matrix, controller/processor allocation, privacy notice, processor terms, subprocessor and transfer review, retention/deletion schedule, rights workflow, breach process, and a DPIA. See the official [GDPR text](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679) and [Latvian DVI DPIA guidance](https://www.dvi.gov.lv/lv/jaunums/dviskaidro-NIDA).\n\n**NIS2-derived Latvian obligations are conditional but strategically important.** The [National Cybersecurity Law](https://likumi.lv/ta/id/353390-nacionalas-kiberdrosibas-likums) applies based on the operator, service, size, designation, and public-sector context. An early-stage vendor may not automatically be in scope, while a municipality or critical customer may be, and contractual controls will flow to suppliers. [Cabinet Regulation No. 397](https://likumi.lv/ta/id/361481-minimalas-kiberdrosibas-prasibas) is therefore the practical operating baseline even before formal designation.\n\n**CRA and AI Act classification cannot wait.** CRA vulnerability and severe-incident reporting begins September 11, 2026 for in-scope products, while the main obligations apply from December 11, 2027. If Atbalsts is made available commercially as software with digital elements, CRA may apply; pure SaaS and transition details require product-specific legal analysis. Use the Commission's [CRA overview](https://digital-strategy.ec.europa.eu/en/policies/cra-summary), [manufacturer guide](https://digital-strategy.ec.europa.eu/en/policies/cra-manufacturers), and [reporting guidance](https://digital-strategy.ec.europa.eu/en/policies/cra-reporting).\n\nFor AI, transparency rules are already relevant. The current labels and deterministic emergency boundary help, but human approval alone does not remove high-risk classification where a system materially evaluates emergency calls, prioritizes response, dispatches first responders, or performs triage. Document the intended purpose against the Commission's [AI Act framework](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai) and [transparency guidance](https://digital-strategy.ec.europa.eu/en/policies/guidelines-ai-transparency-obligations). Government deployment may also trigger Latvia's [State Information Systems Law](https://likumi.lv/ta/id/62324-valsts-informacijas-sistemu-likums) and [general technical requirements](https://likumi.lv/ta/id/343549-informacijas-sistemu-visparejas-tehniskas-prasibas)."
+      },
+      {
+        "id": "compliance-table",
+        "type": "table",
+        "tableId": "compliance-baseline",
+        "layout": "full"
+      },
+      {
+        "id": "existing-controls-finding",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Preserve the safety primitives that already work\n\nThe source is not a blank slate. It has secure cookie attributes and origin checks, production fail-closed provider/storage selection, an explicit no-model emergency path, visible AI labeling, a constrained offline cache allowlist, and atomic publication/withdrawal with idempotency and an outbox.\n\nThose controls should become shared platform libraries with contract tests. The improvement is to extend their guarantees across the whole state machine: mission joins and approvals, profile and session lifecycle, upload quarantine, source ingestion, model context, audit, publication projections, and rollback."
+      },
+      {
+        "id": "existing-controls-table",
+        "type": "table",
+        "tableId": "preserve-controls",
+        "layout": "full"
+      },
+      {
+        "id": "productization-finding",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Productize through deployment boundaries, not feature branches\n\nEach sellable slice should have its own threat model, data inventory, service identity, secrets, database role or project, domain, monitoring, release manifest, and kill switch. Shared business libraries are healthy; shared privileged runtime authority is not.\n\nFor government and crisis-response customers, start with a **dedicated tenant deployment** rather than a shared row-level multi-tenant control plane. It is simpler to explain, test, contain, restore, and contract. Multi-tenancy can follow after identities, row ownership, audit, deletion, backups, and noisy-neighbor controls are proven."
+      },
+      {
+        "id": "product-table",
+        "type": "table",
+        "tableId": "product-slices",
+        "layout": "full"
+      },
+      {
+        "id": "target-architecture",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## The target architecture separates blast radius and decision authority\n\n    Untrusted sources → connector workers → quarantine + normalized event store\n                                                  │\n    Citizens → intake API → PII/contact vault ────┼→ private command centre\n                                                  │        │\n                                                  │        └→ approved action state\n                                                  └→ publication/outbox → public read model\n\n    AI gateway ← allowlisted/redacted projections only; no publish or dispatch authority\n    Audit/backup ← append-only events and off-platform checkpoints in a separate trust domain\n\nThe boundaries should be physical enough to matter: separate Workers or services, separate hostnames, separate credentials, least-privilege Supabase roles or projects, and narrowly scoped service bindings. Runtime feature flags are useful for availability; they are not a security boundary.\n\nUse explicit, versioned allowlist DTOs for public, operator, model, and connector data. Replace growing whole-document collections with normalized per-entity records, foreign keys, ownership rules, versioned state transitions, transactional outbox/audit writes, and idempotency keys. Retain the existing provider abstractions and add ports for publication, object storage, audit, distributed limiting, notifications, model access, clocks, and source connectors.\n\nA public map should consume a one-way, versioned publication snapshot. It must not query the operator domain or carry the Supabase service-role key. The command centre belongs on a separate protected origin with per-user identity, MFA, role/capability checks, live revocation, and a trusted fallback channel outside the same account and domain."
+      },
+      {
+        "id": "roadmap-finding",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## The first 90 days should change the risk envelope\n\nStart with identity, release provenance, data governance, distributed abuse controls, recovery, and trust boundaries. These are prerequisites for a meaningful penetration test, procurement evidence, or certification effort. UI polish and broad framework rewrites can wait.\n\nThe roadmap below is ordered by harm reduction and dependency: establish who may act and what is deployed; define what data exists and why; isolate public, private, sensitive, and untrusted planes; then validate the result independently."
+      },
+      {
+        "id": "roadmap-table",
+        "type": "table",
+        "tableId": "roadmap",
+        "layout": "full"
+      },
+      {
+        "id": "defer",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Defer work that does not yet change a material risk\n\n- Defer lint cleanup, UI polish, stale comments, and minor copy issues unless they hide a safety state.\n- Do not split everything into microservices. Split only where identity, data sensitivity, publication authority, untrusted ingress, or failure isolation requires it.\n- Do not lead with field-level encryption while shared credentials, broad service-role access, session revocation, audit integrity, backups, and retention remain unresolved.\n- Do not pursue SOC 2 unless a target customer requires it. Use [NIST CSF 2.0](https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20) for the operating risk model, [OWASP ASVS 5](https://owasp.org/www-project-application-security-verification-standard/) Level 2 for engineering acceptance, [NIST SSDF](https://csrc.nist.gov/pubs/sp/800/218/final) for delivery, and [CIS Controls v8.1](https://www.cisecurity.org/controls) for operations. Add selected ASVS Level 3 controls to operator, publication, PII, and mission workflows.\n- Do not complete a production multi-tenant control plane or full national eID integration before per-user operator SSO/MFA and tenant isolation are stable.\n- Do not commission the final penetration test until the authentication and deployment boundaries stop moving; do perform focused tests on any real-person pilot boundary.\n\nPursue [ISO/IEC 27001](https://www.iso.org/standard/27001) certification when procurement demand justifies the management-system work. Extend it with [ISO/IEC 27701](https://www.iso.org/standard/27701) for privacy, [ISO 22301](https://www.iso.org/standard/75106.html) for continuity, and [ISO/IEC 42001](https://www.iso.org/standard/42001) if AI becomes a core product capability."
+      },
+      {
+        "id": "further-questions",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Decisions that can change the compliance path\n\n1. Which legal entity will operate Atbalsts, and will it be controller, processor, joint controller, or software supplier for each use case?\n2. Are municipalities, emergency services, defence-related bodies, or other NIS2-covered entities the intended customers?\n3. Will the product be distributed or installed as a PWA/software product, sold under the Atbalsts name, or offered only as a hosted internal service? This changes the CRA analysis.\n4. Is the AI ever intended to rank incidents, prioritize emergency response, dispatch volunteers, or influence triage? This changes the AI Act classification and release gate.\n5. Are precise location, military/police competence, health-adjacent reports, or volunteer contact data necessary for the first product? If not, remove them from that product entirely.\n6. What recovery time, data-loss tolerance, and independent fallback communication channel do target customers require?\n7. May incident or citizen content be sent to the currently configured external model providers, and what EU-region, retention, training-use, and subprocessor terms are contractually required?"
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Caveats and assumptions\n\n- This is an architecture, source, release, and public-surface assessment—not a penetration test, formal conformity assessment, or legal opinion.\n- Production testing was read-only and unauthenticated. Internal Cloudflare, Supabase, secrets, backups, logs, contracts, and organization policies were not available.\n- GitHub code scanning, Dependabot, and secret-scanning endpoints were not available to the reviewer. That is an evidence gap, not proof that every feature is disabled.\n- Some open issues describe conditions already improved in source; issue state alone was not treated as current evidence.\n- `npm audit` reports dependency presence, not exploitability. Reachability, bundling, runtime paths, and patched compatible versions still need review.\n- Legal applicability depends on the operating entity, customer, product distribution model, deployment, and documented intended purpose. Confirm the classification with Latvian/EU counsel and the responsible DPO or security officer before making compliance claims.\n- Evidence snapshot: September 10, 2026, Europe/Riga. The report should be refreshed after the next verified production deployment or a material architecture change."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-09-10T14:07:51+03:00",
+    "status": "ready",
+    "datasets": {
+      "dependency_advisories": [
+        {
+          "severity": "High",
+          "advisories": 6,
+          "affected_packages": "@cloudflare/vite-plugin, miniflare, wrangler, js-yaml, sharp, undici",
+          "environment": "Mixed dependency graph; several paths are build/deployment tooling",
+          "audit_date": "2026-09-10",
+          "assessment": "Review reachability and upgrade deliberately before the next trusted release"
+        },
+        {
+          "severity": "Moderate",
+          "advisories": 3,
+          "affected_packages": "@lovable.dev/vite-tanstack-config, env-runner, nitro",
+          "environment": "Primarily framework/build chain",
+          "audit_date": "2026-09-10",
+          "assessment": "Pin compatible patched versions or document time-bounded exceptions"
+        },
+        {
+          "severity": "Critical",
+          "advisories": 0,
+          "affected_packages": "None reported",
+          "environment": "Current lockfile",
+          "audit_date": "2026-09-10",
+          "assessment": "No critical advisory reported; this is not a reachability assessment"
+        },
+        {
+          "severity": "Low",
+          "advisories": 0,
+          "affected_packages": "None reported",
+          "environment": "Current lockfile",
+          "audit_date": "2026-09-10",
+          "assessment": "No low advisory reported"
+        }
+      ],
+      "release_controls": [
+        {
+          "priority": "01",
+          "control": "Production release identity",
+          "status": "Blocked",
+          "evidence": "Deploy run failed because CLOUDFLARE_API_TOKEN was absent; live /api/health reports build = unknown, so source-to-production identity is unproven."
+        },
+        {
+          "priority": "02",
+          "control": "Operator identity",
+          "status": "Not production-ready",
+          "evidence": "Live mode is shared_passcode with zero named operators; there is no per-user MFA, attributable authorization, or immediate individual revocation."
+        },
+        {
+          "priority": "03",
+          "control": "Code verification",
+          "status": "Strong baseline",
+          "evidence": "Latest main CI passed npm ci, typecheck, lint, 31 security probes, and a production build."
+        },
+        {
+          "priority": "04",
+          "control": "Session lifecycle",
+          "status": "Gap",
+          "evidence": "Opaque operator sessions last 8 hours and citizen sessions 30 days; resetting an upstream password does not revoke independent application sessions."
+        },
+        {
+          "priority": "06",
+          "control": "Mutation integrity",
+          "status": "Partial",
+          "evidence": "Publish and withdraw use atomic commit, idempotency, audit, and outbox; reports, missions, decisions, and other sensitive flows do not yet share that guarantee."
+        },
+        {
+          "priority": "08",
+          "control": "Browser boundary",
+          "status": "Partial",
+          "evidence": "HSTS, no-sniff, referrer policy, frame-ancestor denial, and no-store exist. Live responses also contain malformed numeric headers, and a full CSP is not enforced."
+        },
+        {
+          "priority": "09",
+          "control": "Data-plane privilege",
+          "status": "Concentrated risk",
+          "evidence": "The Worker uses a Supabase service-role credential across the application. Compromise crosses citizen, operator, content, and control data."
+        },
+        {
+          "priority": "10",
+          "control": "Repository governance",
+          "status": "Gap",
+          "evidence": "The default branch reports protected = false. Code, dependency, and secret scanning could not be evidenced through the available GitHub endpoints."
+        },
+        {
+          "priority": "11",
+          "control": "Deployment topology",
+          "status": "Concentrated risk",
+          "evidence": "Public PWA, reports, operator control, volunteer missions, AI, and external live-data ingestion share one Worker and domain."
+        },
+        {
+          "priority": "05",
+          "control": "Distributed abuse controls",
+          "status": "Gap",
+          "evidence": "Current in-memory rate limiters are per Worker isolate and explicitly fail open; authentication, context, model, and ingest abuse require a shared enforcement point."
+        },
+        {
+          "priority": "07",
+          "control": "Audit independence",
+          "status": "Gap",
+          "evidence": "Several audit collections are mutable, capped documents in the same privileged storage trust domain; they are not tamper-evident or independently retained."
+        }
+      ],
+      "compliance_baseline": [
+        {
+          "priority": "01",
+          "framework": "EU GDPR",
+          "fit": "Directly relevant now for real-person use",
+          "action": "Complete data map, purposes/legal bases, controller/processor roles, privacy notice, processor terms, subprocessor/transfers review, retention/deletion, rights handling, breach process, and DPIA before a real-person pilot.",
+          "official_reference": "EUR-Lex Regulation (EU) 2016/679; DVI DPIA guidance"
+        },
+        {
+          "priority": "02",
+          "framework": "Latvian National Cybersecurity Law / NIS2",
+          "fit": "Conditional on entity, service, size, designation, and customer role",
+          "action": "Perform and record an applicability self-assessment. If in scope, appoint the responsible security role and operationalize 24-hour early warning, 72-hour reporting, and one-month final reporting.",
+          "official_reference": "likumi.lv: Nacionālās kiberdrošības likums"
+        },
+        {
+          "priority": "03",
+          "framework": "Cabinet Regulation No. 397",
+          "fit": "Mandatory for covered entities; best-practice target regardless",
+          "action": "Use it as the control baseline for asset/data classification, MFA/access, segmentation, logging, backups and restore tests, risk/continuity plans, incidents, supplier clauses, and synthetic test data.",
+          "official_reference": "likumi.lv: Minimālās kiberdrošības prasības"
+        },
+        {
+          "priority": "04",
+          "framework": "EU Cyber Resilience Act",
+          "fit": "Product classification needed immediately",
+          "action": "Determine whether each sellable slice is a product with digital elements and who is the manufacturer. If in scope, stand up PSIRT/reporting ownership now; build SBOM, vulnerability handling, secure-update/support-period evidence, and the technical file.",
+          "official_reference": "European Commission CRA summary, manufacturer guide, reporting and FAQ"
+        },
+        {
+          "priority": "05",
+          "framework": "EU AI Act",
+          "fit": "Transparency relevant now; high-risk status depends on intended use",
+          "action": "Document intended purpose and Article 6 analysis, maintain visible AI disclosure and AI literacy, keep models advisory/no-write, and either bar dispatch/triage influence or implement the high-risk control set.",
+          "official_reference": "European Commission AI regulatory framework and transparency guidance"
+        },
+        {
+          "priority": "06",
+          "framework": "Latvian state information-system rules",
+          "fit": "Conditional on a public-authority or delegated-state deployment",
+          "action": "Assess before a government implementation; if applicable, align identity, data minimization, metadata/quality, controlled exchange, and technical requirements from the start.",
+          "official_reference": "likumi.lv: Valsts informācijas sistēmu likums and general technical requirements"
+        },
+        {
+          "priority": "07",
+          "framework": "Voluntary assurance stack",
+          "fit": "Recommended for engineering and procurement",
+          "action": "Use NIST CSF 2.0 for governance, OWASP ASVS 5 Level 2 plus selected Level 3 items for acceptance, NIST SSDF for delivery, and CIS Controls for operations. Pursue ISO 27001, then 27701/22301/42001 when customer demand justifies certification.",
+          "official_reference": "NIST, OWASP, CIS, and ISO official publications"
+        }
+      ],
+      "preserve_controls": [
+        {
+          "order": "01",
+          "practice": "Secure session cookies and origin checks",
+          "evidence": "HttpOnly, Secure, SameSite cookies and origin checks protect state-changing routes in source.",
+          "next": "Centralize policy and test every new service/origin; add CSRF-specific tests where cross-site flows are allowed."
+        },
+        {
+          "order": "02",
+          "practice": "Fail-closed production configuration",
+          "evidence": "Invalid auth providers and missing production storage fail closed in current source.",
+          "next": "Make the same rule part of deployment policy and post-deploy attestation."
+        },
+        {
+          "order": "03",
+          "practice": "Deterministic emergency boundary",
+          "evidence": "Emergency answers terminate before any model call; deterministic guidance remains available if the model provider fails.",
+          "next": "Keep this invariant in a shared policy engine and red-team multilingual/obfuscated inputs."
+        },
+        {
+          "order": "04",
+          "practice": "AI disclosure and bounded authority",
+          "evidence": "Citizen and operator surfaces label AI output; the operator assistant produces advice rather than directly mutating state.",
+          "next": "Add documented intended purpose, redacted/allowlisted context, provider controls, evaluation logs, and a hard no-dispatch/no-publish token."
+        },
+        {
+          "order": "05",
+          "practice": "Offline cache minimization",
+          "evidence": "The service worker allowlists public readiness content and static assets and purges disallowed caches on sign-out.",
+          "next": "Add a signed/versioned content manifest and fail readiness checks when essential offline resources are missing."
+        },
+        {
+          "order": "06",
+          "practice": "Atomic publication path",
+          "evidence": "Publication and withdrawal use a multi-document commit with revision checks, idempotency, audit entry, and outbox.",
+          "next": "Move the same transaction/state-machine pattern into incident, mission, approval, and notification workflows."
+        },
+        {
+          "order": "07",
+          "practice": "Private upload bucket with basic limits",
+          "evidence": "Uploads are private and constrained by size and declared image MIME types.",
+          "next": "Quarantine, inspect real file content, normalize images, strip metadata, scan where appropriate, and delete orphaned/expired objects."
+        },
+        {
+          "order": "08",
+          "practice": "Repeatable security probes",
+          "evidence": "The repository runs 31 focused probes plus typecheck, lint, and production build in CI.",
+          "next": "Add protected-branch gates, SAST/secret/dependency scanning, SBOM/provenance, environment approval, and verified deployment smoke tests."
+        }
+      ],
+      "product_slices": [
+        {
+          "sequence": 1,
+          "product": "Readiness Kit",
+          "boundary": "Static/local-first PWA containing /72h and radio-exercise content; no login, PII, live feeds, or privileged API.",
+          "gate": "Signed/versioned offline manifest, complete offline test, safe update/rollback, accessible content review.",
+          "recommendation": "First product. Lowest operational and privacy risk; can ship independently."
+        },
+        {
+          "sequence": 2,
+          "product": "Public Map",
+          "boundary": "Separate public origin, Worker, cache, and read-only publication store; consumes a one-way versioned snapshot.",
+          "gate": "Explicit public DTO instead of the full published domain object, source/provenance rules, simulation markers, withdrawal propagation, threat-mode policy, and no service-role or operator access.",
+          "recommendation": "Second product. Keep read-only and independently degradable."
+        },
+        {
+          "sequence": 3,
+          "product": "Citizen Intake",
+          "boundary": "Separate API/origin, queue and quarantine; dedicated database role and object store; never publishes directly.",
+          "gate": "Distributed abuse controls, identity/session lifecycle, DPIA, retention, DSAR/delete, upload validation, redaction, operator acknowledgment.",
+          "recommendation": "Release only after ingress and privacy gates; offer without missions first."
+        },
+        {
+          "sequence": 4,
+          "product": "Command Centre",
+          "boundary": "Private hostname and service identity; dedicated operator state and audit plane; no anonymous public routes.",
+          "gate": "Per-user SSO/eID, MFA, RBAC/capabilities, live revocation, tamper-evident audit, backup/restore, trusted fallback channel.",
+          "recommendation": "Private pilot only after identity and release provenance are verified."
+        },
+        {
+          "sequence": 5,
+          "product": "Volunteer Missions",
+          "boundary": "Separate high-impact PII/contact vault and explicit dispatch state machine with professional authorization.",
+          "gate": "DPIA, necessity decision for sensitive competencies, parent-incident/hazard/skill gating, notifications and acknowledgments, duty-of-care and safeguarding policy; merge or supersede the open dispatch-safety PR only after review and tests.",
+          "recommendation": "Highest-risk slice. Isolate and do not launch broadly until safety PRs and governance are complete."
+        },
+        {
+          "sequence": 6,
+          "product": "AI Gateway",
+          "boundary": "Optional service that receives allowlisted/redacted projections; separate provider keys, budgets, logs, and kill switch.",
+          "gate": "Prompt-injection boundary, provider/data terms, evaluations, AI Act intended-purpose assessment, no write/publish/dispatch authority.",
+          "recommendation": "Shared optional service; core products must remain usable when it is disabled."
+        },
+        {
+          "sequence": 7,
+          "product": "Source Connectors",
+          "boundary": "One ingestion worker and credential set per external source; normalized signed envelopes and freshness/provenance metadata.",
+          "gate": "Budget/rate controls, sanitization before policy checks, schema validation, replay/idempotency, source-specific kill switch, no PII or publication authority.",
+          "recommendation": "Operate as replaceable adapters, not inside the command or public runtime."
+        }
+      ],
+      "roadmap": [
+        {
+          "phase_order": "0",
+          "window": "0–48 hours",
+          "outcome": "Restore release trust and contain the control plane",
+          "work": "Add a scoped Cloudflare deploy identity and protected production environment; deploy an exact reviewed SHA; verify SHA, migrations, storage and auth; fix malformed headers; reduce public health detail; place the operator surface on a separate protected host with per-user SSO/MFA or disable it; rotate superseded credentials.",
+          "exit_gate": "Production names its commit, post-deploy checks pass, and no shared passcode alone can reach operator actions."
+        },
+        {
+          "phase_order": "1",
+          "window": "Days 3–30",
+          "outcome": "Establish governance and minimum operational controls",
+          "work": "Complete data map, legal-basis/role matrix, DPIA, privacy notice, retention and rights workflows; classify CRA/NIS2/AI Act scope; create PSIRT/security contact and incident runbook; add distributed limiting/WAF, branch protection, review gates, dependency/secret/code scanning, SBOM, backup restore test, RPO/RTO and key rotation.",
+          "exit_gate": "A named owner can show control evidence, handle an incident, restore data, revoke access, and explain every sensitive field."
+        },
+        {
+          "phase_order": "2",
+          "window": "Days 31–90",
+          "outcome": "Create enforceable product and data boundaries",
+          "work": "Separate public, control, PII, untrusted-ingress and audit planes; normalize per-entity data; introduce versioned DTOs, RBAC/capabilities, session revocation, append-only audit checkpoints, media quarantine/normalization, mission safety acknowledgments, AI gateway, and CSP report-only to enforced rollout.",
+          "exit_gate": "Each product can be deployed, disabled, restored, and tested without granting access to another product's authority or data."
+        },
+        {
+          "phase_order": "3",
+          "window": "Months 3–12",
+          "outcome": "Build procurement and conformity evidence",
+          "work": "Run an independent penetration test and incident/DR exercises; prepare customer security pack; implement CRA technical documentation and support policy; pursue ISO 27001 when pipeline justifies it, adding ISO 27701, 22301 and 42001 according to privacy, continuity and AI scope.",
+          "exit_gate": "Independent testing and evidence support the claims made to customers; no certification claim precedes its actual scope and audit."
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "repo-snapshot",
+      "label": "Atbalsts repository at origin/main 6636f6f",
+      "href": "https://github.com/goofis11/palidzi/tree/6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+      "query": {
+        "engine": "SQLite",
+        "description": "Reproducible SQL materialization of source-verified controls inspected at the linked commit.",
+        "executed_at": "2026-09-10T14:07:51+03:00",
+        "filters": [
+          "Commit 6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+          "Current feature branch tree matches origin/main; origin/main is one merge commit ahead",
+          "Open issues may be stale and were checked against source before being treated as current"
+        ],
+        "tables_used": [
+          "src/server.ts",
+          "src/lib/auth/*",
+          "src/lib/storage/*",
+          "src/lib/*-store.ts",
+          "public/sw.js",
+          "supabase/migrations/*",
+          ".github/workflows/*",
+          "wrangler.jsonc",
+          "docs/PLAN.md"
+        ],
+        "language": "sql",
+        "sql": "WITH \"preserve_controls\"(\"order\", \"practice\", \"evidence\", \"next\") AS (\n  VALUES\n    ('01', 'Secure session cookies and origin checks', 'HttpOnly, Secure, SameSite cookies and origin checks protect state-changing routes in source.', 'Centralize policy and test every new service/origin; add CSRF-specific tests where cross-site flows are allowed.'),\n    ('02', 'Fail-closed production configuration', 'Invalid auth providers and missing production storage fail closed in current source.', 'Make the same rule part of deployment policy and post-deploy attestation.'),\n    ('03', 'Deterministic emergency boundary', 'Emergency answers terminate before any model call; deterministic guidance remains available if the model provider fails.', 'Keep this invariant in a shared policy engine and red-team multilingual/obfuscated inputs.'),\n    ('04', 'AI disclosure and bounded authority', 'Citizen and operator surfaces label AI output; the operator assistant produces advice rather than directly mutating state.', 'Add documented intended purpose, redacted/allowlisted context, provider controls, evaluation logs, and a hard no-dispatch/no-publish token.'),\n    ('05', 'Offline cache minimization', 'The service worker allowlists public readiness content and static assets and purges disallowed caches on sign-out.', 'Add a signed/versioned content manifest and fail readiness checks when essential offline resources are missing.'),\n    ('06', 'Atomic publication path', 'Publication and withdrawal use a multi-document commit with revision checks, idempotency, audit entry, and outbox.', 'Move the same transaction/state-machine pattern into incident, mission, approval, and notification workflows.'),\n    ('07', 'Private upload bucket with basic limits', 'Uploads are private and constrained by size and declared image MIME types.', 'Quarantine, inspect real file content, normalize images, strip metadata, scan where appropriate, and delete orphaned/expired objects.'),\n    ('08', 'Repeatable security probes', 'The repository runs 31 focused probes plus typecheck, lint, and production build in CI.', 'Add protected-branch gates, SAST/secret/dependency scanning, SBOM/provenance, environment approval, and verified deployment smoke tests.')\n)\nSELECT \"order\", \"practice\", \"evidence\", \"next\"\nFROM \"preserve_controls\"\nORDER BY \"order\" ASC",
+        "metric_definitions": [
+          "Rows reproduce the reviewed preserve_controls evidence used in this report; qualitative statuses are assessment labels, not a calculated compliance score."
+        ]
+      }
+    },
+    {
+      "id": "release-evidence",
+      "label": "GitHub Actions and live production evidence",
+      "href": "https://github.com/goofis11/palidzi/actions",
+      "query": {
+        "engine": "SQLite",
+        "description": "Reproducible SQL materialization of the release-control observations assembled from the named GitHub Actions runs, repository settings, and public production response.",
+        "executed_at": "2026-09-10T14:07:51+03:00",
+        "filters": [
+          "CI run 34356973421",
+          "Deploy run 34356972836",
+          "Live endpoint https://atbalsts.sortium.co/api/health observed September 10, 2026",
+          "No authenticated or destructive production testing"
+        ],
+        "tables_used": [
+          "GitHub Actions run 34356973421",
+          "GitHub Actions run 34356972836",
+          "GitHub default-branch metadata",
+          "atbalsts.sortium.co response headers and /api/health"
+        ],
+        "language": "sql",
+        "sql": "WITH \"release_controls\"(\"priority\", \"control\", \"status\", \"evidence\") AS (\n  VALUES\n    ('01', 'Production release identity', 'Blocked', 'Deploy run failed because CLOUDFLARE_API_TOKEN was absent; live /api/health reports build = unknown, so source-to-production identity is unproven.'),\n    ('02', 'Operator identity', 'Not production-ready', 'Live mode is shared_passcode with zero named operators; there is no per-user MFA, attributable authorization, or immediate individual revocation.'),\n    ('03', 'Code verification', 'Strong baseline', 'Latest main CI passed npm ci, typecheck, lint, 31 security probes, and a production build.'),\n    ('04', 'Session lifecycle', 'Gap', 'Opaque operator sessions last 8 hours and citizen sessions 30 days; resetting an upstream password does not revoke independent application sessions.'),\n    ('06', 'Mutation integrity', 'Partial', 'Publish and withdraw use atomic commit, idempotency, audit, and outbox; reports, missions, decisions, and other sensitive flows do not yet share that guarantee.'),\n    ('08', 'Browser boundary', 'Partial', 'HSTS, no-sniff, referrer policy, frame-ancestor denial, and no-store exist. Live responses also contain malformed numeric headers, and a full CSP is not enforced.'),\n    ('09', 'Data-plane privilege', 'Concentrated risk', 'The Worker uses a Supabase service-role credential across the application. Compromise crosses citizen, operator, content, and control data.'),\n    ('10', 'Repository governance', 'Gap', 'The default branch reports protected = false. Code, dependency, and secret scanning could not be evidenced through the available GitHub endpoints.'),\n    ('11', 'Deployment topology', 'Concentrated risk', 'Public PWA, reports, operator control, volunteer missions, AI, and external live-data ingestion share one Worker and domain.'),\n    ('05', 'Distributed abuse controls', 'Gap', 'Current in-memory rate limiters are per Worker isolate and explicitly fail open; authentication, context, model, and ingest abuse require a shared enforcement point.'),\n    ('07', 'Audit independence', 'Gap', 'Several audit collections are mutable, capped documents in the same privileged storage trust domain; they are not tamper-evident or independently retained.')\n)\nSELECT \"priority\", \"control\", \"status\", \"evidence\"\nFROM \"release_controls\"\nORDER BY \"priority\" ASC",
+        "metric_definitions": [
+          "Rows reproduce the reviewed release_controls evidence used in this report; qualitative statuses are assessment labels, not a calculated compliance score."
+        ]
+      }
+    },
+    {
+      "id": "npm-audit",
+      "label": "npm audit on the reviewed lockfile",
+      "href": "https://github.com/goofis11/palidzi/blob/6636f6fae01bba5a4a9697c196638b7f0ee84ea9/package-lock.json",
+      "query": {
+        "engine": "SQLite",
+        "query": "npm audit --json",
+        "language": "sql",
+        "description": "Reproducible SQL materialization of the reviewed npm audit severity totals and package-path notes; the values originate from npm audit --json on the linked lockfile.",
+        "executed_at": "2026-09-10T14:07:51+03:00",
+        "filters": [
+          "Repository package-lock.json at the reviewed tree",
+          "Counts include production and development dependency paths",
+          "Presence in the dependency graph is not proof of runtime exploitability"
+        ],
+        "metric_definitions": [
+          "Advisories are counted using npm's total vulnerability counts by severity.",
+          "The reviewed result contains 9 advisories: 6 high, 3 moderate, 0 critical, and 0 low."
+        ],
+        "tables_used": [
+          "inline reviewed npm audit result",
+          "package-lock.json"
+        ],
+        "sql": "WITH npm_audit(severity, advisories, affected_packages, environment, audit_date, assessment, sort_order) AS (\n  VALUES\n    ('High', 6, '@cloudflare/vite-plugin, miniflare, wrangler, js-yaml, sharp, undici', 'Mixed dependency graph; several paths are build/deployment tooling', '2026-09-10', 'Review reachability and upgrade deliberately before the next trusted release', 1),\n    ('Moderate', 3, '@lovable.dev/vite-tanstack-config, env-runner, nitro', 'Primarily framework/build chain', '2026-09-10', 'Pin compatible patched versions or document time-bounded exceptions', 2),\n    ('Critical', 0, 'None reported', 'Current lockfile', '2026-09-10', 'No critical advisory reported; this is not a reachability assessment', 3),\n    ('Low', 0, 'None reported', 'Current lockfile', '2026-09-10', 'No low advisory reported', 4)\n)\nSELECT severity, advisories, affected_packages, environment, audit_date, assessment\nFROM npm_audit\nORDER BY sort_order"
+      }
+    },
+    {
+      "id": "legal-index",
+      "label": "Official Latvian and EU legal sources indexed in the report",
+      "query": {
+        "engine": "SQLite",
+        "description": "Reproducible SQL materialization of the legal applicability screen; row conclusions were derived from the named official publications and remain conditional on entity, product, deployment, customer, and intended-use facts.",
+        "executed_at": "2026-09-10T14:07:51+03:00",
+        "filters": [
+          "Latvia and European Union",
+          "Law and guidance current as reviewed September 10, 2026",
+          "Not a formal legal opinion"
+        ],
+        "tables_used": [
+          "Nacionālās kiberdrošības likums",
+          "Ministru kabineta noteikumi Nr. 397",
+          "Regulation (EU) 2016/679",
+          "Regulation (EU) 2024/2847",
+          "Regulation (EU) 2024/1689",
+          "Valsts informācijas sistēmu likums"
+        ],
+        "language": "sql",
+        "sql": "WITH \"compliance_baseline\"(\"priority\", \"framework\", \"fit\", \"action\", \"official_reference\") AS (\n  VALUES\n    ('01', 'EU GDPR', 'Directly relevant now for real-person use', 'Complete data map, purposes/legal bases, controller/processor roles, privacy notice, processor terms, subprocessor/transfers review, retention/deletion, rights handling, breach process, and DPIA before a real-person pilot.', 'EUR-Lex Regulation (EU) 2016/679; DVI DPIA guidance'),\n    ('02', 'Latvian National Cybersecurity Law / NIS2', 'Conditional on entity, service, size, designation, and customer role', 'Perform and record an applicability self-assessment. If in scope, appoint the responsible security role and operationalize 24-hour early warning, 72-hour reporting, and one-month final reporting.', 'likumi.lv: Nacionālās kiberdrošības likums'),\n    ('03', 'Cabinet Regulation No. 397', 'Mandatory for covered entities; best-practice target regardless', 'Use it as the control baseline for asset/data classification, MFA/access, segmentation, logging, backups and restore tests, risk/continuity plans, incidents, supplier clauses, and synthetic test data.', 'likumi.lv: Minimālās kiberdrošības prasības'),\n    ('04', 'EU Cyber Resilience Act', 'Product classification needed immediately', 'Determine whether each sellable slice is a product with digital elements and who is the manufacturer. If in scope, stand up PSIRT/reporting ownership now; build SBOM, vulnerability handling, secure-update/support-period evidence, and the technical file.', 'European Commission CRA summary, manufacturer guide, reporting and FAQ'),\n    ('05', 'EU AI Act', 'Transparency relevant now; high-risk status depends on intended use', 'Document intended purpose and Article 6 analysis, maintain visible AI disclosure and AI literacy, keep models advisory/no-write, and either bar dispatch/triage influence or implement the high-risk control set.', 'European Commission AI regulatory framework and transparency guidance'),\n    ('06', 'Latvian state information-system rules', 'Conditional on a public-authority or delegated-state deployment', 'Assess before a government implementation; if applicable, align identity, data minimization, metadata/quality, controlled exchange, and technical requirements from the start.', 'likumi.lv: Valsts informācijas sistēmu likums and general technical requirements'),\n    ('07', 'Voluntary assurance stack', 'Recommended for engineering and procurement', 'Use NIST CSF 2.0 for governance, OWASP ASVS 5 Level 2 plus selected Level 3 items for acceptance, NIST SSDF for delivery, and CIS Controls for operations. Pursue ISO 27001, then 27701/22301/42001 when customer demand justifies certification.', 'NIST, OWASP, CIS, and ISO official publications')\n)\nSELECT \"priority\", \"framework\", \"fit\", \"action\", \"official_reference\"\nFROM \"compliance_baseline\"\nORDER BY \"priority\" ASC",
+        "metric_definitions": [
+          "Rows reproduce the reviewed compliance_baseline evidence used in this report; qualitative statuses are assessment labels, not a calculated compliance score."
+        ]
+      }
+    },
+    {
+      "id": "architecture-review",
+      "label": "Architecture and product-boundary assessment",
+      "href": "https://github.com/goofis11/palidzi/tree/6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+      "query": {
+        "engine": "Threat-model and architecture synthesis",
+        "description": "Recommendations derived from the reviewed code, production exposure, data inventory, existing threat model, open control backlog, and official compliance obligations.",
+        "executed_at": "2026-09-10T14:07:51+03:00",
+        "filters": [
+          "Prioritizes blast-radius reduction, identity, data governance, release integrity, and operational resilience",
+          "Defers cosmetic work and broad rewrites that do not close a material risk",
+          "Assumes government and crisis-response customers may require stronger isolation than a consumer SaaS baseline"
+        ],
+        "tables_used": [
+          "Repository architecture",
+          "Production health and headers",
+          "GitHub issues 31-53",
+          "Pull request 58",
+          "docs/THREAT-MODEL-2026-09-04.md",
+          "docs/PLAN.md"
+        ]
+      }
+    },
+    {
+      "id": "product-architecture",
+      "label": "Atbalsts product-boundary recommendations",
+      "href": "https://github.com/goofis11/palidzi/tree/6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+      "query": {
+        "engine": "SQLite",
+        "language": "sql",
+        "sql": "WITH \"product_slices\"(\"sequence\", \"product\", \"boundary\", \"gate\", \"recommendation\") AS (\n  VALUES\n    (1, 'Readiness Kit', 'Static/local-first PWA containing /72h and radio-exercise content; no login, PII, live feeds, or privileged API.', 'Signed/versioned offline manifest, complete offline test, safe update/rollback, accessible content review.', 'First product. Lowest operational and privacy risk; can ship independently.'),\n    (2, 'Public Map', 'Separate public origin, Worker, cache, and read-only publication store; consumes a one-way versioned snapshot.', 'Explicit public DTO instead of the full published domain object, source/provenance rules, simulation markers, withdrawal propagation, threat-mode policy, and no service-role or operator access.', 'Second product. Keep read-only and independently degradable.'),\n    (3, 'Citizen Intake', 'Separate API/origin, queue and quarantine; dedicated database role and object store; never publishes directly.', 'Distributed abuse controls, identity/session lifecycle, DPIA, retention, DSAR/delete, upload validation, redaction, operator acknowledgment.', 'Release only after ingress and privacy gates; offer without missions first.'),\n    (4, 'Command Centre', 'Private hostname and service identity; dedicated operator state and audit plane; no anonymous public routes.', 'Per-user SSO/eID, MFA, RBAC/capabilities, live revocation, tamper-evident audit, backup/restore, trusted fallback channel.', 'Private pilot only after identity and release provenance are verified.'),\n    (5, 'Volunteer Missions', 'Separate high-impact PII/contact vault and explicit dispatch state machine with professional authorization.', 'DPIA, necessity decision for sensitive competencies, parent-incident/hazard/skill gating, notifications and acknowledgments, duty-of-care and safeguarding policy; merge or supersede the open dispatch-safety PR only after review and tests.', 'Highest-risk slice. Isolate and do not launch broadly until safety PRs and governance are complete.'),\n    (6, 'AI Gateway', 'Optional service that receives allowlisted/redacted projections; separate provider keys, budgets, logs, and kill switch.', 'Prompt-injection boundary, provider/data terms, evaluations, AI Act intended-purpose assessment, no write/publish/dispatch authority.', 'Shared optional service; core products must remain usable when it is disabled.'),\n    (7, 'Source Connectors', 'One ingestion worker and credential set per external source; normalized signed envelopes and freshness/provenance metadata.', 'Budget/rate controls, sanitization before policy checks, schema validation, replay/idempotency, source-specific kill switch, no PII or publication authority.', 'Operate as replaceable adapters, not inside the command or public runtime.')\n)\nSELECT \"sequence\", \"product\", \"boundary\", \"gate\", \"recommendation\"\nFROM \"product_slices\"\nORDER BY \"sequence\" ASC",
+        "description": "Reproducible SQL materialization of the product-slice assessment derived from the reviewed architecture, data inventory, production exposure, threat model, and compliance screen.",
+        "executed_at": "2026-09-10T14:07:51+03:00",
+        "filters": [
+          "Ordered by recommended productization sequence",
+          "Sequence reflects blast radius, data sensitivity, decision authority, and current control maturity",
+          "Not a quantitative compliance score"
+        ],
+        "metric_definitions": [
+          "Sequence is an ordinal implementation recommendation; it is not a measured risk probability."
+        ],
+        "tables_used": [
+          "Repository architecture",
+          "Production health and headers",
+          "docs/THREAT-MODEL-2026-09-04.md",
+          "docs/PLAN.md"
+        ]
+      }
+    },
+    {
+      "id": "roadmap-recommendations",
+      "label": "Atbalsts prioritized security roadmap",
+      "href": "https://github.com/goofis11/palidzi/tree/6636f6fae01bba5a4a9697c196638b7f0ee84ea9",
+      "query": {
+        "engine": "SQLite",
+        "language": "sql",
+        "sql": "WITH \"roadmap\"(\"phase_order\", \"window\", \"outcome\", \"work\", \"exit_gate\") AS (\n  VALUES\n    ('0', '0–48 hours', 'Restore release trust and contain the control plane', 'Add a scoped Cloudflare deploy identity and protected production environment; deploy an exact reviewed SHA; verify SHA, migrations, storage and auth; fix malformed headers; reduce public health detail; place the operator surface on a separate protected host with per-user SSO/MFA or disable it; rotate superseded credentials.', 'Production names its commit, post-deploy checks pass, and no shared passcode alone can reach operator actions.'),\n    ('1', 'Days 3–30', 'Establish governance and minimum operational controls', 'Complete data map, legal-basis/role matrix, DPIA, privacy notice, retention and rights workflows; classify CRA/NIS2/AI Act scope; create PSIRT/security contact and incident runbook; add distributed limiting/WAF, branch protection, review gates, dependency/secret/code scanning, SBOM, backup restore test, RPO/RTO and key rotation.', 'A named owner can show control evidence, handle an incident, restore data, revoke access, and explain every sensitive field.'),\n    ('2', 'Days 31–90', 'Create enforceable product and data boundaries', 'Separate public, control, PII, untrusted-ingress and audit planes; normalize per-entity data; introduce versioned DTOs, RBAC/capabilities, session revocation, append-only audit checkpoints, media quarantine/normalization, mission safety acknowledgments, AI gateway, and CSP report-only to enforced rollout.', 'Each product can be deployed, disabled, restored, and tested without granting access to another product''s authority or data.'),\n    ('3', 'Months 3–12', 'Build procurement and conformity evidence', 'Run an independent penetration test and incident/DR exercises; prepare customer security pack; implement CRA technical documentation and support policy; pursue ISO 27001 when pipeline justifies it, adding ISO 27701, 22301 and 42001 according to privacy, continuity and AI scope.', 'Independent testing and evidence support the claims made to customers; no certification claim precedes its actual scope and audit.')\n)\nSELECT \"phase_order\", \"window\", \"outcome\", \"work\", \"exit_gate\"\nFROM \"roadmap\"\nORDER BY \"phase_order\" ASC",
+        "description": "Reproducible SQL materialization of the recommended delivery phases, ordered by harm reduction and prerequisite dependency.",
+        "executed_at": "2026-09-10T14:07:51+03:00",
+        "filters": [
+          "Architecture and control priorities only",
+          "Cosmetic and low-impact work deferred",
+          "Time windows are planning estimates, not contractual commitments"
+        ],
+        "metric_definitions": [
+          "Phase order is a dependency-aware recommendation, not a calculated maturity score."
+        ],
+        "tables_used": [
+          "Repository architecture",
+          "GitHub Actions and issue backlog",
+          "Production public observations",
+          "Official legal and standards screen"
+        ]
+      }
+    },
+    {
+      "id": "law-nkl",
+      "label": "Latvian National Cybersecurity Law",
+      "href": "https://likumi.lv/ta/id/353390-nacionalas-kiberdrosibas-likums"
+    },
+    {
+      "id": "law-mk397",
+      "label": "Latvian Cabinet Regulation No. 397",
+      "href": "https://likumi.lv/ta/id/361481-minimalas-kiberdrosibas-prasibas"
+    },
+    {
+      "id": "law-gdpr",
+      "label": "Regulation (EU) 2016/679 (GDPR)",
+      "href": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679"
+    },
+    {
+      "id": "guidance-dpiA",
+      "label": "Latvian DVI DPIA guidance",
+      "href": "https://www.dvi.gov.lv/lv/jaunums/dviskaidro-NIDA"
+    },
+    {
+      "id": "law-cra",
+      "label": "European Commission CRA overview",
+      "href": "https://digital-strategy.ec.europa.eu/en/policies/cra-summary"
+    },
+    {
+      "id": "guidance-cra-reporting",
+      "label": "European Commission CRA reporting guidance",
+      "href": "https://digital-strategy.ec.europa.eu/en/policies/cra-reporting"
+    },
+    {
+      "id": "law-ai-act",
+      "label": "European Commission AI Act framework",
+      "href": "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai"
+    },
+    {
+      "id": "guidance-ai-transparency",
+      "label": "European Commission AI transparency guidance",
+      "href": "https://digital-strategy.ec.europa.eu/en/policies/guidelines-ai-transparency-obligations"
+    },
+    {
+      "id": "law-state-is",
+      "label": "Latvian State Information Systems Law",
+      "href": "https://likumi.lv/ta/id/62324-valsts-informacijas-sistemu-likums"
+    },
+    {
+      "id": "law-state-tech",
+      "label": "Latvian information-system technical requirements",
+      "href": "https://likumi.lv/ta/id/343549-informacijas-sistemu-visparejas-tehniskas-prasibas"
+    },
+    {
+      "id": "standard-asvs",
+      "label": "OWASP ASVS 5",
+      "href": "https://owasp.org/www-project-application-security-verification-standard/"
+    },
+    {
+      "id": "standard-nist-csf",
+      "label": "NIST Cybersecurity Framework 2.0",
+      "href": "https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20"
+    }
+  ],
+  "package_info": {
+    "reportAudience": "product stakeholders",
+    "reportingQuestion": "Which cybersecurity obligations and architecture changes should guide Atbalsts productization?",
+    "decisionBasis": "Latest fetched source, GitHub Actions and settings, public live-production observation, dependency audit, and official Latvian/EU sources.",
+    "chartMap": [
+      {
+        "section": "Dependency findings need triage, not an automatic upgrade",
+        "analyticalQuestion": "How many advisories are reported at each severity?",
+        "family": "Comparison",
+        "chartType": "bar",
+        "fields": [
+          "severity",
+          "advisories"
+        ],
+        "supportedClaim": "The current lockfile has 9 advisories, concentrated at high severity, with none reported as critical.",
+        "palettePolicy": "single-root preferred",
+        "provenanceSource": "npm-audit"
+      }
+    ],
+    "omittedVisuals": [
+      "No synthetic compliance score was created because ordinal scoring would imply unsupported precision.",
+      "Architecture is presented as a trust-boundary diagram and exact decision tables rather than a quantitative chart."
+    ],
+    "materializationNote": "Native chart/table rows are bounded reviewed evidence. Reproducible SQLite CTE queries are attached to each native source because the report renderer requires query-level provenance; these CTEs materialize the reviewed rows and do not imply that the original legal or repository evidence lived in a database."
+  }
+}

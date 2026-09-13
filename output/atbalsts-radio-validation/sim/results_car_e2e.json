@@ -1,0 +1,47 @@
+[
+ {
+  "name": "Parked, engine off \u00b7 phone on the passenger seat (~50 cm)",
+  "drr": -1,
+  "snr": 25,
+  "frames": 16.0,
+  "objects": 8.0,
+  "records": 23.0,
+  "first_s": 1.02
+ },
+ {
+  "name": "City 50 km/h \u00b7 phone in a dash cradle (~30 cm)",
+  "drr": 3,
+  "snr": 15,
+  "frames": 16.0,
+  "objects": 8.0,
+  "records": 23.0,
+  "first_s": 1.02
+ },
+ {
+  "name": "Highway 100 km/h \u00b7 phone in a dash cradle (~30 cm)",
+  "drr": 3,
+  "snr": 8,
+  "frames": 3.3333333333333335,
+  "objects": 3.3333333333333335,
+  "records": 9.333333333333334,
+  "first_s": 13.704375
+ },
+ {
+  "name": "Highway 100 km/h \u00b7 phone on the passenger seat (~50 cm)",
+  "drr": -1,
+  "snr": 8,
+  "frames": 0.6666666666666666,
+  "objects": 0.6666666666666666,
+  "records": 1.6666666666666667,
+  "first_s": 22.160625
+ },
+ {
+  "name": "Highway 100 km/h \u00b7 phone held at the speaker (~10 cm)",
+  "drr": 13,
+  "snr": 8,
+  "frames": 12.666666666666666,
+  "objects": 7.666666666666667,
+  "records": 21.666666666666668,
+  "first_s": 1.02
+ }
+]

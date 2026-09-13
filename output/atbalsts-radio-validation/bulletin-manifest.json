@@ -1,0 +1,138 @@
+{
+ "payload_len": 255,
+ "passes": 2,
+ "frames": 8,
+ "slots": 16,
+ "duration_s": 34.82,
+ "sample_rate": 48000,
+ "manifest": [
+  {
+   "pass_": 0,
+   "object": 1,
+   "fragment": 0,
+   "start_s": 1.0,
+   "duration_s": 1.864,
+   "frame_len": 166
+  },
+  {
+   "pass_": 0,
+   "object": 2,
+   "fragment": 0,
+   "start_s": 3.114,
+   "duration_s": 1.864,
+   "frame_len": 168
+  },
+  {
+   "pass_": 0,
+   "object": 3,
+   "fragment": 0,
+   "start_s": 5.228,
+   "duration_s": 1.864,
+   "frame_len": 168
+  },
+  {
+   "pass_": 0,
+   "object": 4,
+   "fragment": 0,
+   "start_s": 7.342,
+   "duration_s": 1.864,
+   "frame_len": 166
+  },
+  {
+   "pass_": 0,
+   "object": 5,
+   "fragment": 0,
+   "start_s": 9.456,
+   "duration_s": 1.864,
+   "frame_len": 166
+  },
+  {
+   "pass_": 0,
+   "object": 6,
+   "fragment": 0,
+   "start_s": 11.57,
+   "duration_s": 1.864,
+   "frame_len": 226
+  },
+  {
+   "pass_": 0,
+   "object": 7,
+   "fragment": 0,
+   "start_s": 13.684,
+   "duration_s": 1.864,
+   "frame_len": 231
+  },
+  {
+   "pass_": 0,
+   "object": 8,
+   "fragment": 0,
+   "start_s": 15.798,
+   "duration_s": 1.864,
+   "frame_len": 229
+  },
+  {
+   "pass_": 1,
+   "object": 8,
+   "fragment": 0,
+   "start_s": 17.912,
+   "duration_s": 1.864,
+   "frame_len": 229
+  },
+  {
+   "pass_": 1,
+   "object": 7,
+   "fragment": 0,
+   "start_s": 20.026,
+   "duration_s": 1.864,
+   "frame_len": 231
+  },
+  {
+   "pass_": 1,
+   "object": 6,
+   "fragment": 0,
+   "start_s": 22.14,
+   "duration_s": 1.864,
+   "frame_len": 226
+  },
+  {
+   "pass_": 1,
+   "object": 5,
+   "fragment": 0,
+   "start_s": 24.254,
+   "duration_s": 1.864,
+   "frame_len": 166
+  },
+  {
+   "pass_": 1,
+   "object": 4,
+   "fragment": 0,
+   "start_s": 26.368,
+   "duration_s": 1.864,
+   "frame_len": 166
+  },
+  {
+   "pass_": 1,
+   "object": 3,
+   "fragment": 0,
+   "start_s": 28.482,
+   "duration_s": 1.864,
+   "frame_len": 168
+  },
+  {
+   "pass_": 1,
+   "object": 2,
+   "fragment": 0,
+   "start_s": 30.596,
+   "duration_s": 1.864,
+   "frame_len": 168
+  },
+  {
+   "pass_": 1,
+   "object": 1,
+   "fragment": 0,
+   "start_s": 32.71,
+   "duration_s": 1.864,
+   "frame_len": 166
+  }
+ ]
+}

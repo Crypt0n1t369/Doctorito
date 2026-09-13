@@ -1,0 +1,54 @@
+{
+ "public_key_hex": "4a70181580ffc759ee59b93a28d7afa2b6131bf07b8c8f36699cafdc3638f788",
+ "payload_len": 128,
+ "issuer": 1,
+ "registry_size": 803,
+ "files": [
+  {
+   "file": "01-riga.wav",
+   "label": "Rīga status sweep",
+   "bulletin": 2600,
+   "objects": [
+    2
+   ],
+   "unique_frames": 6,
+   "passes": 2,
+   "bursts": 12,
+   "duration_s": 16.68,
+   "application_bytes": 564,
+   "signed_bytes": 628,
+   "records": 112
+  },
+  {
+   "file": "02-situation.wav",
+   "label": "Situation and closures",
+   "bulletin": 2601,
+   "objects": [
+    3,
+    4
+   ],
+   "unique_frames": 5,
+   "passes": 3,
+   "bursts": 15,
+   "duration_s": 20.72,
+   "application_bytes": 254,
+   "signed_bytes": 382,
+   "records": 13
+  },
+  {
+   "file": "03-latvija.wav",
+   "label": "National sweep",
+   "bulletin": 2602,
+   "objects": [
+    5
+   ],
+   "unique_frames": 9,
+   "passes": 2,
+   "bursts": 18,
+   "duration_s": 24.76,
+   "application_bytes": 904,
+   "signed_bytes": 968,
+   "records": 180
+  }
+ ]
+}

@@ -1,0 +1,89 @@
+{
+  "evidence": "Encoded fixture byte counts; airtime is a budget, not measured radio throughput.",
+  "fixture": "20 facility status updates and 3 new fictional situations; 8 independently signed objects",
+  "application_cbor_bytes": 728,
+  "cose_bytes": 1392,
+  "object_sizes": [
+    {
+      "object_id": 1,
+      "application_bytes": 67,
+      "signed_bytes": 150,
+      "records": 4
+    },
+    {
+      "object_id": 2,
+      "application_bytes": 69,
+      "signed_bytes": 152,
+      "records": 4
+    },
+    {
+      "object_id": 3,
+      "application_bytes": 69,
+      "signed_bytes": 152,
+      "records": 4
+    },
+    {
+      "object_id": 4,
+      "application_bytes": 67,
+      "signed_bytes": 150,
+      "records": 4
+    },
+    {
+      "object_id": 5,
+      "application_bytes": 67,
+      "signed_bytes": 150,
+      "records": 4
+    },
+    {
+      "object_id": 6,
+      "application_bytes": 127,
+      "signed_bytes": 210,
+      "records": 1
+    },
+    {
+      "object_id": 7,
+      "application_bytes": 132,
+      "signed_bytes": 215,
+      "records": 1
+    },
+    {
+      "object_id": 8,
+      "application_bytes": 130,
+      "signed_bytes": 213,
+      "records": 1
+    }
+  ],
+  "public_test_key_hex": "4a70181580ffc759ee59b93a28d7afa2b6131bf07b8c8f36699cafdc3638f788",
+  "profiles": [
+    {
+      "profile": "Rattlegram 170-byte",
+      "text_cap": 170,
+      "fragment_data_bytes_max": 107,
+      "frames_per_pass": 17,
+      "one_pass_seconds": 25.5,
+      "two_pass_seconds": 51.0,
+      "two_pass_plus_25_percent_contingency_seconds": 63.75,
+      "budgeted_unique_application_bps": 91.36
+    },
+    {
+      "profile": "Rattlegram 128-byte",
+      "text_cap": 128,
+      "fragment_data_bytes_max": 77,
+      "frames_per_pass": 19,
+      "one_pass_seconds": 28.5,
+      "two_pass_seconds": 57.0,
+      "two_pass_plus_25_percent_contingency_seconds": 71.25,
+      "budgeted_unique_application_bps": 81.74
+    },
+    {
+      "profile": "Rattlegram 85-byte",
+      "text_cap": 85,
+      "fragment_data_bytes_max": 44,
+      "frames_per_pass": 35,
+      "one_pass_seconds": 52.5,
+      "two_pass_seconds": 105.0,
+      "two_pass_plus_25_percent_contingency_seconds": 131.25,
+      "budgeted_unique_application_bps": 44.37
+    }
+  ]
+}

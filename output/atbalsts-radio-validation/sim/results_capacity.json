@@ -1,0 +1,176 @@
+{
+ "batching": {
+  "1": [
+   40,
+   123
+  ],
+  "2": [
+   49,
+   132
+  ],
+  "4": [
+   67,
+   150
+  ],
+  "8": [
+   107,
+   190
+  ],
+  "16": [
+   187,
+   270
+  ],
+  "32": [
+   348,
+   432
+  ],
+  "48": [
+   508,
+   592
+  ]
+ },
+ "throughput": [
+  {
+   "payload": 85,
+   "burst_s": 0.824,
+   "data_bin": 69,
+   "bps_bin": 64.2,
+   "data_b64": 44,
+   "bps_b64": 41.0
+  },
+  {
+   "payload": 128,
+   "burst_s": 1.064,
+   "data_bin": 112,
+   "bps_bin": 85.2,
+   "data_b64": 77,
+   "bps_b64": 58.6
+  },
+  {
+   "payload": 170,
+   "burst_s": 1.344,
+   "data_bin": 154,
+   "bps_bin": 96.6,
+   "data_b64": 107,
+   "bps_b64": 67.1
+  },
+  {
+   "payload": 255,
+   "burst_s": 1.864,
+   "data_bin": 239,
+   "bps_bin": 113.1,
+   "data_b64": 170,
+   "bps_b64": 80.4
+  }
+ ],
+ "capacity": [
+  {
+   "label": "",
+   "fer": 0.0,
+   "slot_s": 2.114,
+   "window_s": 180.0,
+   "frame_bytes": 239,
+   "independent_bytes": 20315,
+   "independent_N": 85,
+   "independent_R": 1,
+   "correlated_bytes": 20315,
+   "correlated_N": 85,
+   "correlated_R": 1,
+   "updates_independent": 1203,
+   "updates_correlated": 1203
+  },
+  {
+   "label": "",
+   "fer": 0.01,
+   "slot_s": 2.114,
+   "window_s": 180.0,
+   "frame_bytes": 239,
+   "independent_bytes": 10038,
+   "independent_N": 42,
+   "independent_R": 2,
+   "correlated_bytes": 1195,
+   "correlated_N": 5,
+   "correlated_R": 1,
+   "updates_independent": 594,
+   "updates_correlated": 70
+  },
+  {
+   "label": "",
+   "fer": 0.02,
+   "slot_s": 2.114,
+   "window_s": 180.0,
+   "frame_bytes": 239,
+   "independent_bytes": 10038,
+   "independent_N": 42,
+   "independent_R": 2,
+   "correlated_bytes": 478,
+   "correlated_N": 2,
+   "correlated_R": 1,
+   "updates_independent": 594,
+   "updates_correlated": 28
+  },
+  {
+   "label": "",
+   "fer": 0.05,
+   "slot_s": 2.114,
+   "window_s": 180.0,
+   "frame_bytes": 239,
+   "independent_bytes": 6692,
+   "independent_N": 28,
+   "independent_R": 3,
+   "correlated_bytes": 239,
+   "correlated_N": 1,
+   "correlated_R": 1,
+   "updates_independent": 396,
+   "updates_correlated": 14
+  },
+  {
+   "label": "",
+   "fer": 0.1,
+   "slot_s": 2.114,
+   "window_s": 180.0,
+   "frame_bytes": 239,
+   "independent_bytes": 6692,
+   "independent_N": 28,
+   "independent_R": 3,
+   "correlated_bytes": 0,
+   "correlated_N": 0,
+   "correlated_R": 0,
+   "updates_independent": 396,
+   "updates_correlated": 0
+  },
+  {
+   "label": "",
+   "fer": 0.2,
+   "slot_s": 2.114,
+   "window_s": 180.0,
+   "frame_bytes": 239,
+   "independent_bytes": 5019,
+   "independent_N": 21,
+   "independent_R": 4,
+   "correlated_bytes": 0,
+   "correlated_N": 0,
+   "correlated_R": 0,
+   "updates_independent": 297,
+   "updates_correlated": 0
+  },
+  {
+   "label": "",
+   "fer": 0.35,
+   "slot_s": 2.114,
+   "window_s": 180.0,
+   "frame_bytes": 239,
+   "independent_bytes": 3346,
+   "independent_N": 14,
+   "independent_R": 6,
+   "correlated_bytes": 0,
+   "correlated_N": 0,
+   "correlated_R": 0,
+   "updates_independent": 198,
+   "updates_correlated": 0
+  }
+ ],
+ "slot_s": 2.114,
+ "frame_bytes": 239,
+ "gap_s": 0.25
+}

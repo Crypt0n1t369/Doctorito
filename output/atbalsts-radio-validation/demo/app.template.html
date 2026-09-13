@@ -1,0 +1,339 @@
+<title>Atbalsts Radio Receiver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#EDF1F3; --surface:#FFFFFF; --panel:#E3EAEE; --sunk:#F5F8F9; --land:#DCE5EA;
+  --ink:#141D26; --body:#25323D; --muted:#55646F; --faint:#7C8B96;
+  --rule:#CBD7DE; --rule-strong:#A9BAC5;
+  --s1:#0A73A8; --s2:#C25008;
+  --open:#1B6B47; --limited:#9A6206; --full:#B4530C; --closed:#A32A21; --unknown:#96A6B0;
+  --flash:rgba(194,80,8,.20);
+  --shadow:0 1px 2px rgba(20,29,38,.06),0 5px 18px rgba(20,29,38,.05);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0F171D; --surface:#18232B; --panel:#1E2C35; --sunk:#131E25; --land:#22323C;
+  --ink:#E7EDF1; --body:#CBD6DD; --muted:#93A4AF; --faint:#71838F;
+  --rule:#2B3B46; --rule-strong:#3E515E;
+  --s1:#3E97CC; --s2:#D9762F;
+  --open:#54B383; --limited:#D9AE55; --full:#E39152; --closed:#E0796D; --unknown:#5C6E79;
+  --flash:rgba(217,118,47,.24);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 5px 20px rgba(0,0,0,.3);
+}}
+:root[data-theme="dark"]{
+  --ground:#0F171D; --surface:#18232B; --panel:#1E2C35; --sunk:#131E25; --land:#22323C;
+  --ink:#E7EDF1; --body:#CBD6DD; --muted:#93A4AF; --faint:#71838F;
+  --rule:#2B3B46; --rule-strong:#3E515E; --s1:#3E97CC; --s2:#D9762F;
+  --open:#54B383; --limited:#D9AE55; --full:#E39152; --closed:#E0796D; --unknown:#5C6E79;
+  --flash:rgba(217,118,47,.24);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 5px 20px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--body);margin:0;padding:0 14px 40px;
+ font-family:"IBM Plex Sans Condensed",Arial Narrow,sans-serif;font-size:15px;line-height:1.5;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto}
+.mono,.stat .v,code,td.n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+code{font-size:.85em;background:var(--panel);padding:.08em .34em;border-radius:3px}
+h1{font-size:1.5rem;font-weight:700;color:var(--ink);margin:0;letter-spacing:-.01em}
+h2{font-size:.7rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin:0 0 .55rem}
+a{color:var(--s1)}
+header{padding:22px 0 14px;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:baseline;justify-content:space-between}
+header p{margin:.25rem 0 0;color:var(--muted);font-size:.88rem;max-width:62ch}
+.pill{display:inline-flex;align-items:center;gap:.45rem;font-family:"IBM Plex Mono",monospace;
+ font-size:.74rem;padding:.3rem .68rem;border-radius:99px;border:1px solid var(--rule-strong);
+ color:var(--muted);background:var(--surface);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:99px;background:var(--unknown);flex:none}
+.pill.live{border-color:var(--s2);color:var(--s2)} .pill.live .dot{background:var(--s2);animation:p 1.4s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.pill.live .dot{animation:none}}
+.bar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;padding:12px;background:var(--surface);
+ border:1px solid var(--rule);border-radius:4px;box-shadow:var(--shadow)}
+button,select,input[type=text],input[type=number]{font-family:inherit;font-size:.86rem;
+ padding:.46rem .7rem;border-radius:3px;border:1px solid var(--rule-strong);
+ background:var(--surface);color:var(--ink)}
+button{font-weight:600;padding:.48rem 1rem;cursor:pointer}
+button.primary{background:var(--s1);border-color:var(--s1);color:#fff}
+button.ghost{background:transparent}
+button:disabled{opacity:.42;cursor:not-allowed}
+button:hover:not(:disabled){border-color:var(--s2)}
+.sep{width:1px;align-self:stretch;background:var(--rule);margin:0 3px}
+.meter{flex:1;min-width:90px;height:7px;border-radius:99px;background:var(--panel);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--s1);transition:width .08s linear}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:1px;background:var(--rule);
+ border:1px solid var(--rule);border-radius:4px;overflow:hidden;margin:11px 0}
+.stat{background:var(--surface);padding:9px 11px}
+.stat .v{font-size:1.1rem;font-weight:600;color:var(--ink);line-height:1.15}
+.stat .k{font-size:.65rem;color:var(--muted);letter-spacing:.05em;margin-top:.06rem}
+main{display:grid;grid-template-columns:minmax(360px,1.35fr) minmax(320px,1fr);gap:12px;align-items:start}
+@media (max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:12px;box-shadow:var(--shadow)}
+svg.map{display:block;width:100%;height:auto;background:var(--sunk);border-radius:3px;
+ touch-action:none;cursor:grab}
+svg.map:active{cursor:grabbing}
+.legend{display:flex;flex-wrap:wrap;gap:.3rem .95rem;margin-top:.5rem;font-size:.74rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.34rem}
+.sw{width:9px;height:9px;border-radius:99px;display:inline-block}
+.scroll{max-height:300px;overflow-y:auto;border:1px solid var(--rule);border-radius:3px}
+table{border-collapse:collapse;width:100%;font-size:.83rem}
+th{position:sticky;top:0;background:var(--surface);font-size:.64rem;font-weight:600;letter-spacing:.08em;
+ text-transform:uppercase;color:var(--faint);text-align:left;padding:6px 8px;border-bottom:1px solid var(--rule-strong)}
+td{padding:6px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+td small{display:block;color:var(--faint);font-size:.72rem}
+tbody tr:last-child td{border-bottom:none}
+tr.flash{animation:fl 1.6s ease-out}
+@keyframes fl{from{background:var(--flash)}to{background:transparent}}
+@media (prefers-reduced-motion:reduce){tr.flash{animation:none}}
+.tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:.68rem;font-weight:500;
+ padding:.08rem .4rem;border-radius:2px;border:1px solid currentColor;white-space:nowrap}
+.st-0{color:var(--unknown)} .st-1{color:var(--open)} .st-2{color:var(--limited)}
+.st-3{color:var(--full)} .st-4{color:var(--closed)}
+.situation{margin-top:10px;padding:11px 13px;border-radius:4px;border:1px solid var(--closed);
+ border-left-width:4px;background:var(--surface)}
+.situation strong{color:var(--ink);font-size:.95rem} .situation p{margin:.25rem 0 0;font-size:.85rem;color:var(--muted)}
+.situation small{color:var(--faint);font-size:.72rem}
+.empty{color:var(--faint);font-size:.85rem;padding:16px 4px;text-align:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}
+label.f{display:flex;flex-direction:column;gap:.2rem;font-size:.72rem;color:var(--muted);letter-spacing:.04em}
+.log{margin-top:12px}
+.log ol{list-style:none;margin:0;padding:0;max-height:170px;overflow-y:auto;font-family:"IBM Plex Mono",monospace;font-size:.72rem}
+.log li{padding:3px 0;border-bottom:1px solid var(--rule);color:var(--muted)}
+.log li:last-child{border-bottom:none}
+.log li.bad{color:var(--closed)}
+details{margin-top:10px}
+summary{cursor:pointer;font-size:.78rem;color:var(--muted);letter-spacing:.05em}
+pre{font-family:"IBM Plex Mono",monospace;font-size:.7rem;background:var(--sunk);padding:9px;
+ border-radius:3px;overflow-x:auto;max-height:200px;color:var(--muted);margin:.5rem 0 0}
+.maphead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.mapctl{display:flex;gap:5px}
+button.sm{font-size:.74rem;padding:.24rem .55rem;font-weight:500}
+.hint{margin:.4rem 0 0;font-size:.74rem;color:var(--faint)}
+.detail{position:relative;margin-top:9px;padding:11px 13px;border:1px solid var(--rule-strong);
+ border-radius:4px;background:var(--sunk)}
+.detail strong{color:var(--ink);font-size:.98rem}
+.detail .sub{font-size:.78rem;color:var(--muted);margin-top:.15rem}
+.detail .rowline{display:flex;flex-wrap:wrap;gap:.35rem .6rem;align-items:center;margin-top:.4rem}
+.detail .kv{font-family:"IBM Plex Mono",monospace;font-size:.71rem;color:var(--faint)}
+.detail .x{position:absolute;top:6px;right:6px;border:0;background:transparent;font-size:1.1rem;
+ line-height:1;color:var(--faint);padding:.1rem .3rem}
+tr.sel td{background:var(--panel)}
+.tabs{display:flex;gap:4px;margin-bottom:10px;border-bottom:1px solid var(--rule)}
+.tab{background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;
+ padding:.4rem .75rem;font-size:.84rem;font-weight:600;color:var(--muted);cursor:pointer}
+.tab.on{color:var(--ink);border-bottom-color:var(--s2)}
+.pick{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:9px;font-size:.85rem}
+.pick span{color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:.8rem}
+textarea{font-family:inherit;font-size:.86rem;padding:.45rem .7rem;border-radius:3px;
+ border:1px solid var(--rule-strong);background:var(--surface);color:var(--ink);width:100%;resize:vertical}
+.wire{margin-top:11px;padding:11px 13px;border:1px solid var(--rule-strong);border-radius:4px;
+ background:var(--sunk)}
+.wire .lead{font-size:.82rem;color:var(--muted);margin:0 0 .5rem}
+.wire .lead b{color:var(--ink)}
+.bytes{font-family:"IBM Plex Mono",monospace;font-size:.7rem;line-height:1.65;word-break:break-all;
+ color:var(--muted)}
+.bytes .hdr{color:var(--s1)} .bytes .rec{color:var(--ink)} .bytes .sig{color:var(--s2)}
+.keyrow{display:flex;flex-wrap:wrap;gap:.3rem .9rem;margin-top:.5rem;font-size:.72rem;color:var(--faint)}
+.keyrow i{width:9px;height:3px;border-radius:2px;display:inline-block;margin-right:.3rem;vertical-align:middle}
+.picking{outline:2px dashed var(--s2);outline-offset:-3px}
+details.fold summary{list-style:none;font-size:.7rem;font-weight:600;letter-spacing:.13em;
+ text-transform:uppercase;color:var(--faint);cursor:pointer;padding:0}
+details.fold summary::-webkit-details-marker{display:none}
+details.fold summary::before{content:"▸ ";color:var(--s2)}
+details.fold[open] summary::before{content:"▾ "}
+details.fold[open] summary{margin-bottom:10px}
+.foldnote{font-size:.8rem;color:var(--muted);margin:0 0 9px}
+.netrow{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:10px}
+.pill.off{border-color:var(--open);color:var(--open)} .pill.off .dot{background:var(--open)}
+.pill.on{border-color:var(--limited);color:var(--limited)} .pill.on .dot{background:var(--limited)}
+.steps{margin:0;padding-left:1.3rem;font-size:.87rem;color:var(--body)}
+.steps li{margin-bottom:.45rem;line-height:1.5}
+.steps b{color:var(--ink)} .steps em{font-style:normal;color:var(--s1);font-weight:600}
+.note{margin-top:12px;font-size:.8rem;color:var(--muted);line-height:1.55;border-left:3px solid var(--rule-strong);padding-left:13px}
+.note b{color:var(--ink)}
+.warn{border-left-color:var(--s2)}
+:focus-visible{outline:2px solid var(--s2);outline-offset:2px}
+</style>
+
+<div class="wrap">
+<header>
+  <div>
+    <h1>Atbalsts radio receiver</h1>
+    <p>The 803-shelter registry and the map are already on this device. The radio carries
+       only what changed — five bytes per facility. Play a bulletin from another device
+       and watch the map fill in.</p>
+  </div>
+  <span class="pill" id="status"><i class="dot"></i><span id="statusText">Starting…</span></span>
+</header>
+
+<div class="bar">
+  <button class="primary" id="btnMic">Listen with microphone</button>
+  <button id="btnStop" disabled>Stop</button>
+  <div class="sep"></div>
+  <button class="ghost" id="btnFile">Play a bulletin file</button>
+  <input type="file" id="fileIn" accept="audio/*" hidden>
+  <div class="sep"></div>
+  <button class="ghost" id="btnClear">Erase received data</button>
+  <button class="ghost" id="btnLog">Export log</button>
+  <div class="meter" title="input level"><i id="lvl"></i></div>
+</div>
+<div id="micHelp"></div>
+
+<div class="stats">
+  <div class="stat"><div class="v" id="sElapsed">0.0 s</div><div class="k">ELAPSED</div></div>
+  <div class="stat"><div class="v" id="sHeard">0</div><div class="k">BURSTS HEARD</div></div>
+  <div class="stat"><div class="v" id="sFrames">0</div><div class="k">FRAMES OK</div></div>
+  <div class="stat"><div class="v" id="sObjects">0</div><div class="k">SIGNED OBJECTS</div></div>
+  <div class="stat"><div class="v" id="sChanges">0</div><div class="k">RECORDS APPLIED</div></div>
+  <div class="stat"><div class="v" id="sBits">0 b/s</div><div class="k">VERIFIED GOODPUT</div></div>
+</div>
+<span hidden id="sFail">0</span><span hidden id="sFirst">—</span>
+
+<main>
+  <section class="card">
+    <div class="maphead">
+      <h2 id="mapTitle">Latvia · 803 preinstalled shelters</h2>
+      <div class="mapctl">
+        <button id="btnRiga" class="ghost sm">Rīga</button>
+        <button id="btnHome" class="ghost sm" hidden>Whole country</button>
+        <button id="zoomOut" class="ghost sm" aria-label="Zoom out">−</button>
+        <button id="zoomIn" class="ghost sm" aria-label="Zoom in">+</button>
+      </div>
+    </div>
+    <svg class="map" id="map" role="img" aria-label="Map of Latvia showing shelter status"></svg>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--unknown)"></i>No data</span>
+      <span><i class="sw" style="background:var(--open)"></i>Open</span>
+      <span><i class="sw" style="background:var(--limited)"></i>Limited</span>
+      <span><i class="sw" style="background:var(--full)"></i>Full</span>
+      <span><i class="sw" style="background:var(--closed)"></i>Closed</span>
+      <span style="margin-left:auto;color:var(--faint)">Drag to pan · scroll to zoom · tap a shelter</span>
+    </div>
+    <div id="sitWrap"></div>
+  </section>
+
+  <section class="card" id="txPanel">
+    <h2>Selected shelter · edit and transmit</h2>
+    <div id="detail"></div>
+    <div class="tabs">
+      <button class="tab on" data-tab="shelter">Shelter status</button>
+      <button class="tab" data-tab="situation">Situation</button>
+    </div>
+
+    <div id="tabShelter">
+      <div class="pick">
+        <span id="pickName">No shelter chosen</span>
+        <button class="ghost sm" id="pickMap">Choose on the map</button>
+      </div>
+      <div class="grid2">
+        <label class="f">SHELTER ID<input type="number" id="recordId" min="1" max="803" value="500"></label>
+        <label class="f">STATUS<select id="state">
+          <option value="1">Open · Atvērta</option><option value="2">Limited · Ierobežota</option>
+          <option value="3">Full · Pilna</option><option value="4" selected>Closed · Slēgta</option>
+        </select></label>
+        <label class="f">FREE PLACES<input type="number" id="places" min="0" max="255" value="0"></label>
+      </div>
+    </div>
+
+    <div id="tabSituation" hidden>
+      <div class="pick">
+        <span id="sitWhere">56.94960, 24.10520</span>
+        <button class="ghost sm" id="pickSit">Place on the map</button>
+        <select id="sitExisting"><option value="">New situation</option></select>
+      </div>
+      <div class="grid2">
+        <label class="f">SEVERITY<select id="severity">
+          <option value="1">Advisory · Informatīvs</option><option value="2">Warning · Brīdinājums</option>
+          <option value="3" selected>Emergency · Ārkārtas</option></select></label>
+        <label class="f">SITUATION ID<input type="number" id="sitId" min="1" max="65535" value="9001"></label>
+      </div>
+      <label class="f" style="margin-top:8px">TITLE
+        <input type="text" id="title" maxlength="80" value="Mācības: plūdu apdraudējums"></label>
+      <label class="f" style="margin-top:8px">MESSAGE
+        <textarea id="message" rows="2" maxlength="200">Mācību scenārijs. Izmanto Purvciema un Imantas patvertnes.</textarea></label>
+    </div>
+
+    <div class="bar" style="padding:0;border:0;box-shadow:none;margin-top:10px">
+      <button class="primary" id="btnEncode">Encode</button>
+      <button id="btnPlay" disabled>Transmit</button>
+      <select id="repeats">
+        <option value="2">2 passes</option><option value="3" selected>3 passes</option>
+        <option value="4">4 passes</option></select>
+      <span id="dlSlot"></span>
+    </div>
+    <div id="encoded"></div>
+  </section>
+</main>
+
+<section class="card" style="margin-top:12px">
+  <div class="maphead">
+    <h2><span id="sSites">803 shelters known · 0 with status</span></h2>
+    <div class="mapctl">
+      <input type="text" id="search" placeholder="Search all 803 by name, town or municipality" style="min-width:230px">
+      <select id="filterState">
+        <option value="">Received status</option><option value="all">All shelters</option>
+        <option value="1">Open</option><option value="2">Limited</option>
+        <option value="3">Full</option><option value="4">Closed</option>
+        <option value="0">No data yet</option>
+      </select>
+    </div>
+  </div>
+  <div id="listWrap"></div>
+</section>
+
+<details class="card fold" style="margin-top:12px">
+  <summary>Play a ready-made bulletin from this device</summary>
+  <p class="foldnote">Built and signed here, then played aloud — no files needed.
+     Start the other device listening first.</p>
+  <div class="bar" style="padding:0;border:0;box-shadow:none">
+    <button id="btnDemoRiga">Rīga sweep · 112 shelters</button>
+    <button id="btnDemoSit">Situation + closures</button>
+    <button id="btnDemoLv">National sweep · 180</button>
+    <span id="demoSummary" style="font-size:.8rem;color:var(--muted)"></span>
+  </div>
+</details>
+
+<details class="card fold" style="margin-top:12px">
+  <summary>Run it with no network — both devices in airplane mode</summary>
+  <div class="netrow">
+    <span class="pill" id="netPill"><i class="dot"></i><span id="netText">Checking…</span></span>
+    <span id="netNote" style="font-size:.8rem;color:var(--muted)"></span>
+    <button class="ghost sm" id="btnCache">Save for offline use</button>
+  </div>
+  <p id="cacheNote" style="font-size:.8rem;color:var(--muted);margin:0 0 10px"></p>
+  <ol class="steps" id="steps">
+    <li><b>Open this page on both devices</b> and press <em>Save for offline use</em> on each.</li>
+    <li><b>Turn on airplane mode on both.</b> The badge above must read <em>offline</em>.</li>
+    <li><b>On the sender</b>, tap a shelter, pick a status, press <em>Encode</em>. The bytes
+        that go over the air appear underneath — a status change is five of them.</li>
+    <li><b>On the receiver</b>, press <em>Listen with microphone</em>.</li>
+    <li><b>Press <em>Transmit</em></b>, speaker within about 10–30 cm of the receiver.</li>
+    <li><b>Watch the receiver.</b> The shelter changes colour on its map and appears in its
+        list — with no radio of any kind switched on.</li>
+  </ol>
+  <p class="foldnote" style="margin-top:9px">No network requests are made once loaded:
+     <b id="netCount">0 network requests since load</b>.</p>
+</details>
+
+<details class="card fold" style="margin-top:12px">
+  <summary>Receiver log</summary>
+  <ol id="log"></ol>
+  <p id="logNote" class="foldnote"></p>
+  <pre id="rawFrame">No frame received.</pre>
+  <pre id="rawImport">No object accepted.</pre>
+</details>
+
+<p class="note">
+  <b>Exercise data on a real registry.</b> The 803 shelters, their coordinates and the
+  municipality boundaries are the genuine Atbalsts reference layers. Every <em>status</em>,
+  situation and free-place count is fictional, and the signing key is public test material —
+  a production receiver must never trust it. Objects appear only after their Ed25519
+  signature verifies; a valid checksum alone is never enough.
+</p>
+</div>
+
+<script>/*__DATA__*/</script>
+<script>/*__DECODER__*/</script>
+<script>/*__PROTOCOL__*/</script>
+<script>/*__ENCODER__*/</script>
+<script>/*__APP__*/</script>

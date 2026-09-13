@@ -1,0 +1,15 @@
+{
+  "name": "atbalsts-radio-security-proof",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Isolated protocol proof; no production keys or app deployment",
+  "scripts": {
+    "test": "node test.mjs"
+  },
+  "dependencies": {
+    "@hpke/core": "1.9.0",
+    "@hpke/dhkem-x25519": "1.8.0",
+    "cborg": "6.1.2"
+  }
+}

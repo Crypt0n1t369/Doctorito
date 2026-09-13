@@ -1,0 +1,21 @@
+{
+  "hpke_vectors": {
+    "url": "https://raw.githubusercontent.com/cfrg/draft-irtf-cfrg-hpke/b1f7cb0cdeab6906c61b3d6574e8bdfdbe1cd3fb/test-vectors.json",
+    "source_sha256": "61fc662f01996cd06d713dacf5e133167bd309a1f329442d53f1e21a47b3ede6",
+    "selection": {
+      "mode": 0,
+      "kem_id": 32,
+      "kdf_id": 1,
+      "aead_id": 1
+    }
+  },
+  "modem": {
+    "github_commit": "5d6da0aa7053ebe492b477bc28e64d7e109e787c",
+    "path": "public/radio-exercise/index.html",
+    "files": {
+      "decoder.js": "17a0ccad327fdaf0eee33170c93e09ac9267dd762980cb7d1d280770cce69637",
+      "legacy-framing.js": "4c04611532f77256afeec4d1750222f55f1fa7b715f790e78c2598396e23066a",
+      "encoder.js": "49d0c829560446b100d4a44905ad1b0c48355031f062bc6e691ce28b3921ef12"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+
+build_sha=$(/usr/bin/git rev-parse --verify HEAD)
+
+if [ "${#build_sha}" -ne 40 ]; then
+  printf '%s\n' "Atbalsts start aborted: HEAD is not a full Git SHA." >&2
+  exit 1
+fi
+
+case "$build_sha" in
+  *[!0-9a-f]*)
+    printf '%s\n' "Atbalsts start aborted: HEAD contains unexpected characters." >&2
+    exit 1
+    ;;
+esac
+
+export ATBALSTS_BUILD_SHA="$build_sha"
+exec /usr/bin/npm run preview -- --host 127.0.0.1 --port 4178

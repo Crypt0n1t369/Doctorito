@@ -1,0 +1,37 @@
+[
+ {
+  "name": "core envelope   (DRR +12 dB ~0.15 m, babble SNR 20 dB)",
+  "frames_ok": 16.0,
+  "objects": 8.0,
+  "records": 23.0,
+  "first_s": 1.02
+ },
+ {
+  "name": "noisy room      (DRR +12 dB ~0.15 m, babble SNR 10 dB)",
+  "frames_ok": 16.0,
+  "objects": 8.0,
+  "records": 23.0,
+  "first_s": 1.02
+ },
+ {
+  "name": "arm's length    (DRR  +6 dB ~0.30 m, babble SNR 15 dB)",
+  "frames_ok": 16.0,
+  "objects": 8.0,
+  "records": 23.0,
+  "first_s": 1.02
+ },
+ {
+  "name": "across the room (DRR  -5 dB ~1.0 m,  babble SNR 20 dB)",
+  "frames_ok": 0.0,
+  "objects": 0.0,
+  "records": 0.0,
+  "first_s": null
+ },
+ {
+  "name": "PROCESSED mic path (noise suppression on, DRR +12)",
+  "frames_ok": 4.0,
+  "objects": 2.6666666666666665,
+  "records": 6.666666666666667,
+  "first_s": 7.362208333333334
+ }
+]
