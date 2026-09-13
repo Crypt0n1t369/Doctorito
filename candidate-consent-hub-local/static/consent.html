@@ -4,22 +4,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="referrer" content="no-referrer" />
-    <title>Your energy opportunity preferences</title>
+    <title>Your GP Solution choices</title>
     <link rel="stylesheet" href="/static/consent.css" />
   </head>
   <body>
     <main class="consent-shell">
       <section class="consent-card">
         <header><span class="mark">C</span><p>Candidate permission centre</p></header>
-        <p class="eyebrow">Your choice</p>
-        <h1>Hi {{FIRST_NAME}}, choose how we may help.</h1>
-        <p class="intro">We are preparing a service that matches candidates with energy-industry opportunities. Nothing is selected in advance.</p>
+        <p class="eyebrow">Your choices</p>
+        <h1>Hi {{FIRST_NAME}}, choose what you’re comfortable with.</h1>
+        <p class="intro">We are preparing the GP Solution beta for energy-industry professionals. Nothing below is selected in advance, and the choices are independent.</p>
         <form id="consent-form">
           <input type="hidden" name="token" value="{{TOKEN}}" />
-          <label class="choice required-choice"><input type="checkbox" name="cv_match" /><span><strong>Use my existing CV for opportunity matching</strong><small>I agree that my CV and professional profile may be analysed to identify relevant energy-sector roles for the stated retention period.</small></span></label>
-          <label class="choice"><input type="checkbox" name="direct_email" /><span><strong>Contact me directly by email</strong><small>You may email me about potential matches. I can withdraw this permission at any time.</small></span></label>
-          <label class="choice"><input type="checkbox" name="direct_phone" /><span><strong>Contact me by telephone</strong><small>This is optional and separate from email contact.</small></span></label>
-          <div class="notice">We will not share your CV with an employer through this form. Employer disclosure should be requested separately for a specific opportunity. See our <a href="{{PRIVACY_NOTICE_URL}}">privacy notice</a>. Notice version: {{NOTICE_VERSION}}.</div>
+          <label class="choice"><input type="checkbox" name="beta_shortlist" /><span><strong>Join the GP Solution beta shortlist</strong><small>Send me an invitation and essential beta-access updates. If I’m invited, I’ll receive one month free from the day I activate access.</small></span></label>
+          <label class="choice"><input type="checkbox" name="cv_match" /><span><strong>Let GP Solution use my CV for suitable placements</strong><small>I agree that my CV and professional profile may be analysed to identify relevant energy-sector roles outside the platform. This is optional and separate from the beta.</small></span></label>
+          <label class="choice"><input type="checkbox" name="direct_email" /><span><strong>Contact me directly by email about placements</strong><small>You may email me about suitable opportunities outside the platform. I can withdraw this permission at any time.</small></span></label>
+          <label class="choice"><input type="checkbox" name="direct_phone" /><span><strong>Contact me by telephone about placements</strong><small>This is optional and separate from email contact.</small></span></label>
+          <div class="notice"><strong>These choices are separate.</strong> Recruitment permission is not required for the free beta month. We will not share your CV with an employer through this form; employer disclosure should be requested separately for a specific opportunity. See our <a href="{{PRIVACY_NOTICE_URL}}">privacy notice</a>. Notice version: {{NOTICE_VERSION}}.</div>
           <p class="error" id="error"></p>
           <div class="actions"><button type="button" class="danger" data-action="delete">Request deletion</button><button type="button" class="secondary" data-action="decline">Decline</button><button type="submit" class="primary">Save my choices</button></div>
         </form>

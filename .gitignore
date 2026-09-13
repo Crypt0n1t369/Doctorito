@@ -1,0 +1,10 @@
+# macOS and Python noise. Existing tracked copies are unaffected; this stops
+# new ones being added.
+.DS_Store
+__pycache__/
+*.pyc
+
+# SQLite sidecars. These hold recent database pages, so they carry whatever the
+# database carries — including personal data — and must never be committed.
+*.db-wal
+*.db-shm

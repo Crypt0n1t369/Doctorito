@@ -60,7 +60,7 @@ function renderOverview(summary) {
   $('#metric-consented').textContent = summary.totals.consented || 0;
   $('#metric-suppressed').textContent = summary.totals.suppressed || 0;
   const visible = state.candidates.slice(0, 6);
-  $('#overview-candidates').innerHTML = visible.length ? visible.map((candidate) => `<tr><td>${person(candidate)}</td><td>${badge(candidate.eligibility)}</td><td>${badge(candidate.consent_cv_status)}</td><td>${badge(candidate.status)}</td><td>${escapeHtml(candidate.retention_until || 'Not set')}</td></tr>`).join('') : '<tr><td colspan="5" class="empty">No candidate records yet.</td></tr>';
+  $('#overview-candidates').innerHTML = visible.length ? visible.map((candidate) => `<tr><td>${person(candidate)}</td><td>${badge(candidate.eligibility)}</td><td>${badge(candidate.consent_beta_status)}</td><td>${badge(candidate.consent_cv_status)}</td><td>${badge(candidate.status)}</td><td>${escapeHtml(candidate.retention_until || 'Not set')}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">No candidate records yet.</td></tr>';
   const queue = state.candidates.filter((candidate) => ['interested_unverified', 'legal_review'].includes(candidate.status));
   $('#queue-count').textContent = queue.length;
   $('#review-queue').innerHTML = queue.length ? queue.slice(0, 5).map((candidate) => `<div class="review-item"><strong>${escapeHtml(`${candidate.first_name} ${candidate.last_name}`.trim())}</strong><small>${candidate.status === 'legal_review' ? 'Original lawful-contact basis needs review.' : 'Interest received; explicit choices not yet recorded.'}</small><button data-review-id="${candidate.id}">Open in register →</button></div>`).join('') : '<p class="empty">The review queue is clear.</p>';
@@ -75,7 +75,7 @@ function renderCandidates() {
     const haystack = `${candidate.first_name} ${candidate.last_name} ${candidate.email} ${candidate.candidate_key}`.toLowerCase();
     return (!q || haystack.includes(q)) && (!status || candidate.status === status);
   });
-  $('#candidate-table').innerHTML = rows.length ? rows.map((candidate) => `<tr><td>${person(candidate)}<small>${escapeHtml(candidate.candidate_key)}</small></td><td>${escapeHtml(candidate.source_context || '—')}</td><td>${badge(candidate.eligibility)}</td><td>${badge(candidate.consent_cv_status)}</td><td>${badge(candidate.consent_contact_status)}</td><td>${badge(candidate.status)}</td><td><div class="row-actions"><button data-manage-id="${candidate.id}">Manage</button><a class="link-button" href="/consent/${encodeURIComponent(candidate.consent_token)}" target="_blank" rel="noreferrer">Consent ↗</a></div></td></tr>`).join('') : '<tr><td colspan="7" class="empty">No candidates match these filters.</td></tr>';
+  $('#candidate-table').innerHTML = rows.length ? rows.map((candidate) => `<tr><td>${person(candidate)}<small>${escapeHtml(candidate.candidate_key)}</small></td><td>${escapeHtml(candidate.source_context || '—')}</td><td>${badge(candidate.eligibility)}</td><td>${badge(candidate.consent_beta_status)}</td><td>${badge(candidate.consent_cv_status)}</td><td>${badge(candidate.consent_contact_status)}</td><td>${badge(candidate.status)}</td><td><div class="row-actions"><button data-manage-id="${candidate.id}">Manage</button><a class="link-button" href="/consent/${encodeURIComponent(candidate.consent_token)}" target="_blank" rel="noreferrer">Consent ↗</a></div></td></tr>`).join('') : '<tr><td colspan="8" class="empty">No candidates match these filters.</td></tr>';
 }
 
 function renderCampaigns() {
@@ -99,7 +99,7 @@ function openCandidateManager(id) {
   });
   $('#edit-candidate-name').textContent = `${candidate.first_name} ${candidate.last_name}`.trim() || 'Manage candidate';
   $('#edit-candidate-key').textContent = candidate.candidate_key;
-  $('#edit-consent-summary').textContent = `CV: ${labels[candidate.consent_cv_status] || candidate.consent_cv_status}; contact: ${labels[candidate.consent_contact_status] || candidate.consent_contact_status}`;
+  $('#edit-consent-summary').textContent = `Beta: ${labels[candidate.consent_beta_status] || candidate.consent_beta_status}; CV: ${labels[candidate.consent_cv_status] || candidate.consent_cv_status}; contact: ${labels[candidate.consent_contact_status] || candidate.consent_contact_status}`;
   $('#edit-consent-link').href = `/consent/${encodeURIComponent(candidate.consent_token)}`;
   $('#edit-error').textContent = '';
   $('#edit-dialog').showModal();

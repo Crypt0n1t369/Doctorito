@@ -5,7 +5,7 @@ A private, dependency-free candidate register and consent audit trail designed t
 ## What it includes
 
 - Candidate register with lawful-contact eligibility gate
-- Separate CV-matching, email-contact, and telephone-contact permissions
+- Separate beta-shortlist, CV-matching, email-contact, and telephone-contact permissions
 - Secure, unguessable consent links with no preselected checkboxes
 - Append-only consent event log
 - Human review queue for unclear records and interested-but-unverified candidates
@@ -44,8 +44,10 @@ Download `sample-import.csv` as a starting point. Re-importing the same email up
 3. Upload that minimal CSV into the Smartlead informing campaign.
 4. Use `{{consent_form_link}}` in the email copy.
 5. Smartlead stops on reply and routes interested replies to its verification subsequence.
-6. The candidate uses the consent link; the hub records the choices and evidence.
+6. The candidate uses the consent link; the hub records the beta, CV-use, contact choices and evidence independently.
 7. Export or review the hub before using a CV for matching.
+
+The consent form does not require CV permission to join the beta shortlist. A candidate can choose beta access, recruitment permissions, both, or decline. Each selected and declined scope is recorded as its own audit event.
 
 This mode does not require HubSpot or another CRM. It requires occasional CSV movement because Smartlead Base does not provide the Pro API connection.
 

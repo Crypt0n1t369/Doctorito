@@ -8,12 +8,13 @@ async function submitChoice(action) {
   const payload = {
     token: data.get('token'),
     action,
+    beta_shortlist: data.has('beta_shortlist'),
     cv_match: data.has('cv_match'),
     direct_email: data.has('direct_email'),
     direct_phone: data.has('direct_phone'),
   };
-  if (action === 'grant' && !payload.cv_match) {
-    error.textContent = 'Select CV matching to join the opportunity-matching shortlist, or choose Decline.';
+  if (action === 'grant' && !payload.beta_shortlist && !payload.cv_match && !payload.direct_email && !payload.direct_phone) {
+    error.textContent = 'Select at least one option, or choose Decline.';
     return;
   }
   try {

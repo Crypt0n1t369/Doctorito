@@ -74,6 +74,7 @@ SCHEMA_STATEMENTS = [
       original_basis TEXT NOT NULL DEFAULT 'review_required',
       eligibility TEXT NOT NULL DEFAULT 'review_required',
       status TEXT NOT NULL DEFAULT 'new',
+      consent_beta_status TEXT NOT NULL DEFAULT 'not_requested',
       consent_cv_status TEXT NOT NULL DEFAULT 'not_requested',
       consent_contact_status TEXT NOT NULL DEFAULT 'not_requested',
       consent_phone_status TEXT NOT NULL DEFAULT 'not_requested',
@@ -128,6 +129,7 @@ SCHEMA_STATEMENTS = [
     """,
     "CREATE INDEX IF NOT EXISTS idx_candidates_status ON candidates(status)",
     "CREATE INDEX IF NOT EXISTS idx_candidates_eligibility ON candidates(eligibility)",
+    "CREATE INDEX IF NOT EXISTS idx_candidates_consent_beta ON candidates(consent_beta_status)",
     "CREATE INDEX IF NOT EXISTS idx_candidates_consent_cv ON candidates(consent_cv_status)",
     "CREATE INDEX IF NOT EXISTS idx_candidates_retention ON candidates(retention_until)",
     "CREATE INDEX IF NOT EXISTS idx_consent_candidate_time ON consent_events(candidate_id, recorded_at)",
@@ -138,6 +140,15 @@ SCHEMA_STATEMENTS = [
 def init_db(seed: bool = True) -> None:
     stamp = now_iso()
     with closing(connect_db()) as db:
+        # Keep existing local databases forward-compatible with the independent
+        # beta-shortlist permission added after the initial schema.
+        existing_columns = {
+            row["name"] for row in db.execute("PRAGMA table_info(candidates)").fetchall()
+        }
+        if existing_columns and "consent_beta_status" not in existing_columns:
+            db.execute(
+                "ALTER TABLE candidates ADD COLUMN consent_beta_status TEXT NOT NULL DEFAULT 'not_requested'"
+            )
         for statement in SCHEMA_STATEMENTS:
             db.execute(statement)
         db.execute("PRAGMA optimize")
@@ -284,6 +295,7 @@ def create_or_update_candidate(db: sqlite3.Connection, payload: dict[str, Any]) 
     allowed = {
         "first_name", "last_name", "phone", "location", "source_context",
         "cv_reference", "received_at", "original_basis", "eligibility", "status",
+        "consent_beta_status",
         "consent_cv_status", "consent_contact_status", "consent_phone_status",
         "retention_until", "privacy_notice_version", "campaign_name",
         "smartlead_lead_id", "smartlead_campaign_id",
@@ -304,11 +316,11 @@ def create_or_update_candidate(db: sqlite3.Connection, payload: dict[str, Any]) 
             INSERT INTO candidates (
               candidate_key, first_name, last_name, email, phone, location,
               source_context, cv_reference, received_at, original_basis,
-              eligibility, status, consent_cv_status, consent_contact_status,
+              eligibility, status, consent_beta_status, consent_cv_status, consent_contact_status,
               consent_phone_status, retention_until, privacy_notice_version,
               consent_token, campaign_name, smartlead_lead_id,
               smartlead_campaign_id, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 candidate_key(), clean.get("first_name", ""), clean.get("last_name", ""),
@@ -316,6 +328,7 @@ def create_or_update_candidate(db: sqlite3.Connection, payload: dict[str, Any]) 
                 clean.get("source_context", ""), clean.get("cv_reference", ""),
                 clean.get("received_at") or None, clean.get("original_basis", "review_required"),
                 clean.get("eligibility", "review_required"), clean.get("status", "new"),
+                clean.get("consent_beta_status", "not_requested"),
                 clean.get("consent_cv_status", "not_requested"),
                 clean.get("consent_contact_status", "not_requested"),
                 clean.get("consent_phone_status", "not_requested"),
@@ -339,34 +352,58 @@ def apply_consent(db: sqlite3.Connection, payload: dict[str, Any]) -> dict[str, 
     if not candidate:
         raise LookupError("This consent link is invalid or expired.")
     action = str(payload.get("action", "grant"))
+    # `beta_shortlist` identifies the independent, newer consent form. If it
+    # is absent, retain the original CV-required API contract for compatibility
+    # with older links and integrations.
+    independent_form = "beta_shortlist" in payload
+    beta_shortlist = bool(payload.get("beta_shortlist"))
     cv_match = bool(payload.get("cv_match"))
     direct_email = bool(payload.get("direct_email"))
     direct_phone = bool(payload.get("direct_phone"))
     stamp = now_iso()
     notice_version = candidate["privacy_notice_version"]
     if action == "delete":
-        status, cv_status, contact_status, phone_status = "deletion_requested", "withdrawn", "withdrawn", "withdrawn"
-    elif action == "decline" or not cv_match:
-        status, cv_status, contact_status, phone_status = "declined", "declined", "declined", "declined"
+        status = "deletion_requested"
+        beta_status = cv_status = contact_status = phone_status = "withdrawn"
+    elif action == "decline":
+        status = "declined"
+        beta_status = cv_status = contact_status = phone_status = "declined"
+    elif independent_form:
+        beta_status = "granted" if beta_shortlist else "declined"
+        cv_status = "granted" if cv_match else "declined"
+        contact_status = "granted" if direct_email else "declined"
+        phone_status = "granted" if direct_phone else "declined"
+        status = "consented" if any((beta_shortlist, cv_match, direct_email, direct_phone)) else "declined"
+    elif not cv_match:
+        # Legacy form: CV matching was the required purpose, so declining it
+        # declined the other contact scopes as well.
+        status, beta_status, cv_status, contact_status, phone_status = (
+            "declined", "not_requested", "declined", "declined", "declined"
+        )
     else:
         status = "consented"
+        beta_status = "not_requested"
         cv_status = "granted"
         contact_status = "granted" if direct_email else "declined"
         phone_status = "granted" if direct_phone else "declined"
     db.execute(
         """
         UPDATE candidates
-        SET status = ?, consent_cv_status = ?, consent_contact_status = ?,
+        SET status = ?, consent_beta_status = ?, consent_cv_status = ?, consent_contact_status = ?,
             consent_phone_status = ?, last_event_at = ?, updated_at = ?
         WHERE id = ?
         """,
-        (status, cv_status, contact_status, phone_status, stamp, stamp, candidate["id"]),
+        (status, beta_status, cv_status, contact_status, phone_status, stamp, stamp, candidate["id"]),
     )
-    for scope, decision in (
+    decisions = []
+    if independent_form:
+        decisions.append(("beta_shortlist", beta_status))
+    decisions.extend((
         ("cv_matching", cv_status),
         ("direct_email", contact_status),
         ("direct_phone", phone_status),
-    ):
+    ))
+    for scope, decision in decisions:
         db.execute(
             """
             INSERT INTO consent_events
@@ -410,10 +447,11 @@ def ingest_smartlead_event(
     stamp = str(payload.get("created_at") or data.get("created_at") or now_iso())
     if candidate:
         next_status = candidate["status"]
+        beta_status = candidate["consent_beta_status"]
         cv_status = candidate["consent_cv_status"]
         contact_status = candidate["consent_contact_status"]
         if "unsubscribe" in event_type:
-            next_status, contact_status = "do_not_contact", "withdrawn"
+            next_status, beta_status, contact_status = "do_not_contact", "withdrawn", "withdrawn"
         elif "bounce" in event_type:
             next_status = "bounced"
         elif "reply" in event_type:
@@ -424,14 +462,14 @@ def ingest_smartlead_event(
         if category in {"interested", "positive", "requested info", "requested_info"}:
             next_status = "interested_unverified"
         if category in {"not interested", "do not contact", "unsubscribe"}:
-            next_status, contact_status = "do_not_contact", "withdrawn"
+            next_status, beta_status, contact_status = "do_not_contact", "withdrawn", "withdrawn"
         db.execute(
             """
-            UPDATE candidates SET status = ?, consent_cv_status = ?,
+            UPDATE candidates SET status = ?, consent_beta_status = ?, consent_cv_status = ?,
               consent_contact_status = ?, last_event_at = ?, updated_at = ?
             WHERE id = ?
             """,
-            (next_status, cv_status, contact_status, stamp, now_iso(), candidate["id"]),
+            (next_status, beta_status, cv_status, contact_status, stamp, now_iso(), candidate["id"]),
         )
     db.execute(
         """
@@ -626,6 +664,7 @@ class CandidateHubHandler(BaseHTTPRequestHandler):
             allowed = {
                 "first_name", "last_name", "phone", "location", "source_context",
                 "cv_reference", "received_at", "original_basis", "eligibility", "status",
+                "consent_beta_status",
                 "consent_cv_status", "consent_contact_status", "consent_phone_status",
                 "retention_until", "privacy_notice_version", "campaign_name",
                 "smartlead_lead_id", "smartlead_campaign_id",
