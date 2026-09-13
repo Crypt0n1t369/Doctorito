@@ -1,0 +1,130 @@
+{
+  "plan": {
+    "title": "Delivery, funding and network plan",
+    "page": 3
+  },
+  "plan-1": {
+    "title": "1. The next decision and the first deliverable",
+    "page": 3
+  },
+  "plan-2": {
+    "title": "2. Architecture to carry into the pilot",
+    "page": 3
+  },
+  "plan-3": {
+    "title": "3. Institutional relationships and first commitments",
+    "page": 4
+  },
+  "plan-4": {
+    "title": "4. Technical advisers and delivery leadership",
+    "page": 5
+  },
+  "plan-5": {
+    "title": "5. Community, international connections and recruitment",
+    "page": 6
+  },
+  "plan-6": {
+    "title": "6. How to organise the R&D",
+    "page": 7
+  },
+  "plan-7": {
+    "title": "7. Events that produce useful work",
+    "page": 8
+  },
+  "plan-8": {
+    "title": "8. Budget and funding strategy",
+    "page": 8
+  },
+  "plan-9": {
+    "title": "9. The 12-week sequence and spending gates",
+    "page": 10
+  },
+  "plan-10": {
+    "title": "10. Decisions needed before a larger rollout",
+    "page": 10
+  },
+  "plan-11": {
+    "title": "11. First two weeks: action register",
+    "page": 11
+  },
+  "plan-12": {
+    "title": "12. Short outreach drafts",
+    "page": 12
+  },
+  "appendix-a": {
+    "title": "Appendix A. Technical architecture and security",
+    "page": 13
+  },
+  "technical-1": {
+    "title": "A1. What the current evidence supports",
+    "page": 13
+  },
+  "technical-2": {
+    "title": "A2. The recommended system",
+    "page": 14
+  },
+  "technical-3": {
+    "title": "A3. What receives the signal, and which technology to use",
+    "page": 15
+  },
+  "technical-4": {
+    "title": "A4. The “10-30 bit/s” claim and a sensible audio experiment",
+    "page": 15
+  },
+  "technical-5": {
+    "title": "A5. Make the messages small without removing their meaning or security",
+    "page": 16
+  },
+  "technical-6": {
+    "title": "A6. Phone-to-phone exchange: feasible, with an explicit operating model",
+    "page": 17
+  },
+  "technical-7": {
+    "title": "A7. Store-and-forward and returning citizen reports",
+    "page": 18
+  },
+  "technical-8": {
+    "title": "A8. Offline maps, new objects and several days without internet",
+    "page": 19
+  },
+  "technical-9": {
+    "title": "A9. Coverage, radio capacity and power",
+    "page": 20
+  },
+  "technical-10": {
+    "title": "A10. Security: contain failures instead of trusting the network",
+    "page": 21
+  },
+  "technical-11": {
+    "title": "A11. A realistic end-to-end scenario",
+    "page": 22
+  },
+  "technical-12": {
+    "title": "A12. Budget options",
+    "page": 23
+  },
+  "technical-13": {
+    "title": "A13. What to test before increasing the budget",
+    "page": 25
+  },
+  "technical-14": {
+    "title": "A14. What to correct before replying to IDC",
+    "page": 26
+  },
+  "technical-15": {
+    "title": "A15. Implementation sequence for the existing app",
+    "page": 26
+  },
+  "technical-16": {
+    "title": "A16. Assessment of the mentor's informal message",
+    "page": 27
+  },
+  "appendix-b": {
+    "title": "Appendix B. Latvian IDC response draft",
+    "page": 28
+  },
+  "sources": {
+    "title": "Source links",
+    "page": 30
+  }
+}

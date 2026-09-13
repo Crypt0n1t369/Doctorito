@@ -1,0 +1,163 @@
+PAGE 1
+Sadarbības aicinājums krīzes atbalsta
+digitālās platformas izstrādei
+Kristaps Barons
+Ralfs Jānis Gaigulis
+atbalsts.sortium.co
+
+PAGE 2
+Gaisa apdraudējums:
+Vētras un
+laikapstākļu krīzes: 
+Izvilkums no premjerministra Andra Kulberga
+Facebook raksta par reakciju uz vētru 24.08.:
+Daudzviet Latvijā pazuda elektrība.
+Bija traucēti mobilie sakari un internets, nestrādāja degvielas
+uzpildes stacijas, veikali, bankomāti, maksājumu termināļi un
+luksofori.
+→ Nav vienotas, saprotamas un regulāri atjaunotas situācijas kopainas.
+→ Organizācijas savā starpā nav koordinētas.
+→ Cilvēki pašiem jāmeklē informāciju dažādos savstarpēji nesaistītās
+mājaslapās un sociālo tīklu kontos.
+Taču krīzes laikā cilvēkam vienuviet jāspēj saņemt atbildes uz pavisam
+konkrētiem jautājumiem:
+❓ Kur nav elektrības?
+❓ Kur nedarbojas mobilie sakari un internets?
+❓ Kuri ceļi ir slēgti un kur traucēta sabiedriskā transporta kustība?
+❓ Kur ir apdraudēta ūdensapgāde un kanalizācijas darbība?
+❓ Kuri veikali, DUS un aptiekas darbojas?
+ 
+Saite uz orģinālo Facebook ierakstu
+→ Liela sabiedrības neskaidrība, nesapratne
+un informācijas sadrumstalotība krīzes laikā
+atbalsts.sortium.co
+Kā nodrošināt šo informāciju situācijās, kad cilvēkiem nav
+elektrības, interneta vai mobilo sakaru?
+Problēma
+
+PAGE 3
+Risinājums
+Līmenis 1 | Vienpusēja
+Centralizēta, vienota krīzes
+informācijas, notikumu un
+atbalsta platforma.
+Piemērs no Ukrainas:
+https://liveuamap.com/ un
+https://alerts.in.ua/en
+Līmenis 3 | Aplikācija
+Aplikācijas izveidošana un
+platformas pielāgošana
+darbībai bez interneta vai
+mobīlajiem sakariem. 
+Līmenis 2 | Divpusēja
+Platforma ar divpusēju info
+plūsmu, ļaujot iedzīvotājiem
+dalīties ar saviem paziņojumiem,
+resursiem, kā arī iespēja
+pieteikties un koordinēt
+brīvprātīgo palīdzību. Piemērs no
+Ukrainas: https://eppoua.com/
+Platformas pirmā versija:
+atbalsts.sortium.co
+atbalsts.sortium.co
+Viena platforma, trīs attīstības posmi –
+informēšanai, iesaistei un bezsaistei.
+
+PAGE 4
+Līmenis 1  
+Iedzīvotāja skats:
+1) Dažādi paziņojumi par krīzes situācijām
+2) Piekļuve informācijai par patversmēm, 72h
+somu, rīcību dažādās krīzes situācijās, un vēl.
+Centra skats:
+1) Pilnīga situāciju kontrole un pārredzamība. 
+2) Iespēja atlasīt dažādus filtrus, kas ļauj
+apskatīt situācijas identificēt reāllaikā.
+atbalsts.sortium.co
+Vienota info telpa – skaidrība iedzīvotājiem, kontrole centram.
+
+PAGE 5
+1. Iedzīvotāji pieslēdzās un izveido savu profilu.
+2. Iedzīvotāji iesūta apdraudējumu novērojumus.
+3. Iedzīvotāji var pieteikties kā brīvprātīgie un iesaistīties.
+Līmenis 2 1. Centrs izskata un apstiprina
+iedzīvotāju iesūtītos notikumus
+2. Centrs izveido brīvprātīgo misijas,
+kad valsts resursi ir pārslogoti
+3. Centrs var pārskatīt un uzrunāt
+visus pieteikušos brīvprātīgos. 
+atbalsts.sortium.co
+Divpusēja informācijas
+apmaiņa pārvērš iedzīvotāju
+ziņojumus koordinētā rīcībā.
+
+PAGE 6
+Līmenis 3
+1) Pamatbāzes info resursi tiek lejupielādēti kopā ar aplikāciju.
+2) Bez interneta aģents joprojām sniedz būtisku informāciju un
+rīcības ieteikumus.
+Kā applikācija palīdz nodot un saņemt informāciju, kad pazūd
+internets un mobīlie sakari:
+Datu saņemšana pa radio viļņiem – applikācijā informāciju
+atjauno bez interneta (~10–30 bit/s).
+P2P datu apmaiņa – šifrēti dati tiek nodoti starp ierīcēm, līdz
+kāda no tām sasniedz serveri.
+Mobilais datu mezgls – mugursomā, auto vai dronā ievietota
+ierīce savāc un izplata tuvumā esošo ierīču datus.
+Applikācijas izveide - bezsakaru risinājuma nodrošināšana
+atbalsts.sortium.co
+
+PAGE 7
+Platforma ir brīvprātīgs projekts, cēlies no vēlmes uzlabot Latvijas civilo reakciju krīzes laikā.
+Vēlamies sadarboties un izprast kā vislabāk varam palīdzēt esošajām sistēmām.
+  
+Sadarbība ar Krīzes vadības centru un VUGD?
+Kā mēs varam sadarboties?
+Paredzam, ka šī platforma tiks palaista publiski nākošo 1-3 mēnešu laikā. 
+Kopā ar Krīzes vadības centru un VUGD, spēsim šo platformu izveidot daudz spēcīgāku.
+Nē Jā
+Platforma darbojās tikai uz iedzīvotāju
+ziņojumiem, sociālajiem tīkliem, publiskiem
+datiem. Situācijas izvērtē un apstiprina
+privāta platformas izveidotāju komanda.
+Platforma darbojās ar visiem publiski un valsts
+pieejamiem datiem un resursiem. Situācijas
+izvērtē un apstiprina valsts organizācijas.
+Platformu uztur izveidotāju komanda.
+atbalsts.sortium.co
+
+PAGE 8
+Ukrainas veiksmes stāsts
+Ukrainas ePPO (https://eppoua.com/) pretgaisa sistēma ļauj Ukrainas iedzīvotājiem ziņot par
+gaisa draudiem publicējot video un savas koordinātas. 
+Brīvprātīgo komanda “Technaryˮ 2022. gadā izstrādāja lietotni, konsultējoties un sadarbojoties ar
+Ukrainas Gaisa spēku personālu un militāro pavēlniecību.
+Šodien, platforma joprojām pieder privātai kompānijai, cieši sadarbojoties ar Ukrainas valdību.
+єППО iesniegtie ziņojumi dažu sekunžu laikā nonāk Gaisa spēku komandpunktos.
+ 
+Ukrainai rāda piemēru.
+Mēs būvējam Latvijai.
+atbalsts.sortium.co
+
+PAGE 9
+Nākamie soļi
+Mēs vēlamies labāk izprast esošos sistēmas, un kā Jūs redzat mūsu platformas vietu un
+integrāciju Latvijas sabiedrībā. Mums noderētu atbildes uz sekojošiem jautājumiem: 
+1. Kādas sistēmas un dati šobrīd tiek izmantotas krīzes atbalstam? Informācijas apmaiņa augsti
+uzlabotu platformas datu kvalitāti un pielietojamību. 
+2. Kā notiek informācijas publicēšanas lēmumu pieņemšana ķēde krīzes laikā? Vēlamies uzzināt
+veidus kā effektīvi pieslēgties jūsu esošajam procesiem, papildinot jau esošo infrastruktūru.
+3. Zinam, ka esat konsultējušies ar Ukraiņu sistēmu veidotājiem, kas ir ļoti pozitīvi. Kādi ir nākotnes
+plāni šāda tipa platformai? 
+  
+atbalsts.sortium.co
+
+PAGE 10
+Ceram uz drīzu sadarbību!
+Ralfs Jānis Gaigulis
++371 26006667
+rgaigulis@gmail.com
+Kristaps Barons
++371 24862613
+3kristaps6barons9@gmail.com
+atbalsts.sortium.co
