@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { REACHES_A_PERSON } from '../harness/definitions.js';
 import { open, one, all } from '../src/db.js';
 import { loadScenario, listScenarios, seedScenario } from '../src/seed.js';
 import { admit } from '../src/pipeline/admit.js';
@@ -55,12 +56,12 @@ async function runOne(slug) {
 
   // --- the five measures ----------------------------------------------------
   const total = rows.length;
-  const queued = rows.filter((x) => x.r.decision === 'queued').length;
-  const autoShare = total ? (total - queued) / total : 0;
+  const reachedAPerson = rows.filter((x) => REACHES_A_PERSON.has(x.r.decision)).length;
+  const autoShare = total ? (total - reachedAPerson) / total : 0;
 
   const realOffers = rows.filter((x) => ['bound', 'asked', 'full', 'no_match'].includes(x.m.expect?.decision));
   const realAuto = realOffers.length
-    ? realOffers.filter((x) => x.r.decision !== 'queued').length / realOffers.length : null;
+    ? realOffers.filter((x) => !REACHES_A_PERSON.has(x.r.decision)).length / realOffers.length : null;
 
   const class1Binds = rows.filter((x) => x.r.decision === 'bound' && x.r.risk_class === 1);
   const class1Wrong = class1Binds.filter((x) => {
@@ -69,9 +70,12 @@ async function runOne(slug) {
   });
   const wrongRate = class1Binds.length ? class1Wrong.length / class1Binds.length : null;
 
+  // Every path counts, not only the pipeline's own: a class 3 commitment that no
+  // coordinator bound is a violation whether it came from an offer, an
+  // outbound invitation or anything added later (docs/OUTCOMES.md, C2).
   const class3Auto = all(db, `
     select c.commitment_id from commitments c join needs n on n.need_id=c.need_id
-     where c.initiative_id=? and c.bound_by='auto' and n.risk_class=3`, initiative.initiative_id);
+     where c.initiative_id=? and n.risk_class=3 and c.bound_by not like 'coordinator:%'`, initiative.initiative_id);
 
   // Without this, every measure below is maximised by a pipeline that decides
   // nothing: answering "not an offer" to all 45 messages scores a clean sweep.

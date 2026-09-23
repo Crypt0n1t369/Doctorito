@@ -21,6 +21,7 @@
  * Exit status: 1 if any risk class 3 need was auto-bound, which is a structural
  * failure and not a metric. 2 if there was nothing to measure at all.
  */
+import { REACHES_A_PERSON, SPECIFIC_REPLY, isFixture } from './definitions.js';
 import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -56,36 +57,14 @@ const SHORT = {
   no_match: 'nomtch', full: 'full', error: 'ERROR',
 };
 
-/**
- * The coordinator queue is literally `offers where state='queued'` — that is the
- * query src/queue.js runs. So "no human involved" is decided by that and
- * nothing else.
- *
- * A rejected message is a harder call. The pipeline deliberately says nothing
- * useful back to a text that tries to instruct it, and the reply it does send
- * promises that a person will see it, but the offer never enters the console's
- * queue. Both readings are printed, and the stricter one is printed second so
- * that nobody quotes the kinder number without seeing it.
- */
-// 'error' belongs here as well as in REACHES_A_PERSON: a case the system could
-// not decide did not reach a decision without a human. Leaving it out meant a
-// run where every case threw scored 100% on the headline measure, three lines
-// above a footnote saying those same cases reached a person.
-const IN_QUEUE = new Set(['queued', 'error']);
-const REACHES_A_PERSON = new Set(['queued', 'rejected', 'error']);
+// "Reached a person" and "a specific reply" are defined once, in
+// harness/definitions.js, and shared with shadow.js and acceptance.js.
 
 /** Labels a human gave to messages that really are an offer of something. */
 const REAL_OFFER_LABELS = new Set(['bound', 'queued', 'asked', 'full', 'no_match']);
 
 /** Labels where the right answer names no need at all. */
 const NO_NEED_LABELS = new Set(['not_an_offer', 'answered', 'rejected', 'withdrawn', 'no_match']);
-
-/**
- * A reply that names something: the need taken, the question asked, the facts
- * answered, the list still open. The generic "a coordinator is looking at it"
- * is not one, and neither is the deliberate non-answer to an attack.
- */
-const SPECIFIC_REPLY = new Set(['bound', 'asked', 'answered', 'no_match', 'full', 'withdrawn', 'not_an_offer']);
 
 /**
  * The per-minute limit exists so that a flood degrades to queueing rather than
@@ -196,7 +175,7 @@ function selectJobs(args) {
     });
   }
 
-  const picked = args.scenario ? jobs.filter((j) => j.slug === args.scenario) : jobs;
+  const picked = args.scenario ? jobs.filter((j) => j.slug === args.scenario) : jobs.filter((j) => !isFixture(j.slug));
   if (args.scenario && !picked.length) {
     problems.push(`--scenario ${args.scenario} matched nothing measurable`);
   }
@@ -287,8 +266,8 @@ async function scoreCase(db, { initiative, needRefs, slug, c, index }) {
   rec.correct = rec.decision_ok && rec.need_verdict !== 'wrong';
   rec.wrong_bind = isWrongBind(rec);
   rec.unverifiable_bind = rec.decision === 'bound' && rec.need_verdict === 'unknown';
-  rec.in_queue = IN_QUEUE.has(rec.decision);
   rec.reached_a_person = REACHES_A_PERSON.has(rec.decision);
+  rec.in_queue = rec.reached_a_person;
   return rec;
 }
 
@@ -438,7 +417,8 @@ function rebuild(db, { rec, pair, needs, initiative, cfg }) {
     language: rec.labelled_language ?? rec.detected_language ?? 'unstated',
     expect_decision: rec.expect_decision, expect_need_id: rec.expect_need_id,
     recorded_decision: rec.decision, recorded_confidence: rec.confidence,
-    autobind: initiative.autobind, escalate_floor: cfg.escalate_floor,
+    autobind: initiative.autobind, escalate_floor: cfg.escalate_floor, thresholds: cfg.thresholds,
+    recorded_reason: rec.reason ?? null,
     at_the_gate: false, need_id: null, risk_class: null, confidence: null,
     blocked_by_credentials: false, fixed: null,
   };
@@ -552,7 +532,12 @@ function fidelity(rows, cfg) {
   const checked = [];
   for (const r of rows) {
     if (r.unrebuilt) continue;
-    const t = r.at_the_gate ? thresholdFor(cfg, r.risk_class) : Infinity;
+    // Decided by a guard the sweep does not model: a degraded engine, a
+    // possible duplicate, a budget refusal. Those are not threshold decisions.
+    if (/^(degraded|possible_duplicate|budget|error)/.test(r.recorded_reason ?? '')) continue;
+    // Each row against its own scenario's thresholds. Pooled runs used to check
+    // every row against the first scenario's, and called the difference drift.
+    const t = r.at_the_gate ? thresholdFor({ thresholds: r.thresholds ?? cfg.thresholds }, r.risk_class) : Infinity;
     const rebuilt = gateAt(r, t);
     const confOk = r.confidence == null || r.recorded_confidence == null
       || Math.abs(r.confidence - r.recorded_confidence) < 5e-5;
@@ -914,12 +899,10 @@ function printReport(r, args) {
   row('Wrong binds over every bind made', '—', pct(h.wrong_binds_all, { up: true }));
   row('Decision label matched exactly', '—', pct(h.decision_match));
   row('Decision and need both matched', '—', pct(h.fully_correct));
-  row('Stricter: no person involved at all', '—', pct(h.no_person_all));
   say('  ' + RULE);
-  say('  "No human" is the share that did not end in the coordinator queue, which is exactly');
-  say('  the query the console runs: offers where state=\'queued\'. The stricter line also');
-  say('  counts a rejected message and a thrown case as reaching a person, because the reply');
-  say('  to an attack promises that somebody will look.');
+  say('  "No human" is the share that did not reach the coordinator console. The console shows');
+  say('  queued offers and messages the screen set aside as possible attacks, and a case that');
+  say('  threw reached a person too. One definition, shared with shadow and acceptance.');
   const byClass = Object.entries(h.binds_by_risk_class).map(([k, v]) => `class ${k}: ${v}`).join(', ');
   wrap(`Binds made, by risk class: ${byClass || 'none'}.`
     + (h.wrong_binds_class1.n ? '' : ' No class 1 bind was made, so that rate has no denominator'

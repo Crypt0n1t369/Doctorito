@@ -3,6 +3,14 @@
 Turns a collective decision into a catalogue of needs, binds arbitrary free-text
 offers to those needs without a person reading them, and shows the needs closing.
 
+**Start with [docs/OUTCOMES.md](docs/OUTCOMES.md).** Since 22 September the purpose
+is wider than this matcher: people contribute in the scope they choose, the system
+connects the evidence they may use, offers a worthwhile next step, and records what
+happened. The matcher is one component of that loop. OUTCOMES.md says what the system
+is for, the constraints that never bend, the order of work and the decisions still
+open; [docs/DECISIONS.md](docs/DECISIONS.md) is the decision log. What follows
+describes the matcher as it stands.
+
 It is domain-neutral on purpose. The three scenarios in `scenarios/` are a
 municipal participatory budget, a multi-agency storm response and a Horizon
 Europe consortium forming a bid. They share no code — only the nine objects
@@ -16,7 +24,7 @@ npm run accept        # the five measures from the spec, on a live run
 npm run harness       # wrong-bind rate, calibration, per language
 npm run harness -- --sweep    # every threshold, recomputed, no model calls
 npm run shadow -- --scenario river-cleanup   # run beside a coordinator, act on nothing
-npm test              # 76 tests over the invariants
+npm test              # 117 tests: the invariants, and every unsafe path closed in Gate 0
 ```
 
 Node 22 or newer. No dependencies, no build step, no Docker. SQLite comes from
@@ -112,27 +120,54 @@ being true.
 3. **`qty_committed` is derived, never written.** So is the delivery record, and
    a contributor cannot verify their own delivery.
 4. **Eligibility is a pure predicate over verified credentials.** Never inferred
-   from what somebody writes about themselves.
+   from what somebody writes about themselves, and checked on every path: a
+   coordinator who decides an offer matches a need has not granted the
+   certificate the need requires.
 5. **Nothing acts before its judgment is written.** The judgment row lands, then
-   the lease, then the commitment. `takeLease()` throws without a judgment id.
+   the lease, then the commitment. `takeLease()` throws without a judgment id and
+   refuses one that does not exist in the same initiative.
 6. **Risk class 3 has no automatic path, at any confidence.** `thresholdFor()`
-   returns `Infinity` for class 3, so there is no number anyone can put in a
-   config file that would let it bind itself.
+   returns `Infinity` for class 3, and the commitment boundary in
+   `src/pipeline/leases.js` refuses a class 3 commitment on every path a
+   coordinator did not take — including an accepted outbound invitation.
 7. **A need's quantity never changes silently.** An amendment is an event with an
    author and a public reason.
 8. **Offer text is data, never instruction.** It is fenced and labelled untrusted
    inside the state, and it never appears in a question's wording.
-9. **Strip identity before the call, and match on capability.** Names, phone
-   numbers, addresses and identifiers are removed before anything leaves this
-   machine — including numbers the quantity parser found inside them. The model
-   sees "a 7.5 tonne flatbed, Thursday and Friday, within 40 km". This is what
-   makes an EU deployment legal, so it lives in the architecture.
+9. **Send nothing hosted without permission, and strip identity from what is
+   sent.** Processing with a hosted provider is its own permission per initiative
+   (`hosted_processing`, off by default); without it the hosted engine is never
+   called. Where it is allowed, names, phone numbers, addresses and identifiers
+   are removed from every free-text field before anything leaves — the offer, the
+   objective, the catalogue, capability records — including numbers the quantity
+   parser found inside them. Removing identifiers reduces what leaves; it does not
+   by itself make sending lawful, and patterns cannot recognise a name nobody told
+   us about. That is why redaction supplements the permission rather than
+   replacing it.
 10. **Every automated message says it is automated** and gives one way to reach
     a person.
-11. **One switch per initiative** turns every automatic bind into a queue item,
-    effective immediately, usable without calling us.
+11. **One switch per initiative** turns every automatic bind into a queue item —
+    including binds from accepted outbound invitations — and pauses automatic
+    outbound asks, effective immediately, usable without calling us.
 12. **A flood degrades to queueing, not to spending.** Per-initiative rate limit
-    and a hard daily cost cap.
+    and a hard daily cost cap, applied at every model call; an offer refused a
+    budget is queued, never left outside every list.
+13. **Identity is what a channel authenticated.** A signed email webhook, a
+    Telegram secret token, or — on the web form, which vouches for nothing — a
+    random id in the contributor's own browser. Names, handles and email
+    local-parts never merge two people, and a webhook with no secret configured
+    refuses everything.
+14. **A failure degrades to review, never to a weaker engine with the same
+    authority.** A missing key, a refused request, an invalid answer or a
+    disallowed destination still gets a rules-engine reading for the coordinator,
+    marked `degraded_cause`, and nothing binds on it.
+15. **The record is a coordinator's view.** Judgments, actor pages, the outbox and
+    the log need a coordinator session; a private initiative does not exist for
+    the public; a contributor's confirm/withdraw link is never shown to anyone
+    else.
+
+`test/boundaries.test.js` pins 13, 14 and 15 and every other path the 22 September
+review reproduced; 26 of its 29 tests failed on the reviewed code.
 
 Check nine and eight for yourself:
 
@@ -223,6 +258,12 @@ Three scenarios, 138 messages, three channels, three languages, on
 `typesafe/jev-1.13-20260917` reached through OpenRouter's decisions endpoint.
 Reproduce with `npm run accept`.
 
+These were measured on 18 September, before Gate 0 and before "decided with no
+human" had one shared definition (`harness/definitions.js`: a message set aside as
+a possible attack now counts as reaching a person, because the console shows it).
+They have not been rerun since. On the rules engine, Gate 0 changed none of the
+159 decisions; only the definition moved the headline.
+
 | | river-cleanup | storm-response | consortium-bid |
 |---|---:|---:|---:|
 | decision matched the human label | 68.9% | 68.1% | 67.4% |
@@ -282,9 +323,12 @@ names the required credential. Measured by ablation on the live model, `fits`
 fell from 0.84 to 0.21 once the certificate sentence was present, and rose to
 0.89 when the writer merely *claimed* to hold one — an eligibility judgment made
 from what somebody says about themselves, which invariant 4 forbids. Questions
-now name only the authored sixty-character short form, and
-`bin/check-typesafe.js` scans what the builders actually produce rather than the
-static bank, so this class of bug fails the guard instead of the customer.
+now name only the authored sixty-character short form. `bin/check-typesafe.js`
+runs every scenario's traffic and outbound pass through the real pipeline and scans
+each question it built, and `test/guard.test.js` puts the bug back on purpose to
+check that the guard fails. An earlier version of this paragraph said the guard
+already did this; it did not — it scanned questions built from its own hard-coded
+fixture and passed with the bug put back.
 
 **The golden sets in this repository are synthetic.** They measure whether the
 pipeline behaves as designed. They are not the wrong-bind number: that requires
@@ -351,6 +395,9 @@ src/web/                 the surfaces, server-rendered, no framework
 harness/score.js         the measurements, the calibration, the threshold sweep
 harness/shadow.js        run beside a human coordinator, acting on nothing
 scenarios/               three unalike domains, as data
-test/                    76 tests over the invariants (see test/README.md)
+harness/definitions.js   what "reached a person" and "a specific reply" mean, once
+src/judgment/guard.js    scans the questions the pipeline actually builds
+docs/                    the outcomes, the constraints, the decision log
+test/                    117 tests (see test/README.md); boundaries.test.js is Gate 0
 bin/check-typesafe.js    what would leave this machine, checked before it does
 ```

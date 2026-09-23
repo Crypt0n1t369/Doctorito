@@ -4,6 +4,8 @@ import { buildState } from '../src/judgment/redact.js';
 import { systemOne } from '../src/judgment/client.js';
 import { extract } from '../src/extract.js';
 import { DEFAULT_CONFIG } from '../src/config.js';
+import { scanScenario } from '../src/judgment/guard.js';
+import { listScenarios } from '../src/seed.js';
 
 /**
  * Check what we would actually send, against the documented API, before
@@ -67,10 +69,6 @@ for (const fragment of ['Janis', 'Berzins', '29123456', 'janis@example.lv']) {
 }
 
 // 3. Nothing asks the model to count, to order dates, or to do arithmetic.
-// Scan the questions the BUILDERS produce, not the static bank. Since the bank
-// started assembling instructions from catalogue text at request time, a scan
-// over BANK checks something that is never sent — which is exactly how a
-// credential requirement ended up inside a question about kind.
 const forbidden = /\b(how many|count the|count how|earlier than|later than|add up|subtract)\b/i;
 const built = {
   ...widePassQuestions(candidates),
@@ -80,17 +78,23 @@ const built = {
 };
 for (const [qid, q] of Object.entries(built)) {
   if (forbidden.test(q.instructions)) problems.push(`question "${qid}" as sent asks the model to reason about order or arithmetic`);
-  for (const pattern of [/\bsertifik|certificate required|nepiecie\w*\s+derīgs/i]) {
-    if (pattern.test(q.instructions)) {
-      problems.push(`question "${qid}" as sent names a credential requirement; eligibility is a predicate over verified credentials, never a model judgment`);
-    }
-  }
+}
+
+// 4. The questions the pipeline actually built, from each real catalogue and
+// its traffic: no contributor text in any wording, and no need named by the
+// full description that carries its credential clauses (src/judgment/guard.js).
+const scanned = [];
+for (const slug of listScenarios()) {
+  const r = await scanScenario(slug);
+  scanned.push(r);
+  problems.push(...r.problems);
 }
 
 console.log(`\n  question bank   ${VERSION}+${BANK_HASH}  (${Object.keys(BANK).length} questions)`);
 console.log(`  redactions      ${redactions} identifiers removed before the state was built`);
 console.log(`  state size      ${JSON.stringify(state).length} bytes`);
 console.log(`  wide request    ${Object.keys(widePassQuestions(candidates)).length} questions in one call`);
+for (const r of scanned) console.log(`  scanned         ${r.slug}: ${r.questions} questions in ${r.judgments} requests the pipeline built`);
 console.log(`\n  ${'state that would leave this machine'}`);
 console.log(indent(JSON.stringify(state, null, 2)));
 
@@ -107,7 +111,9 @@ if (live) {
     process.exit(problems.length ? 1 : 0);
   }
   console.log('\n  sending one real request to api.typesafe.ai …');
-  const res = await systemOne({ state, questions: widePassQuestions(candidates), cfg: { ...DEFAULT_CONFIG, engine: 'typesafe' } });
+  // Sending this synthetic request is the explicit purpose of --live, so hosted
+  // processing is permitted for it and for nothing else.
+  const res = await systemOne({ state, questions: widePassQuestions(candidates), cfg: { ...DEFAULT_CONFIG, engine: 'typesafe', hosted_processing: true } });
   console.log(`  engine ${res.engine} · model ${res.model_version} · ${res.latency_ms} ms · ` +
     `${res.usage.input_tokens} input tokens · $${res.cost_usd.toFixed(6)}`);
   console.log(indent(JSON.stringify(res.answers, null, 2)));

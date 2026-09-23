@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { decidedWithoutAPerson } from './definitions.js';
 import { rmSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { open, one, all } from '../src/db.js';
@@ -44,14 +45,8 @@ const PRINT_MAX = 25;
 /** The clock bin/demo.js replays against, so the two runs are comparable. */
 const BASE = new Date('2026-09-20T08:00:00Z');
 
-/**
- * Decisions that end a message without a coordinator reading it. `queued` is
- * the opposite by definition and `not_an_offer` still lands in front of a
- * person, because the reply we send promises one. Being counted here does not
- * make a decision right: a wrong bind saves work too, which is why the
- * wrong-bind numbers are printed above this one.
- */
-const NO_HUMAN = new Set(['bound', 'answered', 'withdrawn', 'full', 'no_match', 'rejected', 'asked']);
+// What reached a person is defined once, in harness/definitions.js, and shared
+// with score.js and acceptance.js.
 
 // A shadow run is a replay from the first message or it is nothing, so the
 // database it is handed is rebuilt every time.
@@ -174,7 +169,7 @@ function row(entry, now, seen, human) {
     },
     agreed: agrees(seen, human.action, human.need_id),
     bucket,
-    no_human: NO_HUMAN.has(seen.decision),
+    no_human: decidedWithoutAPerson(seen.decision),
   };
 }
 
