@@ -1,5 +1,5 @@
 import { id, sha256, canonical } from './ids.js';
-import { DERIVED, all, one, run } from './db.js';
+import { DERIVED, all, one, run, tx } from './db.js';
 
 const GENESIS = '0'.repeat(64);
 
@@ -144,7 +144,8 @@ const APPLY = {
       description: p.description, quantity: p.quantity, unit: p.unit,
       availability_start: p.availability_start, availability_end: p.availability_end,
       geo_place: p.geo_place, geo_lat: p.geo_lat, geo_lon: p.geo_lon,
-      geo_radius_km: p.geo_radius_km ?? 40, evidence: p.evidence, created_at: e.at,
+      geo_radius_km: p.geo_radius_km ?? 40, evidence: p.evidence,
+      initiative_id: p.initiative_id ?? e.initiative_id ?? null, created_at: e.at,
     });
   },
 
@@ -154,12 +155,14 @@ const APPLY = {
       raw_text: p.raw_text, channel: p.channel, handle: p.handle,
       attachments: p.attachments, language: p.language, extracted: p.extracted,
       received_at: p.received_at ?? e.at, state: 'received', shadow: p.shadow ?? 0,
+      provider_message_id: p.provider_message_id ?? null, claimed_contact: p.claimed_contact ?? null,
     });
   },
 
   'offer.decided'(db, e, p) {
     patch(db, 'offers', 'offer_id', p.offer_id, {
       state: p.state, latency_ms: p.latency_ms, decided_at: e.at,
+      ...(p.reason !== undefined ? { decision_reason: p.reason } : {}),
     });
   },
 
@@ -172,7 +175,7 @@ const APPLY = {
       model_version: p.model_version, engine: p.engine, state_hash: p.state_hash,
       request: p.request, answers: p.answers, confidence: p.confidence,
       latency_ms: p.latency_ms, input_tokens: p.input_tokens, cost_usd: p.cost_usd,
-      created_at: e.at,
+      degraded_cause: p.degraded_cause ?? null, created_at: e.at,
     });
     const day = e.at.slice(0, 10);
     run(db, `insert into spend (initiative_id, day, calls, cost_usd) values (?,?,1,?)
@@ -256,10 +259,17 @@ export function apply(db, event) {
 }
 
 /**
- * Append one event and fold it. The caller is expected to already be inside a
- * transaction when several events must land together (see leases.js).
+ * Append one event and fold it, as one unit. If the fold throws, the append is
+ * rolled back with it: an event that cannot be folded never enters the log,
+ * because a hash-valid event that breaks replay is worse than no event.
+ * Inside a caller's transaction this is a savepoint, so several events still
+ * land together or not at all (see leases.js).
  */
-export function emit(db, { type, initiative_id = null, payload = {}, author = 'system', reason = null, at = null }) {
+export function emit(db, event) {
+  return tx(db, () => append(db, event));
+}
+
+function append(db, { type, initiative_id = null, payload = {}, author = 'system', reason = null, at = null }) {
   const prev = one(db, 'select hash from events order by seq desc limit 1');
   const prevHash = prev?.hash ?? GENESIS;
   const eventId = id('ev');

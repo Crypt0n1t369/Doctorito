@@ -34,6 +34,8 @@
   },
   "config": {
     "engine": "rules",
+    "hosted_processing": true,
+    "hosted_processing_basis": "Synthetic scenario data authored for testing; no real contributor content. Permits sending redacted packets to the TypeSafe Jev route configured in .env.",
     "human_contact": "talkas@ogresnovads.lv",
     "ask_after_hours": 24,
     "thresholds": {

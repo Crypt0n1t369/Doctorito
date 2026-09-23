@@ -28,7 +28,20 @@ const WIDE_MAX = 60;
 export async function admit(db, {
   initiative, channel, handle, displayName = null, text, attachments = [],
   now = new Date(), shadow = false, baseUrl = 'http://localhost:8787',
+  providerMessageId = null, claimedContact = null,
 }) {
+  // A redelivered message is not a new offer. Channels resend on timeouts, and
+  // a webhook retried three times must not bind three lorries. Identity of the
+  // message comes from the provider, never from its text: two identical
+  // messages can be two real offers.
+  if (providerMessageId) {
+    const seen = one(db, 'select * from offers where initiative_id=? and channel=? and provider_message_id=?',
+      initiative.initiative_id, channel, String(providerMessageId));
+    if (seen) {
+      return { offer_id: seen.offer_id, actor_id: seen.actor_id, decision: seen.state, duplicate_of: seen.offer_id, reply: null };
+    }
+  }
+
   const t0 = process.hrtime.bigint();
   const cfg = configFor(initiative);
   const stages = {};
@@ -59,6 +72,8 @@ export async function admit(db, {
       channel, handle, language,
       attachments: { files: attachments, thread_of: parent?.offer_id ?? null },
       extracted, received_at: now.toISOString(), shadow: shadow ? 1 : 0,
+      provider_message_id: providerMessageId ? String(providerMessageId) : null,
+      claimed_contact: claimedContact,
     },
     at: now.toISOString(),
   });
@@ -68,7 +83,7 @@ export async function admit(db, {
     const latency = Math.round(Number(process.hrtime.bigint() - t0) / 1e6 * 10) / 10;
     emit(db, {
       type: 'offer.decided', initiative_id: initiative.initiative_id, author: 'system',
-      payload: { offer_id: offerId, state: shadow ? `shadow:${decision}` : decision, latency_ms: latency },
+      payload: { offer_id: offerId, state: shadow ? `shadow:${decision}` : decision, latency_ms: latency, reason: extra.reason ?? null },
       at: now.toISOString(),
     });
     if (!shadow && extra.reply) {
@@ -77,6 +92,21 @@ export async function admit(db, {
     return { offer_id: offerId, actor_id: actor.actor_id, decision, latency_ms: latency, stages, language, ...extra };
   };
 
+  // Whatever happens from here on, the offer ends in a state a person can see.
+  // A budget refusal or a failure at any stage queues it with the reason; it
+  // is never left as 'received', outside every list (docs/OUTCOMES.md, C4).
+  try {
+    return await decide();
+  } catch (err) {
+    const budget = err instanceof CostCapExceeded;
+    if (!budget) console.error(`admit ${offerId}:`, err);
+    return finish('queued', {
+      reply: compose(language, 'queued', cfg),
+      reason: budget ? 'budget' : `error: ${String(err?.message ?? err).slice(0, 120)}`,
+    });
+  }
+
+  async function decide() {
   // --- filter in SQL, before the model sees anything ------------------------
   const { candidates, blockedByCredentials, counts } = prefilter(db, {
     initiative, actorId: actor.actor_id, extracted, now,
@@ -115,10 +145,16 @@ export async function admit(db, {
   const A = wide.answers;
   const judgments = [wide.judgment_id];
 
+  // The configured engine did not answer. The fallback's reading is on the
+  // record for the coordinator, but nothing is decided on it.
+  if (wide.degraded_cause) {
+    return finish('queued', { reply: compose(language, 'queued', cfg), reason: `degraded: ${wide.degraded_cause}`, judgments, counts });
+  }
+
   // Offer text is data, never instruction. If it tries to be an instruction we
   // say nothing useful back to it and put it in front of a person.
   if ((A.is_adversarial?.noul ?? 0) >= cfg.gate_adversarial) {
-    return finish('rejected', { reply: compose(language, 'not_offer', cfg), reason: 'adversarial', judgments, counts });
+    return finish('rejected', { reply: compose(language, 'screened', cfg), reason: 'adversarial', judgments, counts });
   }
 
   if ((A.is_withdrawal?.noul ?? 0) >= cfg.gate_withdrawal) {
@@ -178,6 +214,9 @@ export async function admit(db, {
   });
   judgments.push(short.judgment_id);
   mark('shortlist');
+  if (short.degraded_cause) {
+    return finish('queued', { reply: compose(language, 'queued', cfg), reason: `degraded: ${short.degraded_cause}`, judgments, counts });
+  }
 
   // Specificity discounts the confidence rather than capping it: a complete
   // offer should lose almost nothing, and a vague one should lose half.
@@ -255,6 +294,16 @@ export async function admit(db, {
 
   if (shadow) return finish('bound', { ...detail, shadow: true });
 
+  // The same person already holds this need. A second message saying the same
+  // thing is more often a resend or a follow-up than a second lorry, and the
+  // difference is a person's call, not the model's.
+  const held = one(db,
+    `select commitment_id from commitments where actor_id=? and need_id=? and state in ('proposed','confirmed')`,
+    actor.actor_id, need.need_id);
+  if (held) {
+    return finish('queued', { reply: compose(language, 'queued', cfg), reason: 'possible_duplicate', ...detail });
+  }
+
   // Nothing acts before its judgment is written: both judgment rows are already
   // on the record by the time we get here, and the lease names the second one.
   const qty = quantityFor(extracted.quantities, need.unit) ?? 1;
@@ -263,6 +312,11 @@ export async function admit(db, {
     confidence, boundBy: 'auto', judgmentId: short.judgment_id, cfg, now,
   });
 
+  if (!lease.ok && lease.reason !== 'full') {
+    // The boundary refused what the gate allowed: the switch was turned off, a
+    // credential expired or the need closed while this offer was being read.
+    return finish('queued', { reply: compose(language, 'queued', cfg), reason: lease.reason, ...detail });
+  }
   if (!lease.ok) {
     // The popular need is oversubscribed: the lease caps it, and the reply
     // offers the nearest open need instead of a silent no.
@@ -285,6 +339,7 @@ export async function admit(db, {
     ...detail, commitment_id: lease.commitment_id, token: lease.token,
     qty: lease.qty, partial: lease.partial, confirm_needed: confirmNeeded, reply,
   });
+  }
 }
 
 // ---------------------------------------------------------------------------

@@ -10,16 +10,15 @@ import { amendNeed } from '../src/needs.js';
 import { recordFulfilment, deliveredFor } from '../src/fulfilment.js';
 import { extract, reconcileWindow } from '../src/extract.js';
 import { id } from '../src/ids.js';
-import { world, at, NOW } from './helpers.js';
+import { world, at, NOW, judgmentIn } from './helpers.js';
 
-const J = 'jd_test';
 
 function lease(db, w, ref, qty, opts = {}) {
   const need = one(db, 'select * from needs where need_id=?', w.needOf(ref));
   return takeLease(db, {
     need, initiative: w.initiative, offer: null, actorId: opts.actorId ?? id('ac'),
     qty, confidence: 0.95, boundBy: opts.boundBy ?? 'auto',
-    judgmentId: 'judgmentId' in opts ? opts.judgmentId : J,
+    judgmentId: 'judgmentId' in opts ? opts.judgmentId : judgmentIn(db, w.initiative),
     cfg: configFor(w.initiative), now: opts.now ?? NOW,
   });
 }

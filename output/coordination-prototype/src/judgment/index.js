@@ -42,6 +42,9 @@ export async function ask(db, { initiative, offer = null, pass, state, questions
       latency_ms: res.latency_ms,
       input_tokens: res.usage.input_tokens,
       cost_usd: res.cost_usd,
+      // Set when the configured engine did not answer. Such a judgment may
+      // triage an offer for a person; it may never be the reason something binds.
+      degraded_cause: res.degraded_cause ?? null,
     },
   });
 

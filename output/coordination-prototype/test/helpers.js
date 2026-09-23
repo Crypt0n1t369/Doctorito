@@ -1,6 +1,8 @@
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { open } from '../src/db.js';
+import { emit } from '../src/events.js';
+import { id } from '../src/ids.js';
 import { seedScenario, loadScenario } from '../src/seed.js';
 
 /**
@@ -115,6 +117,25 @@ export function world(overrides) {
 function reverse(map) {
   const back = Object.fromEntries(Object.entries(map).map(([k, v]) => [v, k]));
   return (id) => back[id] ?? id;
+}
+
+/**
+ * A judgment that really exists, in the initiative it claims to belong to. A
+ * lease refuses to name anything else, so tests that bind by hand write one.
+ */
+export function judgmentIn(db, initiative) {
+  const judgmentId = id('jd');
+  emit(db, {
+    type: 'judgment.written', initiative_id: initiative.initiative_id, author: 'test',
+    payload: {
+      judgment_id: judgmentId, offer_id: null, initiative_id: initiative.initiative_id,
+      pass: 'test', question_bank_version: 'test', model_version: 'test', engine: 'rules',
+      state_hash: 'test', request: {}, answers: {}, confidence: null, latency_ms: 0,
+      input_tokens: 0, cost_usd: 0,
+    },
+    at: NOW.toISOString(),
+  });
+  return judgmentId;
 }
 
 /** Offsets keep every message in one run at a distinct, predictable time. */

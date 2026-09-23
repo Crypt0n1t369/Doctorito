@@ -119,6 +119,7 @@ create table if not exists capabilities (
   geo_lon          real,
   geo_radius_km    real,
   evidence         text,
+  initiative_id    text,          -- the scope it was declared in; outbound searches nothing wider
   created_at       text
 );
 
@@ -136,7 +137,10 @@ create table if not exists offers (
   decided_at    text,
   state         text,             -- received | bound | queued | asked | answered | rejected | screened_out
   latency_ms    integer,
-  shadow        integer default 0
+  shadow        integer default 0,
+  provider_message_id text,       -- the channel's own id for this message: a redelivery is not a new offer
+  claimed_contact     text,       -- what an unauthenticated form said; never used to resolve identity
+  decision_reason     text        -- why it ended where it did, shown to the coordinator
 );
 create index if not exists offers_state on offers(initiative_id, state);
 
@@ -155,6 +159,7 @@ create table if not exists judgments (
   latency_ms            integer,
   input_tokens          integer,
   cost_usd              real,
+  degraded_cause        text,      -- set when this answer is NOT the configured engine's: it may triage, never bind
   created_at            text
 );
 create index if not exists judgments_offer on judgments(offer_id);
@@ -261,7 +266,30 @@ export function open(path = 'data/coordination.db') {
   db.exec('pragma foreign_keys = on');
   db.exec('pragma busy_timeout = 5000');
   db.exec(SCHEMA);
+  migrate(db);
   return db;
+}
+
+/**
+ * Columns added after a database may already exist. Derived tables are a fold
+ * over the log, so adding a column never loses anything: a replay fills it.
+ */
+const ADDED_COLUMNS = [
+  ['judgments', 'degraded_cause', 'text'],
+  ['offers', 'provider_message_id', 'text'],
+  ['offers', 'claimed_contact', 'text'],
+  ['offers', 'decision_reason', 'text'],
+  ['capabilities', 'initiative_id', 'text'],
+];
+
+function migrate(db) {
+  for (const [table, column, type] of ADDED_COLUMNS) {
+    const has = db.prepare(`pragma table_info(${table})`).all().some((c) => c.name === column);
+    if (!has) db.exec(`alter table ${table} add column ${column} ${type}`);
+  }
+  db.exec(`create unique index if not exists offers_provider_message
+             on offers(initiative_id, channel, provider_message_id)
+             where provider_message_id is not null`);
 }
 
 /**
@@ -269,7 +297,23 @@ export function open(path = 'data/coordination.db') {
  * front, which is what stops two offers arriving 200 ms apart from both being
  * told yes for the last remaining place on a need.
  */
+let savepoints = 0;
+
 export function tx(db, fn) {
+  // Nested units of work become savepoints, so a command that calls another
+  // command still commits or rolls back as one thing.
+  if (db.isTransaction) {
+    const sp = `sp_${++savepoints}`;
+    db.exec(`savepoint ${sp}`);
+    try {
+      const out = fn();
+      db.exec(`release ${sp}`);
+      return out;
+    } catch (e) {
+      try { db.exec(`rollback to ${sp}`); db.exec(`release ${sp}`); } catch { /* outer rollback will do it */ }
+      throw e;
+    }
+  }
   db.exec('begin immediate');
   try {
     const out = fn();

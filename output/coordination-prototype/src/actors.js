@@ -3,10 +3,15 @@ import { emit } from './events.js';
 import { id } from './ids.js';
 
 /**
- * No account is required to make an offer. An actor is whatever we can address:
- * a handle on a channel. The same person writing from WhatsApp and then from
- * email is the failure mode the spec names, so identity is resolved on contact
- * handles and we ask only once.
+ * No account is required to make an offer. An actor is whatever a channel
+ * authenticated: the address a signed email webhook vouches for, the chat
+ * account Telegram vouches for, or — on the web form, which vouches for
+ * nothing — a random id held in the contributor's own browser.
+ *
+ * Identity is never guessed (docs/OUTCOMES.md, C3). The same person writing
+ * from Telegram and then from email stays two actors until they prove they
+ * control both and link them. Being asked twice is a small cost; acting as the
+ * wrong person is not.
  */
 export function normaliseHandle(channel, handle) {
   const h = String(handle ?? '').trim().toLowerCase();
@@ -26,27 +31,11 @@ export function resolveActor(db, { channel, handle, displayName = null, kind = '
   if (existing) return existing;
 
   const h = normaliseHandle(channel, handle);
-
-  // Cheap cross-channel resolution: an email local part that exactly equals a
-  // known telegram handle is the same person often enough to be worth trying,
-  // and it is reversible because it only ever merges onto an existing actor.
-  let actorId = null;
-  if (channel === 'email' && h.includes('@')) {
-    const local = h.split('@')[0];
-    const tg = one(db, 'select * from contacts where channel=? and handle=?', 'telegram', local);
-    if (tg) actorId = tg.actor_id;
-  } else if (channel === 'telegram') {
-    const mail = one(db, `select * from contacts where channel='email' and handle like ?`, `${h}@%`);
-    if (mail) actorId = mail.actor_id;
-  }
-
-  if (!actorId) {
-    actorId = id('ac');
-    emit(db, {
-      type: 'actor.registered', author: `channel:${channel}`,
-      payload: { actor_id: actorId, kind, display_name: displayName ?? h },
-    });
-  }
+  const actorId = id('ac');
+  emit(db, {
+    type: 'actor.registered', author: `channel:${channel}`,
+    payload: { actor_id: actorId, kind, display_name: displayName ?? h },
+  });
 
   emit(db, {
     type: 'actor.contact_added', author: `channel:${channel}`,

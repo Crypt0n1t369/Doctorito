@@ -112,8 +112,8 @@ export function seedScenario(db, scenario, { author = 'seed' } = {}) {
     }
     for (const cp of a.capabilities ?? []) {
       emit(db, {
-        type: 'capability.declared', author,
-        payload: { capability_id: id('cp'), actor_id: actorId, ...cp },
+        type: 'capability.declared', initiative_id: initiativeId, author,
+        payload: { capability_id: id('cp'), actor_id: actorId, ...cp, initiative_id: initiativeId },
       });
     }
   }

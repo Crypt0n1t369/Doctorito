@@ -1,4 +1,5 @@
 import { sha256, canonical } from '../ids.js';
+import { scrub } from './redact.js';
 
 /**
  * The question bank. Eleven questions, one versioned file, code-reviewed like
@@ -161,7 +162,7 @@ export function widePassQuestions(candidates) {
   if (!candidates.length) return screen;
 
   const criteria = {};
-  for (const c of candidates) criteria[c.id] = c.short;
+  for (const c of candidates) criteria[c.id] = scrub(c.short);
   // This option is read as "the catalogue has no need for what is on offer".
   // It used to say "none of these fits", which a message that offers something
   // and then defers ("tell me what you need") satisfies at probability 1.00 —
@@ -231,8 +232,13 @@ export function editorQuestions() {
  * at sixty characters, so it states the kind and little else. Eligibility stays
  * with the credential predicate and quantity stays with the lease.
  */
+/**
+ * The text a question names its candidate by. Catalogue and capability text,
+ * never contributor text — and scrubbed, because a capability description
+ * written by a supplier can hold their phone number as easily as an offer can.
+ */
 function label(c) {
-  return c.label ?? c.capability ?? c.short ?? '';
+  return scrub(c.label ?? c.capability ?? c.short ?? '');
 }
 
 function pick(k) {

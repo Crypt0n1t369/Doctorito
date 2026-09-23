@@ -36,6 +36,7 @@ const ROUTES = [
   ['GET', /^\/c\/([\w]+)$/, pages.contributor],
   ['POST', /^\/c\/([\w]+)\/(confirm|withdraw)$/, pages.contributorAction],
   ['GET', /^\/take\/([\w]+)$/, pages.take],
+  ['POST', /^\/take\/([\w]+)$/, pages.takeAccept],
 
   ['GET', /^\/q$/, pages.queue, 'coordinator'],
   ['GET', /^\/q\/([\w-]+)$/, pages.queue, 'coordinator'],
@@ -44,10 +45,12 @@ const ROUTES = [
   ['GET', /^\/admin\/([\w-]+)$/, pages.admin, 'coordinator'],
   ['POST', /^\/admin\/([\w-]+)\/autobind$/, pages.adminAutobind, 'coordinator'],
 
-  ['GET', /^\/j\/([\w]+)$/, pages.judgment],
-  ['GET', /^\/a\/([\w]+)$/, pages.actor],
-  ['GET', /^\/outbox$/, pages.outbox],
-  ['GET', /^\/events$/, pages.events],
+  // The record behind the public pages: raw offer text, contact handles, every
+  // message sent. A coordinator's view, never a public one (docs/OUTCOMES.md, C1).
+  ['GET', /^\/j\/([\w]+)$/, pages.judgment, 'coordinator'],
+  ['GET', /^\/a\/([\w]+)$/, pages.actor, 'coordinator'],
+  ['GET', /^\/outbox$/, pages.outbox, 'coordinator'],
+  ['GET', /^\/events$/, pages.events, 'coordinator'],
 ];
 
 export function createApp(db, { baseUrl = 'http://localhost:8787' } = {}) {
@@ -58,7 +61,8 @@ export function createApp(db, { baseUrl = 'http://localhost:8787' } = {}) {
     let match = null;
     for (const [method, pattern, handler, role] of ROUTES) {
       const m = pattern.exec(path);
-      if (m) { match = { method, handler, role, params: m.slice(1) }; if (method === req.method) break; }
+      if (m && (!match || method === req.method)) match = { method, handler, role, params: m.slice(1) };
+      if (m && method === req.method) break;
     }
     if (!match) return send(res, 404, 'text/plain; charset=utf-8', 'Not found.');
     if (match.method !== req.method) return send(res, 405, 'text/plain; charset=utf-8', 'Method not allowed.');
@@ -69,21 +73,34 @@ export function createApp(db, { baseUrl = 'http://localhost:8787' } = {}) {
     }
 
     let body = {};
+    let rawBody = '';
     try {
-      if (req.method === 'POST') body = await readBody(req);
+      if (req.method === 'POST') ({ parsed: body, raw: rawBody } = await readBody(req));
     } catch (err) {
       return send(res, 400, 'text/plain; charset=utf-8', `Bad request: ${err.message}`);
     }
 
-    const ctx = { db, req, res, url, query: url.searchParams, params: match.params, body, session, baseUrl, send, redirect };
+    // The web form vouches for nothing, so a contributor there is this browser:
+    // a random id in a signed cookie, issued the first time they send something.
+    const contributorId = () => {
+      const held = unsign(cookies(req).cid);
+      if (held) return held;
+      const fresh = randomBytes(12).toString('hex');
+      res.setHeader('set-cookie', `cid=${sign(fresh)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=31536000`);
+      return fresh;
+    };
+
+    const ctx = { db, req, res, url, query: url.searchParams, params: match.params, body, rawBody, session, baseUrl, send, redirect, contributorId };
     try {
       const out = await match.handler(ctx);
       if (res.writableEnded) return;
       if (typeof out === 'string') return send(res, 200, 'text/html; charset=utf-8', out);
       if (out && typeof out === 'object') return send(res, out.status ?? 200, out.type ?? 'text/html; charset=utf-8', out.body ?? '');
     } catch (err) {
-      console.error(`${req.method} ${path}:`, err);
-      if (!res.writableEnded) send(res, 500, 'text/plain; charset=utf-8', `Something broke: ${err.message}`);
+      // The detail goes to the operator's log, not to whoever made the request.
+      const ref = randomBytes(4).toString('hex');
+      console.error(`${req.method} ${path} [${ref}]:`, err);
+      if (!res.writableEnded) send(res, 500, 'text/plain; charset=utf-8', `Something broke. Reference ${ref}.`);
     }
   });
 }
@@ -161,9 +178,9 @@ function readBody(req) {
       const raw = Buffer.concat(chunks).toString('utf8');
       const type = String(req.headers['content-type'] ?? '');
       try {
-        if (type.includes('application/json')) return resolve(raw ? JSON.parse(raw) : {});
-        const params = new URLSearchParams(raw);
-        resolve(Object.fromEntries(params));
+        // The raw text is kept: a webhook signature is over the bytes, not the parse.
+        if (type.includes('application/json')) return resolve({ parsed: raw ? JSON.parse(raw) : {}, raw });
+        resolve({ parsed: Object.fromEntries(new URLSearchParams(raw)), raw });
       } catch (err) {
         reject(new Error(`could not read the body: ${err.message}`));
       }

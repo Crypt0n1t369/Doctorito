@@ -10,6 +10,13 @@ export const DEFAULT_CONFIG = {
   engine: process.env.JUDGMENT_ENGINE ?? 'rules',
   model: process.env.TYPESAFE_MODEL ?? 'jev-latest',
 
+  // Processing with a hosted provider is its own permission, separate from
+  // reading (docs/OUTCOMES.md, C1 and D4). Off unless the initiative's owner
+  // turns it on; with it off, a hosted engine does not run and the rules engine
+  // answers as a degraded fallback that can triage but never bind. The
+  // operator's JUDGMENT_ENGINE switch chooses an engine; it cannot grant this.
+  hosted_processing: false,
+
   // Risk class -> auto-bind threshold. Class 3 is absent on purpose: there is
   // no number you can put here that would let a class 3 need bind itself.
   thresholds: {

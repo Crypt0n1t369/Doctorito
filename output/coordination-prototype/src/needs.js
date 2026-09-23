@@ -1,4 +1,4 @@
-import { one, all } from './db.js';
+import { one, all, tx } from './db.js';
 import { emit } from './events.js';
 import { id } from './ids.js';
 import { ask as askModel } from './judgment/index.js';
@@ -69,7 +69,14 @@ function sameWordsAsOthers(short) {
 function normaliseQuals(q) {
   if (!q) return [];
   if (Array.isArray(q)) return q.filter(Boolean);
-  return String(q).split(/[,\s]+/).filter(Boolean);
+  // A stored need holds its qualifications as JSON text. Splitting that text on
+  // commas turned "[]" into a credential called "[]" that nobody holds, so every
+  // amended need silently refused every offer.
+  const s = String(q).trim();
+  if (s.startsWith('[')) {
+    try { const parsed = JSON.parse(s); if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean); } catch { /* fall through */ }
+  }
+  return s.split(/[,\s]+/).filter(Boolean);
 }
 
 export function publishNeed(db, { initiative, draft, author }) {
@@ -106,19 +113,28 @@ export function amendNeed(db, { need, changes, author, reason }) {
   if (!reason || String(reason).trim().length < 4) {
     return { ok: false, errors: ['An amendment needs a reason. It will be shown on the public page.'] };
   }
-  const merged = { ...need, ...changes, qualifications: normaliseQuals(changes.qualifications ?? need.qualifications) };
-  const check = validateNeed(merged);
-  if (!check.ok) return { ok: false, ...check };
+  return tx(db, () => {
+    const current = one(db, 'select * from needs where need_id=?', need.need_id);
+    if (!current) return { ok: false, errors: ['No such need.'] };
+    const merged = { ...current, ...changes, qualifications: normaliseQuals(changes.qualifications ?? current.qualifications) };
+    const check = validateNeed(merged);
+    if (!check.ok) return { ok: false, ...check };
 
-  if (Number(merged.qty_required) < need.qty_committed) {
-    return { ok: false, errors: [`Cannot reduce the quantity below what is already committed (${need.qty_committed}).`] };
-  }
+    // Nobody who has been told they are needed can be amended out of the need:
+    // confirmed commitments, and leases still waiting for a tap, both count.
+    const held = one(db,
+      `select coalesce(sum(qty),0) q from commitments where need_id=? and state in ('proposed','confirmed','fulfilled')`,
+      current.need_id).q;
+    if (Number(merged.qty_required) < held) {
+      return { ok: false, errors: [`Cannot reduce the quantity below what is already committed or held for confirmation (${held}).`] };
+    }
 
-  emit(db, {
-    type: 'need.amended', initiative_id: need.initiative_id, author, reason,
-    payload: { need_id: need.need_id, ...changes, qualifications: merged.qualifications },
+    emit(db, {
+      type: 'need.amended', initiative_id: current.initiative_id, author, reason,
+      payload: { need_id: current.need_id, ...changes, qualifications: merged.qualifications },
+    });
+    return { ok: true, warnings: check.warnings };
   });
-  return { ok: true, warnings: check.warnings };
 }
 
 export function closeNeed(db, { need, author, reason }) {

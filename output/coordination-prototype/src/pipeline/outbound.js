@@ -1,4 +1,4 @@
-import { all, one } from '../db.js';
+import { all, one, tx } from '../db.js';
 import { emit } from '../events.js';
 import { id } from '../ids.js';
 import { configFor } from '../config.js';
@@ -7,7 +7,9 @@ import { outboundQuestions } from '../judgment/questions.js';
 import { send } from '../channels/index.js';
 import { preferredContact } from '../actors.js';
 import { compose, whenLine } from '../reply.js';
-import { remainingFor } from './leases.js';
+import { remainingFor, takeLease, autoConfirm } from './leases.js';
+import { buildOutboundState } from '../judgment/redact.js';
+import { detectLanguage } from '../lang.js';
 
 /**
  * The outbound path is not optional.
@@ -38,7 +40,8 @@ select *, (qty_required - qty_committed) as short_by,
 const CANDIDATE_SQL = `
 select c.*, a.display_name from capabilities c
   join actors a on a.actor_id = c.actor_id
- where (:ws is null or c.availability_end   is null or c.availability_end   >= :ws)
+ where c.initiative_id = :init
+   and (:ws is null or c.availability_end   is null or c.availability_end   >= :ws)
    and (:we is null or c.availability_start is null or c.availability_start <= :we)
    and (:lat is null or c.geo_lat is null or (
          abs(c.geo_lat - :lat) <= ((coalesce(c.geo_radius_km, 40) + :radius) / 111.0)
@@ -62,6 +65,9 @@ select c.*, a.display_name from capabilities c
 
 export async function runOutbound(db, { initiative, now = new Date(), baseUrl = 'http://localhost:8787', maxNeeds = 5 }) {
   const cfg = configFor(initiative);
+  // The one switch stops the machine acting on its own, and contacting people
+  // unprompted is acting. A convener who pulls it wants the messages to stop too.
+  if (initiative.autobind !== 1) return [{ skipped: 'automatic actions are switched off' }];
   const cutoff = new Date(now.getTime() - cfg.ask_after_hours * 3600e3).toISOString();
   const needs = all(db, AGEING_SQL, { init: initiative.initiative_id, cutoff }).slice(0, maxNeeds);
 
@@ -80,7 +86,7 @@ export async function runOutbound(db, { initiative, now = new Date(), baseUrl = 
 async function askAround(db, { initiative, need, cfg, now, baseUrl }) {
   const cooldown = new Date(now.getTime() - cfg.ask_cooldown_hours * 3600e3).toISOString();
   const candidates = all(db, CANDIDATE_SQL, {
-    ws: need.window_start, we: need.window_end,
+    init: initiative.initiative_id, ws: need.window_start, we: need.window_end,
     lat: need.geo_lat, lon: need.geo_lon, radius: need.geo_radius_km ?? 25,
     quals: need.qualifications ?? '[]',
     now: now.toISOString(), need: need.need_id, cooldown,
@@ -102,15 +108,7 @@ async function askAround(db, { initiative, need, cfg, now, baseUrl }) {
 
   // The same two-pass shape, run in reverse: one request, one question per
   // candidate capability, against the state of this one need.
-  const state = {
-    initiative: { objective: initiative.objective, place: initiative.place },
-    need: {
-      kind: need.kind,
-      description: need.description,
-      short_by: `${need.qty_required - need.qty_committed} ${need.unit}`,
-    },
-    candidate_capabilities: set,
-  };
+  const state = buildOutboundState({ initiative, need, capabilities: set });
 
   const res = await askModel(db, {
     initiative, pass: 'outbound', state, questions: outboundQuestions(set), cfg,
@@ -170,6 +168,58 @@ async function askAround(db, { initiative, need, cfg, now, baseUrl }) {
 
 export function askById(db, askId) {
   return one(db, 'select * from asks where ask_id=?', askId);
+}
+
+/**
+ * Someone tapped "I can do this" on an invitation. That is their side of the
+ * commitment (O6). The project's side is the convener's standing authorization,
+ * which covers only what an automatic bind could cover: never risk class 3,
+ * never while the switch is off. Anything else becomes a review item, so the
+ * acceptance reaches a person instead of being lost or acted on alone.
+ */
+export function acceptInvitation(db, { askId, now = new Date() }) {
+  return tx(db, () => {
+    const ask = askById(db, askId);
+    if (!ask) return { ok: false, reason: 'unknown' };
+    const need = one(db, 'select * from needs where need_id=?', ask.need_id);
+    const initiative = need && one(db, 'select * from initiatives where initiative_id=?', need.initiative_id);
+    if (!need || !initiative) return { ok: false, reason: 'unknown' };
+    const cfg = configFor(initiative);
+
+    const existing = one(db, `select * from commitments where need_id=? and actor_id=? and state in ('proposed','confirmed','fulfilled')`,
+      ask.need_id, ask.actor_id);
+    if (existing) return { ok: true, already: true, token: existing.token, need, initiative };
+    if (need.status === 'closed' || remainingFor(db, need.need_id, now) <= 0) return { ok: false, reason: 'full', need, initiative };
+
+    const lease = takeLease(db, {
+      need, initiative, offer: null, actorId: ask.actor_id, qty: 1,
+      confidence: ask.confidence, boundBy: 'outbound', judgmentId: ask.judgment_id, cfg, now,
+    });
+    if (lease.ok) {
+      if (need.risk_class < cfg.confirm_required_from_class) autoConfirm(db, lease.commitment_id, now);
+      return { ok: true, token: lease.token, need, initiative };
+    }
+    if (lease.reason === 'full') return { ok: false, reason: 'full', need, initiative };
+
+    const offerId = id('of');
+    const text = `Accepted an invitation to: ${need.description_short ?? need.description}`;
+    emit(db, {
+      type: 'offer.received', initiative_id: initiative.initiative_id, author: `actor:${ask.actor_id}`,
+      payload: {
+        offer_id: offerId, initiative_id: initiative.initiative_id, actor_id: ask.actor_id,
+        raw_text: text, channel: ask.channel, handle: ask.handle, language: need.language ?? detectLanguage(text),
+        attachments: { ask_id: ask.ask_id, judgment_id: ask.judgment_id, need_id: need.need_id },
+        extracted: { quantities: [{ value: 1, unit: need.unit }] }, received_at: now.toISOString(),
+      },
+      at: now.toISOString(),
+    });
+    emit(db, {
+      type: 'offer.decided', initiative_id: initiative.initiative_id, author: 'system',
+      payload: { offer_id: offerId, state: 'queued', latency_ms: 0, reason: `review_required: ${lease.reason}` },
+      at: now.toISOString(),
+    });
+    return { ok: false, review: true, reason: lease.reason, offer_id: offerId, need, initiative };
+  });
 }
 
 function round(x) { return Math.round(x * 1e4) / 1e4; }

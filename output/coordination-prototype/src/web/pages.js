@@ -3,7 +3,9 @@ import { emit, verifyChain } from '../events.js';
 import { configFor, RISK, thresholdFor, mayAutoBind } from '../config.js';
 import { admit } from '../pipeline/admit.js';
 import { confirmByToken, withdrawByToken, takeLease, autoConfirm, remainingFor } from '../pipeline/leases.js';
-import { normalise, send as sendMessage } from '../channels/index.js';
+import { acceptInvitation } from '../pipeline/outbound.js';
+import { normalise, verifyWebhook, send as sendMessage } from '../channels/index.js';
+import { id } from '../ids.js';
 import { needsOf, publishNeed, amendNeed, closeNeed, proposeDecomposition, KINDS, UNITS } from '../needs.js';
 import { deliveryRecord } from '../fulfilment.js';
 import { queueItems, offerDetail, applyQueueAction, overrideStats } from '../queue.js';
@@ -13,12 +15,21 @@ import { html, raw, esc, layout, bar, num, money, fmtDate, fmtWhen, ago, tag, fi
 
 const page = (opts) => layout(opts);
 
+/**
+ * A private initiative does not exist for the public: not on the index, not by
+ * its slug, and not through its offer form (docs/OUTCOMES.md, C1).
+ */
+const visible = (init, session) => init && (init.visibility === 'public' || session?.role === 'coordinator');
+
+/** Bearer links are a contributor's only credential. No page shows one to anyone else. */
+const maskTokens = (text) => String(text ?? '').replace(/\/c\/[A-Za-z0-9_-]{8,}/g, '/c/•••');
+
 // ---------------------------------------------------------------------------
 // Public
 // ---------------------------------------------------------------------------
 
 export function index({ db, session }) {
-  const rows = all(db, 'select * from initiatives order by created_at desc');
+  const rows = all(db, 'select * from initiatives order by created_at desc').filter((i) => visible(i, session));
   return page({
     title: 'Initiatives',
     session,
@@ -44,7 +55,7 @@ export function index({ db, session }) {
 
 export function initiative({ db, params, session }) {
   const init = one(db, 'select * from initiatives where slug=?', params[0]);
-  if (!init) return notFound();
+  if (!visible(init, session)) return notFound();
   const decision = one(db, 'select * from decisions where decision_id=?', init.decision_id);
   const needs = needsOf(db, init.initiative_id);
   const constraints = JSON.parse(init.constraints ?? '[]');
@@ -146,7 +157,7 @@ function commitmentTable(db, init) {
 export function needPage({ db, params, session }) {
   const init = one(db, 'select * from initiatives where slug=?', params[0]);
   const need = one(db, 'select * from needs where need_id=?', params[1]);
-  if (!init || !need) return notFound();
+  if (!visible(init, session) || !need || need.initiative_id !== init.initiative_id) return notFound();
   const quals = JSON.parse(need.qualifications ?? '[]');
   const commitments = all(db, `select c.*, a.display_name, f.qty_delivered, f.verified_by, f.verified_at
       from commitments c left join actors a on a.actor_id=c.actor_id
@@ -198,7 +209,7 @@ export function needPage({ db, params, session }) {
 
 export function offerForm({ db, params, session, query }) {
   const init = one(db, 'select * from initiatives where slug=?', params[0]);
-  if (!init) return notFound();
+  if (!visible(init, session)) return notFound();
   return page({
     title: `Offer something · ${init.title}`,
     session,
@@ -213,6 +224,7 @@ export function offerForm({ db, params, session, query }) {
         ${raw(field({ name: 'contact', label: 'Where should we reply?', hint: 'email or a phone number',
           attrs: 'required placeholder="you@example.lv"' }))}
         ${raw(field({ name: 'name', label: 'Your name', hint: 'optional. it never leaves this machine' }))}
+        <input type="hidden" name="submission_id" value="${id('sb')}">
         <button type="submit">Send</button>
       </form>
       ${query.get('sent') ? '' : ''}
@@ -223,12 +235,17 @@ export function offerForm({ db, params, session, query }) {
 export async function offerSubmit(ctx) {
   const { db, params, body, session, baseUrl } = ctx;
   const init = one(db, 'select * from initiatives where slug=?', params[0]);
-  if (!init) return notFound();
+  if (!visible(init, session)) return notFound();
   const msg = normalise('web', body);
   if (!msg.text) return offerForm(ctx);
 
+  // The form vouches for nothing: anyone can type anyone's email into it. The
+  // offer belongs to this browser, which holds a random id in a signed cookie,
+  // and the contact typed in is kept as a claim, never used to find a person.
+  // The hidden submission id makes a double-click one offer, not two.
   const result = await admit(db, {
-    initiative: init, channel: 'web', handle: msg.handle || 'anonymous',
+    initiative: init, channel: 'web', handle: `web:${ctx.contributorId()}`,
+    claimedContact: msg.handle || null, providerMessageId: body.submission_id || null,
     displayName: msg.displayName, text: msg.text, baseUrl,
   });
 
@@ -257,6 +274,13 @@ export async function offerSubmit(ctx) {
 export async function webhook(ctx) {
   const { db, params, body, query, baseUrl, res } = ctx;
   const channel = params[0];
+
+  // The channel's provider vouches for the sender, or nobody does. Checked
+  // before anything else, so an unauthenticated caller learns nothing — not
+  // even whether an initiative exists (docs/OUTCOMES.md, C3).
+  const auth = verifyWebhook(channel, ctx.req.headers, ctx.rawBody);
+  if (!auth.ok) return { status: auth.status, type: 'application/json', body: JSON.stringify({ error: auth.error }) };
+
   const slug = query.get('initiative') ?? body.initiative;
   const init = slug
     ? one(db, 'select * from initiatives where slug=?', slug)
@@ -269,7 +293,7 @@ export async function webhook(ctx) {
   }
   const result = await admit(db, {
     initiative: init, channel, handle: msg.handle, displayName: msg.displayName,
-    text: msg.text, attachments: msg.attachments, baseUrl,
+    text: msg.text, attachments: msg.attachments, baseUrl, providerMessageId: msg.providerMessageId,
   });
   return {
     status: 200, type: 'application/json',
@@ -289,15 +313,27 @@ const CONTRIB = {
   en: { yours: 'You are down for', when: 'When', where: 'Where', bring: 'Bring', confirm: 'Confirm', withdraw: 'Withdraw',
     not_booked: 'Not booked until you confirm.', gone: 'This link has expired and the place has gone back to the pool.',
     done: 'Confirmed. Thank you.', out: 'Withdrawn. Thank you for telling us in time.',
-    unknown: 'We could not find that. The link may have been used already.' },
+    unknown: 'We could not find that. The link may have been used already.',
+    closed: 'This need has closed, so nothing was confirmed.',
+    review: 'A coordinator has to approve this before it counts. Nothing is confirmed yet.',
+    credential: 'This needs a qualification we have no verified record of for you, so nothing was confirmed. A person can help:',
+    delivered: 'This has already been delivered, so it cannot be withdrawn. To correct the record, contact a person:' },
   lv: { yours: 'Jūs esat pieteikts', when: 'Kad', where: 'Kur', bring: 'Ņemiet līdzi', confirm: 'Apstiprināt', withdraw: 'Atsaukt',
     not_booked: 'Nav rezervēts, kamēr neapstiprināt.', gone: 'Saite ir beigusies un vieta atgriezta sarakstā.',
     done: 'Apstiprināts. Paldies.', out: 'Atsaukts. Paldies, ka pateicāt laikus.',
-    unknown: 'Neizdevās atrast. Saite, iespējams, jau izmantota.' },
+    unknown: 'Neizdevās atrast. Saite, iespējams, jau izmantota.',
+    closed: 'Šī vajadzība ir slēgta, tāpēc nekas netika apstiprināts.',
+    review: 'Vispirms to jāapstiprina koordinatoram. Pagaidām nekas nav apstiprināts.',
+    credential: 'Tam vajadzīga kvalifikācija, kuras apstiprinājums mums nav reģistrēts, tāpēc nekas netika apstiprināts. Palīdzēs cilvēks:',
+    delivered: 'Tas jau ir paveikts, tāpēc to nevar atsaukt. Lai labotu ierakstu, sazinieties ar cilvēku:' },
   ru: { yours: 'За вами записано', when: 'Когда', where: 'Где', bring: 'Возьмите с собой', confirm: 'Подтвердить', withdraw: 'Отменить',
     not_booked: 'Это не бронь, пока вы не подтвердите.', gone: 'Ссылка истекла, место вернулось в список.',
     done: 'Подтверждено. Спасибо.', out: 'Отменено. Спасибо, что сообщили заранее.',
-    unknown: 'Не удалось найти. Возможно, ссылка уже использована.' },
+    unknown: 'Не удалось найти. Возможно, ссылка уже использована.',
+    closed: 'Эта потребность закрыта, поэтому ничего не подтверждено.',
+    review: 'Сначала это должен одобрить координатор. Пока ничего не подтверждено.',
+    credential: 'Для этого нужна квалификация, подтверждения которой у нас нет, поэтому ничего не подтверждено. Поможет человек:',
+    delivered: 'Это уже выполнено, поэтому отменить нельзя. Чтобы исправить запись, свяжитесь с человеком:' },
 };
 
 export function contributor({ db, params, query }) {
@@ -307,7 +343,12 @@ export function contributor({ db, params, query }) {
   const init = one(db, 'select * from initiatives where initiative_id=?', c.initiative_id);
   const cfg = configFor(init);
   const L = CONTRIB[need.language] ?? CONTRIB.en;
-  const notice = query.get('done') === 'confirm' ? L.done : query.get('done') === 'withdraw' ? L.out : null;
+  // The notice says what actually happened, never what was attempted.
+  const NOTICE = {
+    confirm: L.done, withdraw: L.out, expired: L.gone, closed: L.closed, review_required: L.review,
+    credential_required: `${L.credential} ${cfg.human_contact}`, delivered: `${L.delivered} ${cfg.human_contact}`,
+  };
+  const notice = NOTICE[query.get('done')] ?? null;
   const expired = c.state === 'proposed' && c.lease_expires_at && c.lease_expires_at <= new Date().toISOString();
 
   return `<!doctype html><html lang="${esc(need.language ?? 'en')}"><head><meta charset="utf-8">
@@ -323,7 +364,7 @@ ${String(html`
     <div><dt>${L.bring}</dt><dd>${bringLine(need)}</dd></div>
     <div><dt>${init.title}</dt><dd><a href="/i/${init.slug}">${init.objective?.slice(0, 80)}…</a></dd></div>
   </dl>
-  ${expired ? html`<p class="notice warn">${L.gone}</p>` : ''}
+  ${expired && notice !== L.gone ? html`<p class="notice warn">${L.gone}</p>` : ''}
   ${['withdrawn', 'expired', 'failed'].includes(c.state) ? html`<p class="notice">${L.out}</p>` : html`
     ${c.state === 'proposed' && !expired ? html`<p class="muted">${L.not_booked}</p>` : ''}
     <div class="two-buttons">
@@ -350,32 +391,47 @@ export function contributorAction({ db, params, res, redirect }) {
   const [token, action] = params;
   const result = action === 'confirm' ? confirmByToken(db, token) : withdrawByToken(db, token, 'withdrawn from the link');
   if (!result.ok && result.reason === 'unknown') return simple('—', CONTRIB.en.unknown);
-  return redirect(res, `/c/${token}?done=${action}`);
+  return redirect(res, `/c/${token}?done=${result.ok ? action : result.reason}`);
 }
 
-export function take({ db, params, res, redirect, baseUrl }) {
+/**
+ * An invitation link. Opening it changes nothing: mail scanners and link
+ * previews follow every link in a message, and a GET that booked people would
+ * book whoever had a scanner. The page says what is asked; the button acts.
+ */
+export function take({ db, params }) {
   const ask = one(db, 'select * from asks where ask_id=?', params[0]);
   if (!ask) return simple('—', 'We could not find that invitation.');
   const need = one(db, 'select * from needs where need_id=?', ask.need_id);
   const init = one(db, 'select * from initiatives where initiative_id=?', need.initiative_id);
   const cfg = configFor(init);
-
-  const existing = one(db, `select * from commitments where need_id=? and actor_id=? and state in ('proposed','confirmed','fulfilled')`,
-    ask.need_id, ask.actor_id);
-  if (existing) return redirect(res, `/c/${existing.token}`);
-
-  if (remainingFor(db, need.need_id) <= 0) {
-    return simple(need.description_short ?? 'Filled',
-      'Thank you — that one filled up since we wrote to you. The initiative page shows what is still open.',
-      `/i/${init.slug}`);
-  }
-  const lease = takeLease(db, {
-    need, initiative: init, offer: null, actorId: ask.actor_id, qty: 1,
-    confidence: ask.confidence, boundBy: 'outbound', judgmentId: ask.judgment_id, cfg,
+  return page({
+    title: need.description_short ?? 'Invitation',
+    body: String(html`
+      <p class="crumb"><a href="/i/${init.slug}">${init.title}</a></p>
+      <h1>${need.description_short ?? need.description}</h1>
+      <p class="lede">${need.description}</p>
+      <dl class="four">
+        <div><dt>When</dt><dd>${fmtWhen(need.window_start)}</dd></div>
+        <div><dt>Where</dt><dd>${need.geo_place ?? init.place ?? '—'}</dd></div>
+      </dl>
+      <form method="post" action="/take/${ask.ask_id}"><button class="primary">I can do this</button></form>
+      <p class="muted small">Nothing is booked until you press the button. Sent automatically. A person reads ${cfg.human_contact}.</p>
+    `),
   });
-  if (!lease.ok) return simple(need.description_short ?? '—', 'That one filled up since we wrote to you.', `/i/${init.slug}`);
-  if (need.risk_class < cfg.confirm_required_from_class) autoConfirm(db, lease.commitment_id);
-  return redirect(res, `/c/${lease.token}`);
+}
+
+export function takeAccept({ db, params, res, redirect }) {
+  const out = acceptInvitation(db, { askId: params[0] });
+  if (out.reason === 'unknown') return simple('—', 'We could not find that invitation.');
+  if (out.ok) return redirect(res, `/c/${out.token}`);
+  const back = `/i/${out.initiative.slug}`;
+  if (out.review) {
+    return simple(out.need.description_short ?? 'Thank you',
+      'Thank you. A coordinator has to approve this one before it is booked, and will come back to you. Nothing is booked yet.', back);
+  }
+  return simple(out.need.description_short ?? 'Filled',
+    'Thank you — that one filled up since we wrote to you. The initiative page shows what is still open.', back);
 }
 
 // ---------------------------------------------------------------------------
@@ -787,7 +843,7 @@ export function outbox({ db, session }) {
         person to reach, because people forgive a machine that says so and do not forgive one that pretended.</p>
       ${rows.length ? html`<ul class="outbox">${rows.map((m) => html`<li>
         <header><b>${m.channel}</b> → ${m.handle} ${tag(m.kind)} <span class="muted">${fmtWhen(m.sent_at)}</span></header>
-        <pre>${m.body}</pre></li>`)}</ul>` : html`<p class="empty">Nothing sent yet.</p>`}
+        <pre>${maskTokens(m.body)}</pre></li>`)}</ul>` : html`<p class="empty">Nothing sent yet.</p>`}
     `),
   });
 }
