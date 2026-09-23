@@ -12,7 +12,8 @@ if (args.includes('--reset')) {
   }
 }
 
-const wanted = args.filter((a) => !a.startsWith('--'));
+// The value after --db is a path, not a scenario to seed.
+const wanted = args.filter((a, i) => !a.startsWith('--') && args[i - 1] !== '--db');
 const slugs = wanted.length ? wanted : listScenarios();
 
 const db = open(dbPath);
