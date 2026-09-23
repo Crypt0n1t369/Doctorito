@@ -1,4 +1,4 @@
-import { one, all } from './db.js';
+import { one, all, tx } from './db.js';
 import { emit } from './events.js';
 import { id } from './ids.js';
 
@@ -12,35 +12,53 @@ import { id } from './ids.js';
  */
 export function recordFulfilment(db, { commitment, qtyDelivered, evidence, verifiedBy }) {
   if (!verifiedBy) return { ok: false, errors: ['A fulfilment needs a verifier.'] };
-  if (verifiedBy === `actor:${commitment.actor_id}` || verifiedBy === commitment.actor_id) {
-    return { ok: false, errors: ['A contributor cannot verify their own delivery.'] };
-  }
-  if (!['proposed', 'confirmed'].includes(commitment.state)) {
-    return { ok: false, errors: [`This commitment is ${commitment.state}; there is nothing to deliver.`] };
-  }
   const qty = Number(qtyDelivered);
   if (!Number.isFinite(qty) || qty < 0) return { ok: false, errors: ['Delivered quantity must be a number.'] };
 
-  const fulfilmentId = id('fl');
-  emit(db, {
-    type: 'fulfilment.recorded', initiative_id: commitment.initiative_id, author: verifiedBy,
-    payload: {
-      fulfilment_id: fulfilmentId, commitment_id: commitment.commitment_id,
-      need_id: commitment.need_id, qty_delivered: qty,
-      variance: qty - commitment.qty, evidence, verified_by: verifiedBy,
-    },
+  // Read again inside the transaction: the object a caller holds can be stale,
+  // and a commitment withdrawn a minute ago must not be marked delivered now.
+  return tx(db, () => {
+    const c = one(db, 'select * from commitments where commitment_id=?', commitment.commitment_id);
+    if (!c) return { ok: false, errors: ['No such commitment.'] };
+    if (verifiedBy === `actor:${c.actor_id}` || verifiedBy === c.actor_id) {
+      return { ok: false, errors: ['A contributor cannot verify their own delivery.'] };
+    }
+    // Only a confirmed commitment can be delivered. A proposal nobody confirmed,
+    // or a lease that expired, was never a promise, so it cannot be kept.
+    if (c.state !== 'confirmed') {
+      return { ok: false, errors: [`This commitment is ${c.state}; only a confirmed one can be delivered.`] };
+    }
+
+    const fulfilmentId = id('fl');
+    emit(db, {
+      type: 'fulfilment.recorded', initiative_id: c.initiative_id, author: verifiedBy,
+      payload: {
+        fulfilment_id: fulfilmentId, commitment_id: c.commitment_id,
+        need_id: c.need_id, qty_delivered: qty,
+        variance: qty - c.qty, evidence, verified_by: verifiedBy,
+      },
+    });
+    return { ok: true, fulfilment_id: fulfilmentId, variance: qty - c.qty };
   });
-  return { ok: true, fulfilment_id: fulfilmentId, variance: qty - commitment.qty };
 }
 
-/** A no-show. Recorded as what it is, because a poisoned label is worse than a gap. */
+/**
+ * A no-show. Recorded as what it is, because a poisoned label is worse than a
+ * gap. Only a confirmed commitment can fail: one that was delivered did not,
+ * and correcting a delivery is a dispute with its own author and reason.
+ */
 export function markFailed(db, { commitment, reason, author }) {
   if (!reason) return { ok: false, errors: ['Say why. It becomes a training label.'] };
-  emit(db, {
-    type: 'commitment.failed', initiative_id: commitment.initiative_id, author, reason,
-    payload: { commitment_id: commitment.commitment_id, need_id: commitment.need_id },
+  return tx(db, () => {
+    const c = one(db, 'select * from commitments where commitment_id=?', commitment.commitment_id);
+    if (!c) return { ok: false, errors: ['No such commitment.'] };
+    if (c.state !== 'confirmed') return { ok: false, errors: [`This commitment is ${c.state}; only a confirmed one can fail.`] };
+    emit(db, {
+      type: 'commitment.failed', initiative_id: c.initiative_id, author, reason,
+      payload: { commitment_id: c.commitment_id, need_id: c.need_id },
+    });
+    return { ok: true };
   });
-  return { ok: true };
 }
 
 /** Derived. Displayed as a record of what happened, never reduced to a score. */

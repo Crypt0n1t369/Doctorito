@@ -140,7 +140,8 @@ create table if not exists offers (
   shadow        integer default 0,
   provider_message_id text,       -- the channel's own id for this message: a redelivery is not a new offer
   claimed_contact     text,       -- what an unauthenticated form said; never used to resolve identity
-  decision_reason     text        -- why it ended where it did, shown to the coordinator
+  decision_reason     text,       -- why it ended where it did, shown to the coordinator
+  reply               text        -- what the sender was told, so a resubmission sees the same answer
 );
 create index if not exists offers_state on offers(initiative_id, state);
 
@@ -279,6 +280,7 @@ const ADDED_COLUMNS = [
   ['offers', 'provider_message_id', 'text'],
   ['offers', 'claimed_contact', 'text'],
   ['offers', 'decision_reason', 'text'],
+  ['offers', 'reply', 'text'],
   ['capabilities', 'initiative_id', 'text'],
 ];
 

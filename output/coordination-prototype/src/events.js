@@ -145,7 +145,7 @@ const APPLY = {
       availability_start: p.availability_start, availability_end: p.availability_end,
       geo_place: p.geo_place, geo_lat: p.geo_lat, geo_lon: p.geo_lon,
       geo_radius_km: p.geo_radius_km ?? 40, evidence: p.evidence,
-      initiative_id: p.initiative_id ?? e.initiative_id ?? null, created_at: e.at,
+      initiative_id: p.initiative_id ?? e.initiative_id ?? legacyScope(db, e), created_at: e.at,
     });
   },
 
@@ -160,9 +160,14 @@ const APPLY = {
   },
 
   'offer.decided'(db, e, p) {
+    // Before 23 September a coordinator's "reject" was recorded as 'rejected',
+    // the same word the screen uses for a message it sets aside for a person.
+    // Only the screen's kind is still waiting for someone; a person's is done.
+    const state = p.state === 'rejected' && e.author !== 'system' ? 'screened_out' : p.state;
     patch(db, 'offers', 'offer_id', p.offer_id, {
-      state: p.state, latency_ms: p.latency_ms, decided_at: e.at,
+      state, latency_ms: p.latency_ms, decided_at: e.at,
       ...(p.reason !== undefined ? { decision_reason: p.reason } : {}),
+      ...(p.reply !== undefined ? { reply: p.reply } : {}),
     });
   },
 
@@ -252,6 +257,18 @@ const APPLY = {
   },
 };
 
+/**
+ * Capabilities declared before 23 September carry no initiative. Seeding always
+ * opened the initiative and then declared its actors' capabilities, so the
+ * scope of an unscoped declaration is the initiative opened most recently
+ * before it in the log. Deterministic, so replay agrees; used only for those
+ * old events, since every new declaration names its initiative.
+ */
+function legacyScope(db, e) {
+  if (e.seq == null) return null;
+  return one(db, `select initiative_id from events where type='initiative.opened' and seq < ? order by seq desc limit 1`, e.seq)?.initiative_id ?? null;
+}
+
 export function apply(db, event) {
   const fn = APPLY[event.type];
   if (!fn) throw new Error(`no fold for event type ${event.type}`);
@@ -276,11 +293,11 @@ function append(db, { type, initiative_id = null, payload = {}, author = 'system
   const when = at ?? new Date().toISOString();
   const body = canonical({ event_id: eventId, type, initiative_id, payload, author, reason, at: when });
   const hash = sha256(prevHash + body);
-  run(db,
+  const inserted = run(db,
     `insert into events (event_id, initiative_id, type, payload, author, reason, at, prev_hash, hash)
      values (?,?,?,?,?,?,?,?,?)`,
     eventId, initiative_id, type, JSON.stringify(payload), author, reason, when, prevHash, hash);
-  apply(db, { event_id: eventId, type, initiative_id, payload, author, reason, at: when });
+  apply(db, { seq: Number(inserted.lastInsertRowid), event_id: eventId, type, initiative_id, payload, author, reason, at: when });
   return eventId;
 }
 

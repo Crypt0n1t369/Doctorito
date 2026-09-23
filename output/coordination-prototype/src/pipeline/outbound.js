@@ -73,6 +73,10 @@ export async function runOutbound(db, { initiative, now = new Date(), baseUrl = 
 
   const report = [];
   for (const need of needs) {
+    // Model calls are awaited between needs, and the switch can be pulled while
+    // they run. Ask the log again before contacting anyone else.
+    const now_ = one(db, 'select autobind from initiatives where initiative_id=?', initiative.initiative_id);
+    if (now_?.autobind !== 1) { report.push({ need_id: need.need_id, skipped: 'automatic actions were switched off' }); break; }
     try {
       report.push(await askAround(db, { initiative, need, cfg, now, baseUrl }));
     } catch (err) {
@@ -113,6 +117,16 @@ async function askAround(db, { initiative, need, cfg, now, baseUrl }) {
   const res = await askModel(db, {
     initiative, pass: 'outbound', state, questions: outboundQuestions(set), cfg,
   });
+
+  // The configured engine did not answer. Contacting people is acting, and a
+  // fallback's ranking is not enough to act on (docs/OUTCOMES.md, C4).
+  if (res.degraded_cause) {
+    emit(db, {
+      type: 'need.asked', initiative_id: initiative.initiative_id, author: 'system',
+      reason: `no asks sent: degraded judgment (${res.degraded_cause})`, payload: { need_id: need.need_id }, at: now.toISOString(),
+    });
+    return { need_id: need.need_id, need: need.description_short, candidates: candidates.length, asked: 0, skipped: `degraded: ${res.degraded_cause}` };
+  }
 
   const scored = candidates
     .map((c) => ({ cap: c, p: res.answers[`capfits__${c.capability_id}`]?.noul ?? 0 }))

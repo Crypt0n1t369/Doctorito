@@ -78,9 +78,12 @@ export function takeLease(db, {
     const n = one(db, 'select * from needs where need_id=?', need.need_id);
     const init = one(db, 'select * from initiatives where initiative_id=?', initiative.initiative_id);
     if (!n || !init || n.initiative_id !== init.initiative_id) return { ok: false, reason: 'not_found' };
-    const j = one(db, 'select initiative_id from judgments where judgment_id=?', judgmentId);
+    const j = one(db, 'select initiative_id, degraded_cause from judgments where judgment_id=?', judgmentId);
     if (!j) return { ok: false, reason: 'no_such_judgment' };
     if (j.initiative_id !== init.initiative_id) return { ok: false, reason: 'judgment_from_another_initiative' };
+    // A fallback's reading can put an offer in front of a person. It is never
+    // the reason something binds on its own (docs/OUTCOMES.md, C4).
+    if (j.degraded_cause && !String(boundBy ?? '').startsWith('coordinator:')) return { ok: false, reason: 'degraded_judgment' };
     if (init.status !== 'open') return { ok: false, reason: 'initiative_not_open' };
     if (n.status === 'closed') return { ok: false, reason: 'closed' };
 
@@ -129,6 +132,13 @@ function confirmable(db, c, now) {
   if (!need || need.status === 'closed') return 'closed';
   if (missingCredentials(db, c.actor_id, need, now).length) return 'credential_required';
   if (!mayAutoBind(need.risk_class) && !String(c.bound_by ?? '').startsWith('coordinator:')) return 'review_required';
+  // A proposal the machine made stands on the convener's standing authority,
+  // and the one switch withdraws that authority for everything not yet
+  // confirmed, not only for what arrives after it was pulled.
+  if (c.bound_by === 'auto' || c.bound_by === 'outbound') {
+    const init = one(db, 'select autobind from initiatives where initiative_id=?', c.initiative_id);
+    if (init?.autobind !== 1) return 'paused';
+  }
   return null;
 }
 
