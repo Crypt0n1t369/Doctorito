@@ -5,7 +5,7 @@ import { runOutbound } from '../pipeline/outbound.js';
 
 /**
  * What would actually leave this machine, checked against two rules that do
- * not bend (docs/OUTCOMES.md, C6):
+ * not bend (docs/CONSTRAINTS.md, C6):
  *
  *   - contributor text is data, never instruction: it never appears in a
  *     question's wording;

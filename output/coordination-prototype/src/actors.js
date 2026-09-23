@@ -8,7 +8,7 @@ import { id } from './ids.js';
  * account Telegram vouches for, or — on the web form, which vouches for
  * nothing — a random id held in the contributor's own browser.
  *
- * Identity is never guessed (docs/OUTCOMES.md, C3). The same person writing
+ * Identity is never guessed (docs/CONSTRAINTS.md, C3). The same person writing
  * from Telegram and then from email stays two actors until they prove they
  * control both and link them. Being asked twice is a small cost; acting as the
  * wrong person is not.

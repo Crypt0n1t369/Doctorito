@@ -46,7 +46,7 @@ const ROUTES = [
   ['POST', /^\/admin\/([\w-]+)\/autobind$/, pages.adminAutobind, 'coordinator'],
 
   // The record behind the public pages: raw offer text, contact handles, every
-  // message sent. A coordinator's view, never a public one (docs/OUTCOMES.md, C1).
+  // message sent. A coordinator's view, never a public one (docs/CONSTRAINTS.md, C1).
   ['GET', /^\/j\/([\w]+)$/, pages.judgment, 'coordinator'],
   ['GET', /^\/a\/([\w]+)$/, pages.actor, 'coordinator'],
   ['GET', /^\/outbox$/, pages.outbox, 'coordinator'],

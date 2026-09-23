@@ -3,7 +3,7 @@
  * (harness/score.js, harness/shadow.js, bin/acceptance.js). Three files used
  * to define "decided with no human" three ways, and the same 168 records came
  * out at 69.6%, 67.8% and 64.3% depending on which one was asked
- * (docs/OUTCOMES.md, C9).
+ * (docs/CONSTRAINTS.md, C9).
  *
  * The definitions follow what the product actually does, not what a label
  * would like it to do:

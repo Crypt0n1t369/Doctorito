@@ -5,14 +5,38 @@ what evidence would reopen it. Open decisions stay here until the user settles t
 
 ## Open
 
-- **D1 What compounds · D2 The training right · D3 The contributor's side for class 1 ·
-  D4 Whose permission covers hosted processing.** Proposals are in
-  [OUTCOMES.md](OUTCOMES.md#decisions-still-open). None blocks Gate 0.
+- **Who is the first real user; whose is the record of what someone has done; may the
+  system learn from contributions.** Product questions, with proposals, in
+  [OUTCOMES.md](OUTCOMES.md#open-questions).
+- **D3 The contributor's side for class 1 · D4 Whose permission covers hosted
+  processing.** Technical, with proposals, in
+  [CONSTRAINTS.md](CONSTRAINTS.md#decisions-still-open). D1 and D2 there are the
+  technical side of the second and third product questions. None blocks Gate 0.
+
+## 2026-09-23 — Separate the why and what from the how
+
+**Decided.** OUTCOMES.md states only why the system exists and what it enables, for one
+person, a team and open collaboration, in plain language. The engineering rules (C1–C9),
+the order of work and the technical decisions moved unchanged to CONSTRAINTS.md, where
+the code and tests cite them.
+
+**Why.** The first version listed eleven outcomes as measures and constraints, and never
+said what anyone actually gets. The user asked for the why and what first, with the how
+to follow. The same excess of distinctions (six kinds of statement, five scopes, four
+permission types, about nine states) runs through the design notes and is the likeliest
+reason both interface studies felt confusing: a screen cannot be clearer than the objects
+behind it.
+
+**Alternative considered.** Keep one document with a plainer summary on top. Rejected:
+the two audiences are different, and the technical half would keep crowding out the point.
+
+**Reopen if.** The why and what cannot be kept short without losing something a user
+would notice.
 
 ## 2026-09-23 — Steer by outcomes and constraints, not by features
 
 **Decided.** [OUTCOMES.md](OUTCOMES.md) is the steering document. Every change names the
-outcome it serves or the constraint it protects. Work follows its order: Gate 0 boundary
+outcome it serves or the constraint ([CONSTRAINTS.md](CONSTRAINTS.md)) it protects. Work follows its order: Gate 0 boundary
 repair, then Stage 1 with templates, then models in shadow mode, then limited automation.
 
 **Why.** The prototype had grown around one mechanism — an offer binding to a need — while
@@ -37,4 +61,4 @@ what was reviewed.
 ## Settled by the guiding prompt (22 September)
 
 Where the next-step loop starts; conversation; writers; the first proof. See
-[OUTCOMES.md](OUTCOMES.md#settled-by-the-guiding-prompt).
+[CONSTRAINTS.md](CONSTRAINTS.md#settled-by-the-guiding-prompt).

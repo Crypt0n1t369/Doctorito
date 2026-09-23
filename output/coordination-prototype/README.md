@@ -3,13 +3,14 @@
 Turns a collective decision into a catalogue of needs, binds arbitrary free-text
 offers to those needs without a person reading them, and shows the needs closing.
 
-**Start with [docs/OUTCOMES.md](docs/OUTCOMES.md).** Since 22 September the purpose
-is wider than this matcher: people contribute in the scope they choose, the system
-connects the evidence they may use, offers a worthwhile next step, and records what
-happened. The matcher is one component of that loop. OUTCOMES.md says what the system
-is for, the constraints that never bend, the order of work and the decisions still
-open; [docs/DECISIONS.md](docs/DECISIONS.md) is the decision log. What follows
-describes the matcher as it stands.
+**Start with [docs/OUTCOMES.md](docs/OUTCOMES.md)**: why this exists and what it
+enables, for one person, for a team and for open collaboration. The short version: a
+shared memory for a piece of work, which keeps what matters from conversation, shares
+it only as far as you choose, and makes the next step visible. The matcher described
+below is one part of that. [docs/CONSTRAINTS.md](docs/CONSTRAINTS.md) holds the
+engineering rules that must never break and the order of work, and
+[docs/DECISIONS.md](docs/DECISIONS.md) is the decision log. What follows describes the
+matcher as it stands.
 
 It is domain-neutral on purpose. The three scenarios in `scenarios/` are a
 municipal participatory budget, a multi-agency storm response and a Horizon

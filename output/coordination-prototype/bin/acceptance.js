@@ -72,7 +72,7 @@ async function runOne(slug) {
 
   // Every path counts, not only the pipeline's own: a class 3 commitment that no
   // coordinator bound is a violation whether it came from an offer, an
-  // outbound invitation or anything added later (docs/OUTCOMES.md, C2).
+  // outbound invitation or anything added later (docs/CONSTRAINTS.md, C2).
   const class3Auto = all(db, `
     select c.commitment_id from commitments c join needs n on n.need_id=c.need_id
      where c.initiative_id=? and n.risk_class=3 and c.bound_by not like 'coordinator:%'`, initiative.initiative_id);

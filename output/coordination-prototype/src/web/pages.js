@@ -17,7 +17,7 @@ const page = (opts) => layout(opts);
 
 /**
  * A private initiative does not exist for the public: not on the index, not by
- * its slug, and not through its offer form (docs/OUTCOMES.md, C1).
+ * its slug, and not through its offer form (docs/CONSTRAINTS.md, C1).
  */
 const visible = (init, session) => init && (init.visibility === 'public' || session?.role === 'coordinator');
 
@@ -277,7 +277,7 @@ export async function webhook(ctx) {
 
   // The channel's provider vouches for the sender, or nobody does. Checked
   // before anything else, so an unauthenticated caller learns nothing — not
-  // even whether an initiative exists (docs/OUTCOMES.md, C3).
+  // even whether an initiative exists (docs/CONSTRAINTS.md, C3).
   const auth = verifyWebhook(channel, ctx.req.headers, ctx.rawBody);
   if (!auth.ok) return { status: auth.status, type: 'application/json', body: JSON.stringify({ error: auth.error }) };
 

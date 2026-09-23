@@ -11,7 +11,7 @@ import { mayAutoBind, thresholdFor } from '../config.js';
  * arriving 200 ms apart cannot both be told yes for the last place. Unconfirmed
  * leases expire and the quantity returns to the pool.
  *
- * This file is also the command boundary for commitments (docs/OUTCOMES.md, C2).
+ * This file is also the command boundary for commitments (docs/CONSTRAINTS.md, C2).
  * Every path that creates, confirms or ends one — the pipeline, the coordinator
  * console, an outbound invitation, a contributor's link, shadow mode — comes
  * through these functions, and each check runs again inside the transaction
@@ -82,7 +82,7 @@ export function takeLease(db, {
     if (!j) return { ok: false, reason: 'no_such_judgment' };
     if (j.initiative_id !== init.initiative_id) return { ok: false, reason: 'judgment_from_another_initiative' };
     // A fallback's reading can put an offer in front of a person. It is never
-    // the reason something binds on its own (docs/OUTCOMES.md, C4).
+    // the reason something binds on its own (docs/CONSTRAINTS.md, C4).
     if (j.degraded_cause && !String(boundBy ?? '').startsWith('coordinator:')) return { ok: false, reason: 'degraded_judgment' };
     if (init.status !== 'open') return { ok: false, reason: 'initiative_not_open' };
     if (n.status === 'closed') return { ok: false, reason: 'closed' };

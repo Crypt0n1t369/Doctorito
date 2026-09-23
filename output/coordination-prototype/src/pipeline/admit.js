@@ -94,7 +94,7 @@ export async function admit(db, {
 
   // Whatever happens from here on, the offer ends in a state a person can see.
   // A budget refusal or a failure at any stage queues it with the reason; it
-  // is never left as 'received', outside every list (docs/OUTCOMES.md, C4).
+  // is never left as 'received', outside every list (docs/CONSTRAINTS.md, C4).
   try {
     return await decide();
   } catch (err) {

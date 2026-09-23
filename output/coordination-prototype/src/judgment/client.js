@@ -43,7 +43,7 @@ function estimateTokens(payload) {
  * validated for. Anything else is a fallback: the rules engine still answers,
  * so the offer can be triaged and shown to a person with a best guess, but the
  * result carries `degraded_cause` and nothing downstream may act on it alone
- * (docs/OUTCOMES.md, C4). A missing key, a refused request, an invalid answer
+ * (docs/CONSTRAINTS.md, C4). A missing key, a refused request, an invalid answer
  * and a disallowed destination are all the same case: the configured engine
  * did not answer.
  */

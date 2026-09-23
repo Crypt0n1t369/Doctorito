@@ -119,7 +119,7 @@ async function askAround(db, { initiative, need, cfg, now, baseUrl }) {
   });
 
   // The configured engine did not answer. Contacting people is acting, and a
-  // fallback's ranking is not enough to act on (docs/OUTCOMES.md, C4).
+  // fallback's ranking is not enough to act on (docs/CONSTRAINTS.md, C4).
   if (res.degraded_cause) {
     emit(db, {
       type: 'need.asked', initiative_id: initiative.initiative_id, author: 'system',

@@ -8,7 +8,7 @@ import { loadScenario } from '../src/seed.js';
 /**
  * The leak guard is only worth running if it fails when the thing it guards
  * breaks. The previous guard passed with its own regression put back, so these
- * tests put the regression back on purpose (docs/OUTCOMES.md, C6).
+ * tests put the regression back on purpose (docs/CONSTRAINTS.md, C6).
  */
 describe('the leak guard fails for the regression it exists to catch', () => {
   const scenario = loadScenario('river-cleanup');

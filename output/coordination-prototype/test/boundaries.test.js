@@ -19,7 +19,7 @@ import { compose } from '../src/reply.js';
 /**
  * Gate 0. Every test here pins the SAFE behaviour for an unsafe path that was
  * reproduced on 22 September (evidence/ in the review folder) or found since.
- * Each names the constraint in docs/OUTCOMES.md that it protects.
+ * Each names the constraint in docs/CONSTRAINTS.md that it protects.
  */
 
 const realFetch = globalThis.fetch;
