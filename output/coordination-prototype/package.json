@@ -1,0 +1,21 @@
+{
+  "name": "coordination-prototype",
+  "version": "0.1.0",
+  "description": "Turns a collective decision into a catalogue of needs, binds arbitrary offers to them without a coordinator reading them, and shows the needs closing.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env --experimental-sqlite --no-warnings run.js",
+    "seed": "node --env-file-if-exists=.env --experimental-sqlite --no-warnings bin/seed.js",
+    "demo": "node --env-file-if-exists=.env --experimental-sqlite --no-warnings bin/demo.js",
+    "accept": "node --env-file-if-exists=.env --experimental-sqlite --no-warnings bin/acceptance.js",
+    "harness": "node --env-file-if-exists=.env --experimental-sqlite --no-warnings harness/score.js",
+    "shadow": "node --env-file-if-exists=.env --experimental-sqlite --no-warnings harness/shadow.js",
+    "replay": "node --env-file-if-exists=.env --experimental-sqlite --no-warnings bin/replay.js",
+    "test": "node --env-file-if-exists=.env --experimental-sqlite --no-warnings --test \"test/*.test.js\"",
+    "env": "cp -n .env.example .env 2>/dev/null; node --env-file-if-exists=.env -e \"const k=process.env.OPENROUTER_API_KEY||process.env.TYPESAFE_API_KEY||''; console.log(k ? '.env ready, key set ('+k.length+' chars) - left untouched' : '.env ready, no key set yet')\""
+  },
+  "dependencies": {}
+}
