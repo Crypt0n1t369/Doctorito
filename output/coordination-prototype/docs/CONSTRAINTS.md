@@ -185,5 +185,7 @@ understanding as well as capacity.
 
 Two figures are carried with caution. "One coordinator holds 30 to 50 active relationships"
 is the concept paper's, with no cited source; it is a hypothesis that measuring coordinator
-minutes per resolved item can test. The OECD finding of "a black box between input and outcome" is the
-concept paper's paraphrase of the 2025 review of citizen participation, not checked here.
+minutes per resolved item can test. The OECD "black box between input and outcome" is a
+misattribution: in the OECD's 2025 reports "black boxes" means opaque technology. What
+the OECD does document is low accountability after participatory processes and an
+inconsistent feedback loop (see VALUE-AND-SCOPE.md).

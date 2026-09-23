@@ -5,9 +5,15 @@ what evidence would reopen it. Open decisions stay here until the user settles t
 
 ## Open
 
-- **Who is the first real user; whose is the record of what someone has done; may the
-  system learn from contributions.** Product questions, with proposals, in
-  [OUTCOMES.md](OUTCOMES.md#open-questions).
+- **Who is the first real user.** Research recommends a two-to-six-person team working
+  one question for weeks or months with several AI tools, whose output others rely on,
+  with this project as the first test bed ([VALUE-AND-SCOPE.md](VALUE-AND-SCOPE.md)).
+  Awaiting the user.
+- **Reframe OUTCOMES.md's why** from "conversation forgets" to "we can no longer tell
+  what is established". Memory is being solved by the AI vendors; trust is not. Proposed
+  in VALUE-AND-SCOPE.md, awaiting the user.
+- **Whose is the record of what someone has done; may the system learn from
+  contributions.** Proposals in [OUTCOMES.md](OUTCOMES.md#open-questions).
 - **D3 The contributor's side for class 1 · D4 Whose permission covers hosted
   processing.** Technical, with proposals, in
   [CONSTRAINTS.md](CONSTRAINTS.md#decisions-still-open). D1 and D2 there are the
