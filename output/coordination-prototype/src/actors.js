@@ -16,7 +16,11 @@ import { id } from './ids.js';
 export function normaliseHandle(channel, handle) {
   const h = String(handle ?? '').trim().toLowerCase();
   if (channel === 'email') return h.replace(/^mailto:/, '');
-  if (channel === 'telegram') return h.replace(/^@/, '');
+  if (channel === 'telegram') {
+    // Inbound webhooks use id:<provider user id>. Keep historical username
+    // contacts distinct; they cannot prove ownership of a provider id.
+    return /^\d+$/.test(h) ? `id:${h}` : h.replace(/^@/, '');
+  }
   return h;
 }
 

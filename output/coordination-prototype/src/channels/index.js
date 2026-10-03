@@ -74,9 +74,13 @@ export function normalise(channel, payload) {
   }
   if (channel === 'telegram') {
     const from = payload.message?.from ?? {};
+    // A username can be changed or reassigned. The webhook authenticates the
+    // Telegram user id, so only that immutable provider id may identify an
+    // actor. An old username-only contact is never silently linked to it.
+    const providerId = String(from.id ?? '');
     return {
       channel: 'telegram',
-      handle: (from.username ?? String(from.id ?? '')).toLowerCase(),
+      handle: /^[1-9]\d*$/.test(providerId) ? `id:${providerId}` : '',
       displayName: [from.first_name, from.last_name].filter(Boolean).join(' ') || null,
       text: payload.message?.text ?? '',
       attachments: [],

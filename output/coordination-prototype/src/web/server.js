@@ -3,6 +3,7 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { one, run } from '../db.js';
 import { STYLESHEET } from './views.js';
 import * as pages from './pages.js';
+import * as inquiryPages from './inquiry-pages.js';
 
 /**
  * One application process, server-rendered pages, magic links instead of
@@ -21,6 +22,23 @@ const ROUTES = [
   ['GET', /^\/style\.css$/, styleSheet],
   ['GET', /^\/login$/, login],
   ['GET', /^\/logout$/, logout],
+
+  ['GET', /^\/topics$/, inquiryPages.index],
+  ['GET', /^\/topics\/new$/, inquiryPages.newForm, 'coordinator'],
+  ['POST', /^\/topics$/, inquiryPages.create, 'coordinator'],
+  ['GET', /^\/topics\/([a-z0-9-]+)$/, inquiryPages.topic],
+  ['GET', /^\/topics\/([a-z0-9-]+)\/contribute$/, inquiryPages.contributeForm],
+  ['POST', /^\/topics\/([a-z0-9-]+)\/contribute$/, inquiryPages.contribute],
+  ['GET', /^\/receipt\/([a-z0-9_]+)$/, inquiryPages.receipt],
+  ['POST', /^\/receipt\/([a-z0-9_]+)\/release$/, inquiryPages.setContributionRelease],
+  ['POST', /^\/receipt\/([a-z0-9_]+)\/delete$/, inquiryPages.deleteContribution],
+  ['GET', /^\/topics\/([a-z0-9-]+)\/review$/, inquiryPages.reviewQueue, 'coordinator'],
+  ['POST', /^\/topics\/([a-z0-9-]+)\/review\/([a-z0-9_]+)$/, inquiryPages.review, 'coordinator'],
+  ['POST', /^\/topics\/([a-z0-9-]+)\/sources$/, inquiryPages.addSource, 'coordinator'],
+  ['POST', /^\/topics\/([a-z0-9-]+)\/sources\/([a-z0-9_]+)\/release$/, inquiryPages.setSourceRelease, 'coordinator'],
+  ['POST', /^\/topics\/([a-z0-9-]+)\/draft$/, inquiryPages.saveDraft, 'coordinator'],
+  ['POST', /^\/topics\/([a-z0-9-]+)\/review-draft$/, inquiryPages.reviewDraft, 'coordinator'],
+  ['POST', /^\/topics\/([a-z0-9-]+)\/publish$/, inquiryPages.publish, 'coordinator'],
 
   ['GET', /^\/i\/([\w-]+)$/, pages.initiative],
   ['GET', /^\/i\/([\w-]+)\/offer$/, pages.offerForm],
@@ -80,17 +98,24 @@ export function createApp(db, { baseUrl = 'http://localhost:8787' } = {}) {
       return send(res, 400, 'text/plain; charset=utf-8', `Bad request: ${err.message}`);
     }
 
-    // The web form vouches for nothing, so a contributor there is this browser:
-    // a random id in a signed cookie, issued the first time they send something.
+    // A contributor form carries the same signed identity as the cookie. If a
+    // response loses its Set-Cookie header, retrying that form still uses the
+    // same principal and idempotency key.
     const contributorId = () => {
       const held = unsign(cookies(req).cid);
+      const posted = unsign(body.contributor_token);
+      if (posted) {
+        if (held !== posted) res.setHeader('set-cookie', `cid=${sign(posted)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=31536000`);
+        return posted;
+      }
       if (held) return held;
       const fresh = randomBytes(12).toString('hex');
       res.setHeader('set-cookie', `cid=${sign(fresh)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=31536000`);
       return fresh;
     };
 
-    const ctx = { db, req, res, url, query: url.searchParams, params: match.params, body, rawBody, session, baseUrl, send, redirect, contributorId };
+    const contributorFormToken = () => sign(contributorId());
+    const ctx = { db, req, res, url, query: url.searchParams, params: match.params, body, rawBody, session, baseUrl, send, redirect, contributorId, contributorFormToken };
     try {
       const out = await match.handler(ctx);
       if (res.writableEnded) return;

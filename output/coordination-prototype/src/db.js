@@ -250,6 +250,119 @@ create table if not exists sessions (
 );
 
 create table if not exists meta (k text primary key, v text);
+
+-- Inquiry content is deliberately outside the append-only event log. The log
+-- retains opaque references and action metadata after personal content is
+-- deleted; replay can then reconstruct the action, but not the deleted text.
+create table if not exists inquiry_payloads (
+  payload_id       text primary key,
+  owner_principal  text not null,
+  kind             text not null,
+  body             text,
+  created_at       text not null,
+  deleted_at       text
+);
+
+-- Command deduplication and receipt secrets are operational state, not public
+-- event data. Both are written in the same transaction as the command event.
+create table if not exists inquiry_commands (
+  principal        text not null,
+  idempotency_key  text not null,
+  salt             text not null,
+  request_hash     text not null,
+  response         text not null,
+  created_at       text not null,
+  primary key (principal, idempotency_key)
+);
+create table if not exists inquiry_receipt_secrets (
+  receipt_id       text primary key,
+  token_hash       text not null unique
+);
+
+-- All tables below are projections of inquiry.* events.
+create table if not exists inquiries (
+  inquiry_id           text primary key,
+  slug                 text not null unique,
+  owner_principal      text not null,
+  title_payload_id     text not null,
+  question_payload_id  text not null,
+  visibility           text not null,
+  version              integer not null default 0,
+  current_revision_id  text,
+  reviewed_revision_id text,
+  latest_publication_id text,
+  created_at           text not null
+);
+create table if not exists inquiry_roles (
+  role_id       text primary key,
+  inquiry_id    text not null,
+  principal     text not null,
+  role          text not null,
+  active        integer not null default 1,
+  unique(inquiry_id, principal)
+);
+create index if not exists inquiry_roles_principal on inquiry_roles(principal, active);
+create table if not exists inquiry_sources (
+  source_id      text primary key,
+  inquiry_id     text not null,
+  payload_id     text not null,
+  added_by       text not null,
+  read_scope     text not null,
+  public_release integer not null default 0,
+  created_at     text not null
+);
+create index if not exists inquiry_sources_inquiry on inquiry_sources(inquiry_id);
+create table if not exists inquiry_revisions (
+  revision_id       text primary key,
+  inquiry_id        text not null,
+  parent_revision_id text,
+  version           integer not null,
+  state             text not null,
+  payload_id        text not null,
+  source_ids        text not null,
+  contribution_ids  text not null,
+  author            text not null,
+  reviewer          text,
+  reason_payload_id text,
+  created_at        text not null,
+  unique(inquiry_id, version)
+);
+create index if not exists inquiry_revisions_inquiry on inquiry_revisions(inquiry_id, version);
+create table if not exists inquiry_contributions (
+  contribution_id        text primary key,
+  inquiry_id             text not null,
+  principal              text not null,
+  payload_id             text not null,
+  source_ids             text not null,
+  allow_team_read        integer not null default 0,
+  allow_public_release   integer not null default 0,
+  status                 text not null,
+  submitted_at           text not null,
+  reviewer               text,
+  review_reason_payload_id text,
+  reviewed_at            text,
+  receipt_id             text not null,
+  resulting_revision_id  text
+);
+create index if not exists inquiry_contributions_inquiry on inquiry_contributions(inquiry_id, status);
+create table if not exists inquiry_receipts (
+  receipt_id       text primary key,
+  contribution_id  text not null,
+  inquiry_id       text not null,
+  status           text not null,
+  reason_payload_id text,
+  revision_id      text,
+  made_available_at text not null
+);
+create table if not exists inquiry_publications (
+  publication_id text primary key,
+  inquiry_id     text not null,
+  revision_id    text not null,
+  audience       text not null,
+  published_by   text not null,
+  published_at   text not null
+);
+create index if not exists inquiry_publications_inquiry on inquiry_publications(inquiry_id, published_at);
 `;
 
 /** Derived tables, in the order the fold rebuilds them. events/meta/sessions are not derived. */
@@ -257,6 +370,8 @@ export const DERIVED = [
   'decisions', 'initiatives', 'needs', 'actors', 'contacts', 'credentials',
   'capabilities', 'offers', 'judgments', 'commitments', 'fulfilments',
   'overrides', 'asks', 'outbox', 'spend',
+  'inquiries', 'inquiry_roles', 'inquiry_sources', 'inquiry_revisions',
+  'inquiry_contributions', 'inquiry_receipts', 'inquiry_publications',
 ];
 
 export function open(path = 'data/coordination.db') {
@@ -266,6 +381,7 @@ export function open(path = 'data/coordination.db') {
   db.exec('pragma journal_mode = wal');
   db.exec('pragma foreign_keys = on');
   db.exec('pragma busy_timeout = 5000');
+  db.exec('pragma secure_delete = on');
   db.exec(SCHEMA);
   migrate(db);
   return db;
@@ -282,6 +398,7 @@ const ADDED_COLUMNS = [
   ['offers', 'decision_reason', 'text'],
   ['offers', 'reply', 'text'],
   ['capabilities', 'initiative_id', 'text'],
+  ['inquiry_contributions', 'allow_team_read', 'integer not null default 0'],
 ];
 
 function migrate(db) {

@@ -107,6 +107,7 @@ p { margin: .5rem 0; }
 }
 .card > :first-child { margin-top: 0; }
 .card > :last-child { margin-bottom: 0; }
+details.card summary { cursor: pointer; font-weight: 600; }
 .cardhead { display: flex; flex-wrap: wrap; gap: .5rem .75rem; align-items: baseline; }
 .cardhead h3 { margin: 0; flex: 1 1 18rem; }
 
@@ -327,6 +328,7 @@ export const STYLE_VERSION = createHash('sha256').update(STYLESHEET).digest('hex
 export function layout({ title, session = null, body, nav = [] }) {
   const links = [
     ['/', 'Initiatives'],
+    ['/topics', 'Topics'],
     ...nav,
     ['/outbox', 'Outbox'],
     ['/events', 'Log'],
@@ -412,19 +414,19 @@ export function tag(text, kind = '') {
  * the page. The need editor is the screen where wrong input is the whole
  * problem, so a message the author has to scroll to find is a message wasted.
  */
-export function field({ name, label, value = '', type = 'text', hint = '', options = null, errors = [], warnings = [], attrs = '' }) {
+export function field({ name, id = name, label, value = '', type = 'text', hint = '', options = null, errors = [], warnings = [], attrs = '' }) {
   const bad = errors.length ? ' bad' : '';
   const control = options
-    ? html`<select id="${name}" name="${name}" ${raw(attrs)}>${options.map((o) => {
+    ? html`<select id="${id}" name="${name}" ${raw(attrs)}>${options.map((o) => {
         const [v, text] = Array.isArray(o) ? o : [o, o];
         return html`<option value="${v}"${raw(String(value) === String(v) ? ' selected' : '')}>${text}</option>`;
       })}</select>`
     : type === 'textarea'
-      ? html`<textarea id="${name}" name="${name}" ${raw(attrs)}>${value ?? ''}</textarea>`
-      : html`<input id="${name}" name="${name}" type="${type}" value="${value ?? ''}" ${raw(attrs)}>`;
+      ? html`<textarea id="${id}" name="${name}" ${raw(attrs)}>${value ?? ''}</textarea>`
+      : html`<input id="${id}" name="${name}" type="${type}" value="${value ?? ''}" ${raw(attrs)}>`;
 
   return html`<div class="field${raw(bad)}">
-  <label for="${name}">${label}${hint ? html`<span class="hint">${hint}</span>` : ''}</label>
+  <label for="${id}">${label}${hint ? html`<span class="hint">${hint}</span>` : ''}</label>
   ${control}
   ${errors.map((e) => html`<p class="err">${e}</p>`)}
   ${warnings.map((w) => html`<p class="warnmsg">${w}</p>`)}

@@ -13,6 +13,7 @@ import { amendNeed, closeNeed } from '../src/needs.js';
 import { recordFulfilment } from '../src/fulfilment.js';
 import { applyQueueAction, queueItems } from '../src/queue.js';
 import { runOutbound } from '../src/pipeline/outbound.js';
+import { normalise } from '../src/channels/index.js';
 import { seedScenario } from '../src/seed.js';
 import { compose } from '../src/reply.js';
 
@@ -203,6 +204,43 @@ describe('C2 — nothing consequential without the authority it requires', () =>
     } finally { await s.close(); w.db.close(); }
   });
 
+  test('switching off during outbound judgment creates no invitations or delivery intent', async () => {
+    const w = world(hostedConfig());
+    const control = world(hostedConfig());
+    let enterModel;
+    let releaseModel;
+    const entered = new Promise((resolve) => { enterModel = resolve; });
+    const held = new Promise((resolve) => { releaseModel = resolve; });
+    try {
+      await withHosted(async (_url, opts) => {
+        enterModel();
+        await held;
+        const { answer } = await import('../src/judgment/rules.js');
+        return {
+          ok: true, status: 200,
+          json: async () => ({ model: 'mock', answers: answer(JSON.parse(opts.body)), usage: { input_tokens: 100 } }),
+        };
+      }, async () => {
+        const running = runOutbound(w.db, { initiative: w.initiative, now: new Date(Date.now() + 3 * 86400e3) });
+        await entered;
+        emit(w.db, {
+          type: 'initiative.autobind_set', initiative_id: w.initiative.initiative_id, author: 'coordinator:test',
+          payload: { initiative_id: w.initiative.initiative_id, autobind: 0 },
+        });
+        releaseModel();
+        const report = await running;
+        assert.ok(report.some((item) => /switched off/.test(item.skipped ?? '')));
+        assert.equal(one(w.db, 'select count(*) n from asks').n, 0);
+        assert.equal(one(w.db, 'select count(*) n from outbox').n, 0);
+        assert.equal(one(w.db, "select count(*) n from events where type='need.asked'").n, 0);
+
+        // The same response would contact people while authorization remains on.
+        await runOutbound(control.db, { initiative: control.initiative, now: new Date(Date.now() + 3 * 86400e3) });
+        assert.ok(one(control.db, 'select count(*) n from asks').n > 0);
+      });
+    } finally { releaseModel?.(); w.db.close(); control.db.close(); }
+  });
+
   test('a coordinator cannot bind a credential-required need to someone without the credential', async () => {
     const w = world();
     const r = await admit(w.db, { initiative: w.initiative, channel: 'web', handle: 'web:t5', text: 'I can do chainsaw work on Saturday and fell three leaning trees.', now: NOW });
@@ -263,6 +301,24 @@ describe('C2 — nothing consequential without the authority it requires', () =>
 
 // ---------------------------------------------------------------------------
 describe('C3 — identity is what a channel authenticated', () => {
+  test('Telegram identity follows the provider id across username changes and reuse', () => {
+    const w = world();
+    const incoming = (id, username) => normalise('telegram', {
+      message: { from: { id, username }, chat: { id }, message_id: id, text: 'I can help' },
+    });
+    const first = incoming(1001, 'shared_name');
+    const samePerson = incoming(1001, 'new_name');
+    const otherPerson = incoming(2002, 'shared_name');
+    const a = resolveActor(w.db, first);
+    const aAgain = resolveActor(w.db, samePerson);
+    const b = resolveActor(w.db, otherPerson);
+    assert.equal(a.actor_id, aAgain.actor_id);
+    assert.notEqual(a.actor_id, b.actor_id);
+    assert.equal(first.handle, 'id:1001');
+    assert.equal(otherPerson.handle, 'id:2002');
+    assert.equal(normalise('telegram', { message: { from: { username: 'shared_name' }, text: 'Hello' } }).handle, '');
+    w.db.close();
+  });
   test('matching a telegram username to an email local-part does not merge two people', () => {
     const w = world();
     const a = resolveActor(w.db, { channel: 'telegram', handle: 'unique_person' });

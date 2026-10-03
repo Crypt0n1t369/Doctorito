@@ -144,38 +144,58 @@ async function askAround(db, { initiative, need, cfg, now, baseUrl }) {
   }
 
   const language = need.language ?? 'en';
-  let sent = 0;
-  for (const r of chosen) {
-    const contact = preferredContact(db, r.cap.actor_id);
-    if (!contact) continue;
-    const askId = id('ak');
-    const body = compose(language, 'ask_outbound', cfg,
-      need.description, whenLine(language, need).trim(), `${baseUrl}/take/${askId}`);
+  // Model inference can outlive the operator's permission. Recheck after the
+  // await, under the same write lock that creates the ask and its outbox row.
+  // A switch-off committed before this point wins; one committed afterwards
+  // sees the whole enqueue already finished.
+  const outcome = tx(db, () => {
+    const live = one(db, 'select autobind, status from initiatives where initiative_id=?', initiative.initiative_id);
+    if (live?.autobind !== 1 || live.status !== 'open') return { skipped: 'automatic actions were switched off or the initiative closed' };
+    const currentNeed = one(db, 'select status from needs where need_id=? and initiative_id=?', need.need_id, initiative.initiative_id);
+    if (currentNeed?.status !== 'open' || remainingFor(db, need.need_id, now) <= 0) return { skipped: 'need closed or filled' };
+
+    let sent = 0;
+    for (const r of chosen) {
+      // Another outbound run may have reached this actor while inference was
+      // in flight. The cooldown check belongs at the enqueue boundary too.
+      if (one(db, 'select ask_id from asks where need_id=? and actor_id=? and sent_at>?', need.need_id, r.cap.actor_id, cooldown)) continue;
+      if (one(db, `select commitment_id from commitments where need_id=? and actor_id=? and state in ('proposed','confirmed','fulfilled')`, need.need_id, r.cap.actor_id)) continue;
+      const contact = preferredContact(db, r.cap.actor_id);
+      if (!contact) continue;
+      const askId = id('ak');
+      const body = compose(language, 'ask_outbound', cfg,
+        need.description, whenLine(language, need).trim(), `${baseUrl}/take/${askId}`);
+
+      emit(db, {
+        type: 'ask.sent', initiative_id: initiative.initiative_id, author: 'system',
+        payload: {
+          ask_id: askId, need_id: need.need_id, actor_id: r.cap.actor_id,
+          channel: contact.channel, handle: contact.handle, body,
+          judgment_id: res.judgment_id, confidence: round(r.p),
+        },
+        at: now.toISOString(),
+      });
+      send(db, {
+        initiative, actorId: r.cap.actor_id, channel: contact.channel,
+        handle: contact.handle, kind: 'outbound_ask', body,
+      });
+      sent++;
+    }
 
     emit(db, {
-      type: 'ask.sent', initiative_id: initiative.initiative_id, author: 'system',
-      payload: {
-        ask_id: askId, need_id: need.need_id, actor_id: r.cap.actor_id,
-        channel: contact.channel, handle: contact.handle, body,
-        judgment_id: res.judgment_id, confidence: round(r.p),
-      },
-      at: now.toISOString(),
+      type: 'need.asked', initiative_id: initiative.initiative_id, author: 'system',
+      reason: `${sent} asks`, payload: { need_id: need.need_id }, at: now.toISOString(),
     });
-    send(db, {
-      initiative, actorId: r.cap.actor_id, channel: contact.channel,
-      handle: contact.handle, kind: 'outbound_ask', body,
-    });
-    sent++;
-  }
-
-  emit(db, {
-    type: 'need.asked', initiative_id: initiative.initiative_id, author: 'system',
-    reason: `${sent} asks`, payload: { need_id: need.need_id }, at: now.toISOString(),
+    return { sent };
   });
+  if (outcome.skipped) return {
+    need_id: need.need_id, need: need.description_short,
+    candidates: candidates.length, asked: 0, skipped: outcome.skipped,
+  };
 
   return {
     need_id: need.need_id, need: need.description_short,
-    candidates: candidates.length, asked: sent, judgment_id: res.judgment_id,
+    candidates: candidates.length, asked: outcome.sent, judgment_id: res.judgment_id,
     remaining: remainingFor(db, need.need_id, now),
   };
 }

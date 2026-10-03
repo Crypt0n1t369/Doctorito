@@ -3,19 +3,22 @@
 Turns a collective decision into a catalogue of needs, binds arbitrary free-text
 offers to those needs without a person reading them, and shows the needs closing.
 
+**Next action — 29 September 2026:** use the [pilot workbook](docs/experiments/WORKBOOK.md) with a willing lead. The [experiment protocol](docs/EXPERIMENT.md) explains the comparison and the [Latvia inquiry candidate](docs/experiments/LATVIA.md) holds the source research. [docs/VALUE-AND-SCOPE.md](docs/VALUE-AND-SCOPE.md) integrates the latest critique. These are plans and sourced example records, not new runtime capabilities or a completed pilot. Known boundary gaps remain; the matcher is only one component.
+
 **Start with [docs/OUTCOMES.md](docs/OUTCOMES.md)**: why this exists and what it
 enables, for one person, for a team and for open collaboration. The short version: a
 shared memory for a piece of work, which keeps what matters from conversation, shares
 it only as far as you choose, and makes the next step visible. The matcher described
 below is one part of that. [docs/CONSTRAINTS.md](docs/CONSTRAINTS.md) holds the
 engineering rules that must never break and the order of work, and
-[docs/DECISIONS.md](docs/DECISIONS.md) is the decision log. What follows describes the
+[docs/DECISIONS.md](docs/DECISIONS.md) is the decision log. The new
+[local inquiry walkthrough](docs/INQUIRY-PILOT.md) describes a source-linked
+topic, review, release and contributor-receipt slice. What follows describes the
 matcher as it stands.
 
 It is domain-neutral on purpose. The three scenarios in `scenarios/` are a
 municipal participatory budget, a multi-agency storm response and a Horizon
-Europe consortium forming a bid. They share no code — only the nine objects
-below. Applying this to a new case is writing a catalogue, not writing a matcher.
+Europe consortium forming a bid. They use the same matcher and the nine objects below with different catalogues. This reuse concerns known-needs matching; inquiry, domain review and governance can require additional records and implementation.
 
 ```bash
 npm run seed          # load the scenario packs
@@ -25,7 +28,7 @@ npm run accept        # the five measures from the spec, on a live run
 npm run harness       # wrong-bind rate, calibration, per language
 npm run harness -- --sweep    # every threshold, recomputed, no model calls
 npm run shadow -- --scenario river-cleanup   # run beside a coordinator, act on nothing
-npm test              # 117 tests: the invariants, and every unsafe path closed in Gate 0
+npm test              # run the suite; passing tests alone do not establish Gate 0 completion
 ```
 
 Node 22 or newer. No dependencies, no build step, no Docker. SQLite comes from
@@ -57,9 +60,10 @@ a decision        imported, never authored here
       commitments leased, confirmed, withdrawn, fulfilled — each naming its judgment
 ```
 
-Nine objects, and everything in the product is a view over them: `decisions`,
+The matcher has nine core objects: `decisions`,
 `initiatives`, `needs`, `actors`, `capabilities`, `offers`, `commitments`,
-`fulfilments`, `judgments`. The schema is `src/db.js` and it is short.
+`fulfilments`, `judgments`. The inquiry slice adds its own topic, source,
+revision, contribution, receipt and publication records. The schema is `src/db.js`.
 
 ### The admission pipeline
 
@@ -109,8 +113,7 @@ action writes a labelled override against the judgment that produced it.
 
 ## Rules that do not bend
 
-These are in the code, not in a policy document, and `test/` fails if they stop
-being true.
+These are the matcher's intended contracts, with partial implementation and bounded test coverage. The 28 September assessment still reproduced identity, cancellation and concurrent-budget gaps and found incomplete multi-project permissions. Read these rules as requirements, not evidence that every path satisfies them. The documentation changes do not close Gate 0.
 
 1. **Append-only.** State is a fold over events. `npm run replay` drops every
    derived table and folds the log again; if the fingerprint changes, the claim
@@ -189,9 +192,7 @@ probability), `choice` (one option plus the distribution and a confidence), and
 against shared state. Confidence is the concentration of the distribution, and
 the intended use is a three-way gate: act, confirm, or ask a person.
 
-That gate is this product's whole architecture, which is why the decomposition
-works: deterministic code owns quantities, capacity, time windows, geography,
-eligibility and the ledger; the model owns "is a flatbed suitable for hauling wet
+That gate structures the matcher component. The broader inquiry and mission workflow is outlined in [docs/MISSION-PORTAL.md](docs/MISSION-PORTAL.md). In the matcher, deterministic code owns quantities, capacity, time windows, geography, eligibility and state transitions; the model proposes judgments about "is a flatbed suitable for hauling wet
 debris", "does this offer address this need at all", "are these two reported
 resources the same thing".
 

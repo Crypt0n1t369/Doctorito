@@ -21,6 +21,26 @@
         "dev"
       ],
       "port": 4137
+    },
+    {
+      "name": "coordination-preview",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "-u",
+        "TYPESAFE_API_KEY",
+        "-u",
+        "OPENROUTER_API_KEY",
+        "JUDGMENT_ENGINE=rules",
+        "PORT=8788",
+        "DB=coordination-prototype/data/preview.db",
+        "COORDINATOR_KEY=preview-only-key",
+        "SESSION_SECRET=preview-only-secret",
+        "node",
+        "--experimental-sqlite",
+        "--no-warnings",
+        "coordination-prototype/run.js"
+      ],
+      "port": 8788
     }
   ]
 }

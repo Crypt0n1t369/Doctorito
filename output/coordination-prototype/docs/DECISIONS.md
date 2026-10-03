@@ -5,19 +5,28 @@ what evidence would reopen it. Open decisions stay here until the user settles t
 
 ## Open
 
-- **Who is the first real user.** Research recommends a two-to-six-person team working
-  one question for weeks or months with several AI tools, whose output others rely on,
-  with this project as the first test bed ([VALUE-AND-SCOPE.md](VALUE-AND-SCOPE.md)).
-  Awaiting the user.
-- **Reframe OUTCOMES.md's why** from "conversation forgets" to "we can no longer tell
-  what is established". Memory is being solved by the AI vendors; trust is not. Proposed
-  in VALUE-AND-SCOPE.md, awaiting the user.
+- **Who is the first real user.** The AI-heavy selection rule is reopened. [EXPERIMENT.md](EXPERIMENT.md) proposes one public-material inquiry with a lead, contributors and a fresh reader; [the Latvia case](experiments/LATVIA.md) is a concrete candidate. No participants or final issue have been selected. Internal use is a workflow check, not external demand evidence.
+- **First positioning.** Test continuity, checking and follow-through together. The earlier memory-versus-trust reframe assumed too much; current [VALUE-AND-SCOPE.md](VALUE-AND-SCOPE.md) retains both as testable needs. Which benefit drives adoption remains open.
 - **Whose is the record of what someone has done; may the system learn from
   contributions.** Proposals in [OUTCOMES.md](OUTCOMES.md#open-questions).
 - **D3 The contributor's side for class 1 · D4 Whose permission covers hosted
   processing.** Technical, with proposals, in
   [CONSTRAINTS.md](CONSTRAINTS.md#decisions-still-open). D1 and D2 there are the
   technical side of the second and third product questions. None blocks Gate 0.
+
+## 2026-09-29 — Close the documentation and pilot-preparation loose ends
+
+At the user's request to finish obvious omissions, replace the older mission blueprint's readiness claims and first-step sequence with the current conditional architecture; preserve the old document as history. Correct the README's full-architecture and fully-enforced-boundary claims. Add a manual pilot workbook and point the assessment register at canonical project documents while retaining dated integration snapshots.
+
+This prepares the work; it does not recruit a lead, select the pilot, resolve runtime gaps or count as an observed episode. The source research remains dated 28 September.
+
+## 2026-09-29 — Integrate the critique and prepare a falsifiable experiment
+
+**Integrated at the user's request.** Replace universal memory-solved, solo-use-dismissal and AI-heavy selection claims with testable hypotheses. Retain the earlier value research as a dated archive. Clarify intended outcomes versus implemented capability, retain the hard boundaries, and make domain-specific acceptance explicit.
+
+**Proposed, not yet selected or run.** A roughly ten-day public-material inquiry with an ordinary-document baseline, visible saved/reviewed/published distinctions, contribution receipts, contrary-evidence review and a fresh-reader handover. The Latvia example is source research, not field validation. Its runtime implementation and any external release remain future work.
+
+**Reopen if.** Ordinary tools achieve the same result with less effort, the participants will not maintain it, or an actual group reveals a more useful starting problem.
 
 ## 2026-09-23 — Separate the why and what from the how
 

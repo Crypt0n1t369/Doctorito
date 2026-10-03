@@ -115,6 +115,12 @@ knowledge model second. Fulfilment's legal transitions belong to Gate 0; evidenc
 acceptance belongs to Stage 1. Per-language thresholds wait until an automatic action is
 proposed in that language, but per-language reporting starts now.
 
+## 29 September experiment clarification
+
+C1–C9 remain in force. [EXPERIMENT.md](EXPERIMENT.md) proposes a public-material inquiry to test continuity, contribution closure, correction and total review effort. A manual trial in ordinary documents may proceed without claiming the prototype is safe. A software trial must repair and verify every boundary it uses; private data still requires Gate 0. Do not use public source material as an excuse to expose participant identities or private notes.
+
+The earlier two-maker story remains a useful boundary/regression scenario; it is not evidence of adoption or the only possible first value test. The inquiry candidate does not select the first real user. Wrong-bind rate remains a matcher measure; the product also needs evidence that people can resume, revise and obtain useful outcomes.
+
 ## Decisions still open
 
 These change what the product is, so they are the user's. Each has a proposal.
@@ -167,8 +173,7 @@ contributor must grant it. That needs counsel before a real pilot.
   concept paper's "does not make conversation" is about the matcher, which still does not.
 - **Writers.** One authoritative writer per record. Groups exchange packages; federation
   waits until ownership or scale requires it.
-- **First proof.** Gate 0, then Stage 1's two-maker, two-project story, which can be built
-  and tested now. The convener pilot measures the wrong-bind rate in Stage 3.
+- **First proof (22 September baseline).** Gate 0, then Stage 1's two-maker, two-project story. The 29 September clarification adds a proposed inquiry value test while retaining this boundary scenario. A convener trial measures matcher errors; product usefulness requires the separate outcome checks in EXPERIMENT.md.
 
 ## Where this came from
 

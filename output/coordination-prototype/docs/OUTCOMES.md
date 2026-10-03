@@ -3,6 +3,8 @@
 23 September 2026. What this is for, from the point of view of the people who use it.
 How it is built follows from this, and lives elsewhere ([CONSTRAINTS.md](CONSTRAINTS.md)).
 
+29 September clarification: these are intended outcomes, not guarantees implemented by the current prototype. The [first experiment](EXPERIMENT.md) tests a complete episode; its participants and final topic remain unselected.
+
 ## Why
 
 Work happens in conversation, and conversation forgets.
@@ -29,7 +31,7 @@ three things.
    losing what it said before.
 2. **Share as far as you choose.** Everything kept is visible to you alone, to the people
    on the project, or to everyone. It goes no further unless someone decides it should.
-3. **Move forward.** Open questions, needs and commitments are written down rather than
+3. **Move forward.** An inquiry can begin before anyone knows the needs. Contrary evidence can change its question or preserve an unresolved alternative. Open questions, needs and commitments are written down rather than
    remembered, so the next step is visible. The people who could take it can be asked, or
    can offer. Whatever they do comes back into the memory.
 
@@ -78,10 +80,7 @@ voted can trace the decision to a finished job.
 
 ## The same thing at every scale
 
-The page, the things kept on it and the three audiences work the same way whether one
-person uses it or a whole town does. A private note can become a team item, and a team's
-result can be made public, but only because someone chose to. Nobody has to switch
-tools when the work grows.
+Keep, share and move forward should remain recognizable as work grows. A private note can become a team item, and a team result can be released, with the relevant permission. Different domains and scales can require different review, representation and governance workflows. Reusing concepts does not establish that the same implementation or three audience labels are sufficient everywhere.
 
 ## Lines we do not cross
 
@@ -101,13 +100,12 @@ alongside those. It keeps no scores, rankings or streaks for people.
 ## Where the current prototype fits
 
 The prototype built so far covers one part of open collaboration: it turns an offer into
-a commitment against a need, and it does that well. Keeping, the three audiences and the
-page itself are still to be built around it. A need is simply one of the things a page
+a commitment against a need. Its evidence is synthetic component testing, with known boundary gaps. Keeping, the three audiences and the page itself are still to be built around it. A need is simply one of the things a page
 can keep.
 
 ## Open questions
 
-1. **Who is the first real user?** One person, a team, or an open initiative?
+1. **Who is the first real user?** One person, a team, or an open initiative? The latest [inquiry experiment](EXPERIMENT.md) is a candidate: a public-material solo-to-small-group episode. The earlier recommendation below remains an alternative, not a selected pilot.
    *Recommendation:* a small team of two to five people doing real work, where each
    member also has a private space. That tests keeping and sharing together, the pain
    (one person holding everything) is sharp, and it grows into open collaboration. A

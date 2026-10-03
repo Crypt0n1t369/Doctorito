@@ -255,6 +255,145 @@ const APPLY = {
       channel: p.channel, handle: p.handle, kind: p.kind, body: p.body, sent_at: e.at,
     });
   },
+
+  // Inquiry events contain references and decision metadata only. Text lives
+  // in inquiry_payloads, which is intentionally not rebuilt from this log.
+  'inquiry.created'(db, e, p) {
+    insert(db, 'inquiries', {
+      inquiry_id: p.inquiry_id, slug: p.slug, owner_principal: p.owner_principal,
+      title_payload_id: p.title_payload_id, question_payload_id: p.question_payload_id,
+      visibility: p.visibility, version: 0, created_at: e.at,
+    });
+    insert(db, 'inquiry_roles', {
+      role_id: p.owner_role_id, inquiry_id: p.inquiry_id,
+      principal: p.owner_principal, role: 'owner', active: 1,
+    });
+  },
+
+  'inquiry.role_granted'(db, e, p) {
+    run(db, `insert into inquiry_roles (role_id,inquiry_id,principal,role,active)
+             values (?,?,?,?,1) on conflict(inquiry_id,principal) do update set
+             role_id=excluded.role_id, role=excluded.role, active=1`,
+      p.role_id, p.inquiry_id, p.principal, p.role);
+  },
+
+  'inquiry.role_revoked'(db, e, p) {
+    run(db, 'update inquiry_roles set active=0 where inquiry_id=? and principal=?',
+      p.inquiry_id, p.principal);
+  },
+
+  'inquiry.source_added'(db, e, p) {
+    insert(db, 'inquiry_sources', {
+      source_id: p.source_id, inquiry_id: p.inquiry_id, payload_id: p.payload_id,
+      added_by: e.author, read_scope: p.read_scope,
+      public_release: p.public_release ? 1 : 0, created_at: e.at,
+    });
+  },
+
+  'inquiry.source_release_set'(db, e, p) {
+    patch(db, 'inquiry_sources', 'source_id', p.source_id,
+      { public_release: p.public_release ? 1 : 0 });
+  },
+
+  'inquiry.draft_saved'(db, e, p) {
+    insert(db, 'inquiry_revisions', {
+      revision_id: p.revision_id, inquiry_id: p.inquiry_id,
+      parent_revision_id: p.parent_revision_id, version: p.version,
+      state: 'saved_draft', payload_id: p.payload_id,
+      source_ids: p.source_ids, contribution_ids: p.contribution_ids,
+      author: e.author, reason_payload_id: p.reason_payload_id,
+      created_at: e.at,
+    });
+    patch(db, 'inquiries', 'inquiry_id', p.inquiry_id,
+      { version: p.version, current_revision_id: p.revision_id });
+  },
+
+  'inquiry.draft_reviewed'(db, e, p) {
+    insert(db, 'inquiry_revisions', {
+      revision_id: p.revision_id, inquiry_id: p.inquiry_id,
+      parent_revision_id: p.parent_revision_id, version: p.version,
+      state: 'reviewed', payload_id: p.payload_id,
+      source_ids: p.source_ids, contribution_ids: p.contribution_ids,
+      author: e.author, reviewer: e.author,
+      reason_payload_id: p.reason_payload_id, created_at: e.at,
+    });
+    patch(db, 'inquiries', 'inquiry_id', p.inquiry_id, {
+      version: p.version, current_revision_id: p.revision_id,
+      reviewed_revision_id: p.revision_id,
+    });
+  },
+
+  'inquiry.contribution_submitted'(db, e, p) {
+    insert(db, 'inquiry_contributions', {
+      contribution_id: p.contribution_id, inquiry_id: p.inquiry_id,
+      principal: e.author, payload_id: p.payload_id, source_ids: p.source_ids,
+      allow_team_read: p.allow_team_read ? 1 : 0,
+      allow_public_release: p.allow_public_release ? 1 : 0,
+      status: 'submitted_for_review', submitted_at: e.at, receipt_id: p.receipt_id,
+    });
+    insert(db, 'inquiry_receipts', {
+      receipt_id: p.receipt_id, contribution_id: p.contribution_id,
+      inquiry_id: p.inquiry_id, status: 'submitted_for_review', made_available_at: e.at,
+    });
+  },
+
+  'inquiry.contribution_release_set'(db, e, p) {
+    patch(db, 'inquiry_contributions', 'contribution_id', p.contribution_id,
+      { allow_public_release: p.allow_public_release ? 1 : 0 });
+  },
+
+  'inquiry.contribution_team_read_set'(db, e, p) {
+    patch(db, 'inquiry_contributions', 'contribution_id', p.contribution_id,
+      { allow_team_read: p.allow_team_read ? 1 : 0 });
+  },
+
+  'inquiry.contribution_withdrawn'(db, e, p) {
+    patch(db, 'inquiry_contributions', 'contribution_id', p.contribution_id,
+      { status: 'withdrawn', allow_public_release: 0 });
+    patch(db, 'inquiry_receipts', 'receipt_id', p.receipt_id,
+      { status: 'withdrawn', made_available_at: e.at });
+  },
+
+  'inquiry.contribution_reviewed'(db, e, p) {
+    if (p.revision_id) {
+      insert(db, 'inquiry_revisions', {
+        revision_id: p.revision_id, inquiry_id: p.inquiry_id,
+        parent_revision_id: p.parent_revision_id, version: p.version,
+        state: 'reviewed', payload_id: p.payload_id,
+        source_ids: p.source_ids, contribution_ids: p.contribution_ids,
+        author: e.author, reviewer: e.author,
+        reason_payload_id: p.reason_payload_id, created_at: e.at,
+      });
+      patch(db, 'inquiries', 'inquiry_id', p.inquiry_id, {
+        version: p.version, current_revision_id: p.revision_id,
+        reviewed_revision_id: p.revision_id,
+      });
+    }
+    patch(db, 'inquiry_contributions', 'contribution_id', p.contribution_id, {
+      status: p.disposition, reviewer: e.author,
+      review_reason_payload_id: p.reason_payload_id, reviewed_at: e.at,
+      resulting_revision_id: p.revision_id ?? null,
+    });
+    patch(db, 'inquiry_receipts', 'receipt_id', p.receipt_id, {
+      status: p.disposition, reason_payload_id: p.reason_payload_id,
+      revision_id: p.revision_id ?? null, made_available_at: e.at,
+    });
+  },
+
+  'inquiry.published'(db, e, p) {
+    insert(db, 'inquiry_publications', {
+      publication_id: p.publication_id, inquiry_id: p.inquiry_id,
+      revision_id: p.revision_id, audience: p.audience,
+      published_by: e.author, published_at: e.at,
+    });
+    patch(db, 'inquiries', 'inquiry_id', p.inquiry_id,
+      { latest_publication_id: p.publication_id });
+  },
+
+  'inquiry.payload_deleted'() {
+    // The payload is physically erased by the command transaction. Replay
+    // retains this audit event and reconstructs references to missing content.
+  },
 };
 
 /**
