@@ -1,0 +1,12 @@
+{
+  "name": "mission-spine-pg",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test:unit": "node --test test/unit.test.js",
+    "test:embedded": "node test/embedded-smoke.mjs",
+    "test:pg": "node --test test/postgres.test.js"
+  },
+  "devDependencies": { "@electric-sql/pglite": "0.5.8", "pg": "^8.16.0" }
+}
